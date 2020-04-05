@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Number System
-description: "An application showing numbering systems."
+description: "An application showing number systems."
 modified: 2020-04-05
 tags: [code]
 image:
@@ -15,6 +15,4 @@ This application shows different numbering systems.
 
 Link: [Number System Application](http://neumont-gamedev.github.io/assets/unity/numbersystem/index.html)
 
-![image-title-here](/assets/img/nc_logo.png){:class="img-responsive"}
-{: .image-right}
 
