@@ -13,7 +13,7 @@ image:
 
 This application shows different numbering systems.
 
-A link to the [Number System Application](http://neumont-gamedev.github.io/_posts/NumberSystem/index)
+A link to the [Number System Application](http://neumont-gamedev.github.io/_posts/NumberSystem/index.html)
 
 ![image-title-here](/assets/img/nc_logo.png){:class="img-responsive"}
 {: .image-right}
