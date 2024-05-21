@@ -1,5 +1,5 @@
 ---
-title: AI
+title: AI Resources
 date: 2024-05-18 14:00:00 +/-TTTT
 categories: [AI]
 tags: [ai]     # TAG names should always be lowercase
@@ -7,7 +7,7 @@ toc: true
 comments: true
 img_path: /assets/img/ai
 ---
-#### A comprehensive collection of AI-related documents, useful links, and key information curated to support your academic and research interests in Artificial Intelligence. Dive into the resources to explore, learn, and innovate!
+#### A collection of AI-related documents, useful links, and key information curated to support your academic and research interests in Artificial Intelligence. Dive into the resources to explore, learn, and innovate!
 
 ### AI - GPT
 <span title="ChatGPT is an AI language model from OpenAI designed to understand and generate human-like text based on the input it receives.">ChatGPT: </span>
@@ -29,12 +29,18 @@ img_path: /assets/img/ai
 [https://supertools.therundown.ai/](https://supertools.therundown.ai/)
 
 #### Image
+<span title="Runway creates products and models for generating videos, images, and various multimedia content.">RunwayML: </span>
+[https://app.runwayml.com/](https://app.runwayml.com/)
+
 <span title="Adobe Firefly, a product of Adobe Creative Cloud, is a generative machine learning model that is used in the field of design.">Adobe Firefly: </span>
 [https://firefly.adobe.com/](https://firefly.adobe.com/)
 
 #### Audio
 <span title="ElevenLabs is a software company that specializes in developing natural-sounding speech synthesis software using deep learning.">Eleven Labs: </span>
 [https://elevenlabs.io/](https://elevenlabs.io/)
+
+<span title="Suno is a generative artificial intelligence music creation program designed to generate realistic songs with instrumentation and vocals.">Suno: </span>
+[https://suno.com/](https://suno.com/)
 
 ### AI - Games
 <span title="A free interactive game from Google that teaches you how to craft effective prompts for AI image generation.">Say what you see: </span>
