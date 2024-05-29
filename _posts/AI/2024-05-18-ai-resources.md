@@ -58,14 +58,15 @@ img_path: /assets/img/ai
 <span title="Answer questions to see if your are smarter than ChatGPT.">Are you smarter than ChatGPT: </span>
 [https://smarterthangpt.com/](https://smarterthangpt.com/)
 
-
+<span title="Generates memes based on prompt input.">AI Meme Generator: </span>
+[https://rusher.ai/free-tools/ai-meme-generator?ref=therundown](https://rusher.ai/free-tools/ai-meme-generator?ref=therundown)
 
 
 
 ### Other Resources
-<span title="LMSYS Chatbot Arena is a a benchmark platform for large language models (LLMs) that features anonymous, randomized battles in a crowdsourced manner.">LMSYS Chatbot Arena:</span>
+<span title="LMSYS Chatbot Arena is a benchmark platform for large language models (LLMs) that features anonymous, randomized battles in a crowdsourced manner.">LMSYS Chatbot Arena:</span>
 [https://chat.lmsys.org/](https://chat.lmsys.org/)
-<br>
+
 <span title="The Rundown is a daily AI newsletter.Get the latest AI news and learn how to apply it in 5 minutes.">The Rundown:</span>
 [https://www.therundown.ai/subscribe/](https://www.therundown.ai/subscribe/)
 
