@@ -61,8 +61,6 @@ img_path: /assets/img/ai
 <span title="Generates memes based on prompt input.">AI Meme Generator: </span>
 [https://rusher.ai/free-tools/ai-meme-generator?ref=therundown](https://rusher.ai/free-tools/ai-meme-generator?ref=therundown)
 
-
-
 ### Other Resources
 <span title="LMSYS Chatbot Arena is a benchmark platform for large language models (LLMs) that features anonymous, randomized battles in a crowdsourced manner.">LMSYS Chatbot Arena:</span>
 [https://chat.lmsys.org/](https://chat.lmsys.org/)

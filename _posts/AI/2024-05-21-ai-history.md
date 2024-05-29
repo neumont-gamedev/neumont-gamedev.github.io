@@ -13,7 +13,7 @@ img_path: /assets/img/ai
 
 ["Computing Machinery and Intelligence" by Alan Turing (1950)](https://phil415.pbworks.com/f/TuringComputing.pdf)
 
-["A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence" by John McCarthy, Marvin L. Minsky, Nathaniel Rochester, and Claude E. Shannon (1955)](http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf)
+["A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence" by John McCarthy, Marvin L. Minsky, Nathaniel Rochester, and Claude E. Shannon (1955)](https://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf)
 
 ["The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain" by Frank Rosenblatt (1958)](https://www.ling.upenn.edu/courses/cogs501/Rosenblatt1958.pdf)
 
