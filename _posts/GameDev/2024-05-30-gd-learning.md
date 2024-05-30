@@ -24,7 +24,7 @@ C++ is the predominate language for developing game engines and high-performance
 [https://en.cppreference.com/w/](https://en.cppreference.com/w/)
 
 **Guidelines (advanced):**
-[http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#main](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#main)
+[https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#main](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#main)
 
 ### Design Patterns
 Design patterns are solutions to common programming problems that occur frequently in development. They can be used to help solve a problem but are not necessary the exact solution but can steer you in a direction that may be helpful.
@@ -51,7 +51,7 @@ Excellent book that is now free online:
 Good resources for learning the foundation of transformations:
 [https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/points-vectors-and-normals.html](https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/points-vectors-and-normals.html)
 
-[http://blog.wolfire.com/2009/07/linear-algebra-for-game-developers-part-1/](http://blog.wolfire.com/2009/07/linear-algebra-for-game-developers-part-1/)
+[https://blog.wolfire.com/2009/07/linear-algebra-for-game-developers-part-1/](https://blog.wolfire.com/2009/07/linear-algebra-for-game-developers-part-1/)
 
 ### Game Development
 Of course, this is what we’re here for. It is important that we understand the core components of software engineering and the math involved in transforming objects in space, but game design and programming concepts get us to where we want to be.
