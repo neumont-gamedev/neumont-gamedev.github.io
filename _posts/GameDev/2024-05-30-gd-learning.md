@@ -53,7 +53,17 @@ Good resources for learning the foundation of transformations.
 
 [https://blog.wolfire.com/2009/07/linear-algebra-for-game-developers-part-1/](https://blog.wolfire.com/2009/07/linear-algebra-for-game-developers-part-1/)
 
-### Game Development
+### Graphics
+
+Contains excellent database of graphics programming resources. The database is searchable by title, and each article has been tagged to make it easier to find items again. Highly recommended that you subscribe to the weekly newsletter if you are interested in computer graphics.
+[https://www.jendrikillner.com/#about](https://www.jendrikillner.com/#about)
+
+### Game AI
+
+Online versions of the Game AI Pro book series. Contains a large collections of Game AI articles from professional industry developers covering techniques and algrorithms used in many popular games.
+[https://www.gameaipro.com/](https://www.gameaipro.com/)
+
+### General Game Development
 Of course, this is what we’re here for. It is important that we understand the core components of software engineering and the math involved in transforming objects in space, but game design and programming concepts get us to where we want to be.
 
 **YouTube**

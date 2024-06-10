@@ -1,7 +1,7 @@
 ---
 title: GameMaker Setup
 date: 2024-05-06 20:45:00 +/-TTTT
-categories: [GameMaker, Tutorials]
+categories: [GameMaker]
 tags: [gamemaker]     # TAG names should always be lowercase
 toc: true
 comments: true
