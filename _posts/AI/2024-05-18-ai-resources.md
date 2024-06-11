@@ -7,7 +7,7 @@ toc: true
 comments: true
 img_path: /assets/img/ai
 ---
-#### A collection of AI-related documents, useful links, and key information curated to support your academic and research interests in Artificial Intelligence. Dive into the resources to explore, learn, and innovate!
+**A collection of AI-related documents, useful links, and key information curated to support your academic and research interests in Artificial Intelligence. Dive into the resources to explore, learn, and innovate!**
 
 ### AI - GPT
 <span title="ChatGPT is an AI language model from OpenAI designed to understand and generate human-like text based on the input it receives.">ChatGPT: </span>
@@ -21,6 +21,10 @@ img_path: /assets/img/ai
 <br>
 <span title="Claude is an AI assistant created by Anthropic to engage in open-ended dialogue and assist with a variety of tasks while adhering to principles of ethical and truthful conduct.">Anthropic Claude: </span>
 [https://claude.ai/](https://claude.ai/)
+
+### AI - Search Engine
+<span title="Perplexity is a free AI search engine. Perplexity generates answers using sources from the web and cites links within the text response.">Perplexity: </span>
+[https://www.perplexity.ai/](https://www.perplexity.ai/)
 
 ### AI - Tools
 

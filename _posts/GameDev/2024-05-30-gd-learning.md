@@ -58,6 +58,9 @@ Good resources for learning the foundation of transformations.
 Contains excellent database of graphics programming resources. The database is searchable by title, and each article has been tagged to make it easier to find items again. Highly recommended that you subscribe to the weekly newsletter if you are interested in computer graphics.
 [https://www.jendrikillner.com/#about](https://www.jendrikillner.com/#about)
 
+Rendering Engine Architecture Conference (REAC) is a computer graphics conference about real-time rendering. The site contains information on conference talks with links to videos on the presentations.
+[https://enginearchitecture.org/index.htm](https://enginearchitecture.org/index.htm)
+ 
 ### Game AI
 
 Online versions of the Game AI Pro book series. Contains a large collections of Game AI articles from professional industry developers covering techniques and algrorithms used in many popular games.

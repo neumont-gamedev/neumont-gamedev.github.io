@@ -8,10 +8,11 @@ comments: true
 math: true
 img_path: /assets/img/ai
 ---
-
 **Linear Regression** is a fundamental statistical method used in machine learning and data analysis to model the relationship between a dependent variable (often called the response variable) and one or more independent variables (also known as predictors or features). The primary goal is to find the best-fitting linear equation that can predict the value of the dependent variable based on the values of the independent variables.
 
-#### Key Components ####
+<iframe src="https://neumont-gamedev.github.io/assets/unity/test/index.html." width="800" height="600" frameborder="0"></iframe>
+
+### Key Components
 + Dependent Variable (Y):
   + The variable you are trying to predict or explain.
 
@@ -29,7 +30,7 @@ $$
 
 + $(\beta_1, \beta_2, \ldots, \beta_n)$ are the coefficients (the change in $Y$ for a one-unit change in each $X$).
 
-#### How It Works ####
+### How It Works
 + Fit a Line:
 
   + Linear regression finds the best-fitting line (or hyperplane in multiple dimensions) through the data points.
@@ -43,15 +44,15 @@ $$
 The coefficients $(\beta_1, \beta_2, \ldots, \beta_n)$ indicate the strength and direction of the relationship between each independent variable and the dependent variable.
 The intercept $\beta_0$ indicates the expected value of $(Y)$ when all $(X)$ are zero.
 
-#### Applications ####
+### Applications
 + Predictive Modeling: Used to predict outcomes based on historical data.
 + Trend Analysis: Helps in identifying trends and relationships in data.
 + Risk Management: Assists in assessing risks and forecasting future trends.
 
-#### Example ####
+### Example
 Given a dataset of house prices $(Y)$ based on their size $(X)$, linear regression can help predict the price of a house based on its size.
 
-#### Conclusion ####
+### Conclusion
 Linear regression is a simple yet powerful tool for understanding and predicting the relationship between variables. It forms the basis for many more complex statistical models and machine learning algorithms.
 
 
