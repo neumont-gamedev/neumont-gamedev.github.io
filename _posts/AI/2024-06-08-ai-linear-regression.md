@@ -10,7 +10,7 @@ img_path: /assets/img/ai
 ---
 **Linear Regression** is a fundamental statistical method used in machine learning and data analysis to model the relationship between a dependent variable (often called the response variable) and one or more independent variables (also known as predictors or features). The primary goal is to find the best-fitting linear equation that can predict the value of the dependent variable based on the values of the independent variables.
 
-<iframe src="https://neumont-gamedev.github.io/assets/unity/test/index.html." width="800" height="600" frameborder="0"></iframe>
+<iframe src="https://neumont-gamedev.github.io/assets/unity/test/index.html" width="800" height="600" frameborder="0"></iframe>
 
 ### Key Components
 + Dependent Variable (Y):
