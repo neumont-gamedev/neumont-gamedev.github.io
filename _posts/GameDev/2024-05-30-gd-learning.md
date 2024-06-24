@@ -7,8 +7,6 @@ toc: true
 comments: true
 img_path: /assets/img/gamedev
 ---
-#### A collection of GameDev-related links and information on learning game development. This is to supplement the course material and guide you to other resources to further your knowledge and abilities in game development!
-
 _To be a top-level game developer and software engineer, you must always be looking for ways to increase your skills and knowledge. I’ve linked some online resources that you can learn some invaluable information and get ahead of the game 😊._
 
 ### C++
