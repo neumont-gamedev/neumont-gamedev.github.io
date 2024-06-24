@@ -83,7 +83,7 @@ An IDE, or Integrated Development Environment, enables programmers to consolidat
 +	Run Visual Studio from the Start Menu
   + Type "Visual Studio" in the Start Bar
 <div align="left">
-<img src="vs-start.jpg" alt="Visual Studio Start" width="80%"/>
+<img src="vs-start.jpg" alt="Visual Studio Start" width="60%"/>
 </div>
 
 > Right-click on it and select **Pin to taskbar** for quick access.
