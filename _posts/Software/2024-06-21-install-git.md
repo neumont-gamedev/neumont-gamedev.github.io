@@ -119,7 +119,7 @@ _The following steps assumes that you have a GitHub page already setup. If you d
 +	To upload the Git repository to the remote repository (GitHub), use the command	```git remote add origin <url>```
   +	Example: ```git remote add origin https://github.com/neumont-gamedev/Example```
 <div align="left">
-<img src="git-add.jpg" alt="GitHub Add" width="80%"/>
+<img src="git-remote-add.jpg" alt="GitHub Remote Add" width="80%"/>
 </div> 
 
 +	To push the changes to the remote repository (GitHub), use the command ```git push -u origin master```
