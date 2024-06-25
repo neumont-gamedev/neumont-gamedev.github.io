@@ -101,3 +101,28 @@ _The following steps assumes that you have a GitHub page already setup. If you d
 <div align="left">
 <img src="git-github.jpg" alt="GitHub" width="60%"/>
 </div>
++ Click **Repositories**
++ Click **New** to create a new repository.
+<div align="left">
+<img src="git-new.jpg" alt="GitHub New" width="60%"/>
+</div>
++	Type the name of the repository
+<div align="left">
+<img src="git-new-name.jpg" alt="GitHub New Name" width="60%"/>
+</div>
+
++	Copy the **URL** for the new repository.
+<div align="left">
+<img src="git-url.jpg" alt="GitHub URL" width="60%"/>
+</div>
+
++	To upload the Git repository to the remote repository (GitHub), use the command	```git remote add origin <url>```
+  +	Example: ```git remote add origin https://github.com/neumont-gamedev/Example```
+<div align="left">
+<img src="git-add.jpg" alt="GitHub Add" width="80%"/>
+</div> 
+
++	To push the changes to the remote repository (GitHub), use the command ```git push -u origin master```
+<div align="left">
+<img src="git-push.jpg" alt="GitHub Push" width="80%"/>
+</div> 
