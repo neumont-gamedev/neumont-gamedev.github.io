@@ -18,7 +18,7 @@ _This instructional guide will teach you how to create a Git repository and host
 ### Install Git ###
 **Git** may already be installed on your computer. Open a command prompt and type ```git -v```. If **Git** is installed, the current version will be displayed, **Git** is ready and the install step can be skipped.
 <div align="left">
-<img src="git-version.jpg" alt="Version" width="50%"/>
+<img src="git-version.jpg" alt="Version" width="65%"/>
 </div>
 
 > There are mutliple ways to open a command prompt.
@@ -46,7 +46,7 @@ _This instructional guide will teach you how to create a Git repository and host
 + Open a command prompt in the directory that you want to place under source conrol. _(See instructions above)_  
 + Type ```git init``` to initialize a Git repository in the directory
 <div align="left">
-<img src="git-init.jpg" alt="Git Init" width="80%"/>
+<img src="git-init.jpg" alt="Git Init" width="65%"/>
 </div>
 
 _A .gitignore file serves to exclude specific files and directories from being tracked in Git. It allows the exclusion of files that are temporary or only required during project builds, ensuring they are not included in the repository's history._
@@ -69,7 +69,7 @@ _A .gitignore file serves to exclude specific files and directories from being t
 
 +	Add the files to Git using the ```git add . ```command
 <div align="left">
-<img src="git-add.jpg" alt="Git Add" width="80%"/>
+<img src="git-add.jpg" alt="Git Add" width="70%"/>
 </div>
 
 > Individual files can be added using ```git add <filename>``` 
@@ -83,13 +83,13 @@ _A .gitignore file serves to exclude specific files and directories from being t
   +	To disable the warnings, type the following command
 ```git config core.autocrlf true```
 <div align="left">
-<img src="git-line-config.jpg" alt="Git Line Config" width="80%"/>
+<img src="git-line-config.jpg" alt="Git Line Config" width="70%"/>
 </div>
 
 +	Commit the changes using the git command ```commit -m <message>”```
   +	For the first commit, it will look like ```git commit -m “Initial commit”```
 <div align="left">
-<img src="git-commit.jpg" alt="Git Commit" width="80%"/>
+<img src="git-commit.jpg" alt="Git Commit" width="70%"/>
 </div>
 
 ### Create Remote Repository ###
@@ -111,18 +111,19 @@ _The following steps assumes that you have a GitHub page already setup. If you d
 <img src="git-new-name.jpg" alt="GitHub New Name" width="60%"/>
 </div>
 
-+	Copy the **URL** for the new repository.
++	Copy the HTTPS **URL** for the new repository.
 <div align="left">
-<img src="git-url.jpg" alt="GitHub URL" width="60%"/>
+<img src="git-url.jpg" alt="GitHub URL" width="100%"/>
 </div>
 
-+	To upload the Git repository to the remote repository (GitHub), use the command	```git remote add origin <url>```
-  +	Example: ```git remote add origin https://github.com/neumont-gamedev/Example```
++	To upload the Git repository to the remote repository (GitHub), use the command	```git remote add origin <url>.git```
+  +	Example: ```git remote add origin https://github.com/neumont-gamedev/Example.git```
+  
 <div align="left">
-<img src="git-remote-add.jpg" alt="GitHub Remote Add" width="80%"/>
+<img src="git-remote-add.jpg" alt="GitHub Remote Add" width="110%"/>
 </div> 
 
 +	To push the changes to the remote repository (GitHub), use the command ```git push -u origin master```
 <div align="left">
-<img src="git-push.jpg" alt="GitHub Push" width="80%"/>
+<img src="git-push.jpg" alt="GitHub Push" width="75%"/>
 </div> 
