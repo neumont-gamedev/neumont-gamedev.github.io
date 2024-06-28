@@ -1,5 +1,5 @@
 ---
-title: Install Visual Studio
+title: Visual Studio Install
 date: 2024-06-23 12:45:00 +/-TTTT
 categories: [Software]
 tags: [software,visualstudio]     # TAG names should always be lowercase

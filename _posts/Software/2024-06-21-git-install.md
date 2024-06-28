@@ -1,5 +1,5 @@
 ---
-title: Install Git (Console)
+title: Git Install (Console)
 date: 2024-06-21 12:45:00 +/-TTTT
 categories: [Software]
 tags: [software,git]     # TAG names should always be lowercase
@@ -10,7 +10,7 @@ img_path: /assets/img/software
 <div align="center">
     <img src="git-logo.svg" alt="Logo" />
 </div>
-_This instructional guide will teach you how to create a Git repository and host it remotely on GitHub. You will learn how to make the initial commit and push your changes to the repository. This guide will demonstrate how to use Git through the command line prompt._
+_This guide will walk you through creating a Git repository and hosting it remotely on GitHub. You will learn how to make the initial commit and push your changes to the repository. The instructions will demonstrate how to use Git via the command line prompt._
 
 ### About Git ###
 **Git** is a distributed version control system designed to track changes in source code during software development. It allows multiple developers to collaborate on a project simultaneously, managing changes efficiently. **Git** works by creating snapshots of a project's files at different points in time, called **commits**. These **commits** form a history of changes, enabling users to track progress, **revert** to previous states, and **merge** different branches of development. **Git** operates locally on a user's machine, allowing for offline work, and facilitates collaboration through remote **repositories** hosted on platforms like **GitHub**, **GitLab**, or **Bitbucket**. Developers can **pull** changes from and **push** changes to these remote **repositories**, enabling seamless collaboration and version control across distributed teams.
@@ -44,7 +44,7 @@ _This instructional guide will teach you how to create a Git repository and host
 
 ### Create Repository ###
 + Open a command prompt in the directory that you want to place under source conrol. _(See instructions above)_  
-+ Type ```git init``` to initialize a Git repository in the directory
++ Type ```git init``` to initialize a Git repository in the directory.
 <div align="left">
 <img src="git-init.jpg" alt="Git Init" width="65%"/>
 </div>
