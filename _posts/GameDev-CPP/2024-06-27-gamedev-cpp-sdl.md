@@ -8,7 +8,7 @@ comments: true
 img_path: /assets/img/gamedev/cpp/sdl
 ---
 <div align="center">
-    <img src="sdl-logo.svg" alt="Logo" width="40%" />
+<img src="sdl-logo.svg" alt="Logo" width="65%"/>
 </div>
 _This guide will provide step-by-step instructions on how to add the Simple DirectMedia Layer (SDL) library to a Visual Studio C++ project. You will learn how to download and set up SDL, configure Visual Studio to recognize the library, and integrate SDL into your project for enhanced multimedia capabilities. By the end of this guide, you will be ready to utilize SDL in your Visual Studio C++ projects._
 
@@ -23,8 +23,8 @@ _This guide will provide step-by-step instructions on how to add the Simple Dire
 <img src="sdl-zip.jpg" alt="Version" width="65%"/>
 </div>
 
-+ Create a folder in the Solution directory called "ThirdParty".
-  + **ThirdParty** will contain libraries from external developers to be used in the project.
++ Create a folder in the Solution directory called "ThirdParty"
+  + **ThirdParty** will contain libraries from external developers to be used in the project
 <div align="left">
 <img src="sdl-thirdparty-folder.jpg" alt="ThirdParty Folder" width="65%"/>
 </div>
@@ -109,7 +109,7 @@ sdl2main.lib
 <img src="sdl-build.jpg" alt="Build" width="70%"/>
 </div>
 
-+ Copy the **sdl2.dll** file from the **ThirdParty\lib\x64** directory to the **Build** folder.
++ Copy the **sdl2.dll** file from the **ThirdParty\sdl\lib\x64** directory to the **Build** folder.
   + The project is a x64 project (64-bit application).
 <div align="left">
 <img src="sdl-dll.jpg" alt="DLL" width="70%"/>
