@@ -172,8 +172,7 @@ $(SolutionDir)Build
 	FMOD::Sound* sound = nullptr;
 	audio->createSound("test.wav", FMOD_DEFAULT, 0, &sound);
 
-	FMOD::Channel* channel;
-	audio->playSound(sound, 0, false, &channel);
+	audio->playSound(sound, 0, false, nullptr);
 ```
 + In main() inside the main loop add the following to update **FMOD**:
 ```
