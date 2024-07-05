@@ -156,7 +156,7 @@ $(SolutionDir)Build
 <img src="fmod-build-wav.jpg" alt="Wav" width="70%"/>
 </div>
 + You can download this file if needed: 
-[test.wav](assets/downloads/test.wav)
+[test.wav](../../assets/downloads/test.wav)
 
 + In main() add the following code to create the audio system (place where systems are created):
 ```
