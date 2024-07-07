@@ -12,15 +12,19 @@ img_path: /assets/img/ai
 ### AI - GPT
 <span title="ChatGPT is an AI language model from OpenAI designed to understand and generate human-like text based on the input it receives.">ChatGPT: </span>
 [https://chatgpt.com/](https://chatgpt.com/)
-<br>
+
 <span title="Microsoft Copilot is an AI-powered digital assistant that aims to provide personalized assistance to users for a range of tasks and activities.">Microsoft Copilot: </span>
 [https://copilot.microsoft.com/](https://copilot.microsoft.com/)
-<br>
+
 <span title="Google Gemini is a family of powerful AI models that can understand and work with different kinds of information, like text, images, and code.">Google Gemini: </span>
 [https://gemini.google.com/](https://gemini.google.com/)
-<br>
+
 <span title="Claude is an AI assistant created by Anthropic to engage in open-ended dialogue and assist with a variety of tasks while adhering to principles of ethical and truthful conduct.">Anthropic Claude: </span>
 [https://claude.ai/](https://claude.ai/)
+
+<span title="Hume is a GPT that is trained to have a more emotionally driven response with its conversation.">Hume: </span>
+[https://demo.hume.ai/](https://demo.hume.ai/)
+
 
 ### AI - Search Engine
 <span title="Perplexity is a free AI search engine. Perplexity generates answers using sources from the web and cites links within the text response.">Perplexity: </span>
@@ -32,12 +36,27 @@ img_path: /assets/img/ai
 <span title="The most useful AI tools — organized and categorized in one spot.">Supertools: </span>
 [https://supertools.therundown.ai/](https://supertools.therundown.ai/)
 
-#### Image
+#### Image/Video
 <span title="Runway creates products and models for generating videos, images, and various multimedia content.">RunwayML: </span>
 [https://app.runwayml.com/](https://app.runwayml.com/)
 
 <span title="Adobe Firefly, a product of Adobe Creative Cloud, is a generative machine learning model that is used in the field of design.">Adobe Firefly: </span>
 [https://firefly.adobe.com/](https://firefly.adobe.com/)
+
+<span title="Leverage generative AI with a unique suite of tools to convey your ideas to the world.">Leonardo.AI: </span>
+[https://leonardo.ai/](https://leonardo.ai/)
+
+<span title="Change the style of videos, create images from text or image prompts and generate videos from text prompts.">LensGo: </span>
+[https://lensgo.ai/](https://lensgo.ai/)
+
+
+#### 3D
+
+<span title="Controllable Large-scale Generative Model for Creating High-quality 3D Assets.">HyperHuman Rodin: </span>
+[https://hyperhuman.deemos.com/rodin](https://hyperhuman.deemos.com/rodin)
+
+<span title="Customize 3D models effortlessly, designed to fuel your creativity and efficiency in any project.">Sloyd: </span>
+[https://www.sloyd.ai/](https://www.sloyd.ai/)
 
 #### Audio
 <span title="ElevenLabs is a software company that specializes in developing natural-sounding speech synthesis software using deep learning.">Eleven Labs: </span>
