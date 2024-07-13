@@ -16,7 +16,7 @@ _This guide will provide step-by-step instructions on how to add the FMOD librar
 **FMOD** is a proprietary sound effects engine and authoring tool for video games and applications. It is able to play and mix sounds of diverse formats on many operating systems. **FMOD** is used many popular game engines like Unity and Unreal Engine.
 
 ### Download FMOD ###
-+ Go to the **FMOD** website (https://www.fmod.com/)[https://www.fmod.com/]
++ Go to the **FMOD** website [https://www.fmod.com/](https://www.fmod.com/)
   + Go to the **Sign In** and sign up for an account if you don't have one
   + Go to the **Download**
 <div align="left">

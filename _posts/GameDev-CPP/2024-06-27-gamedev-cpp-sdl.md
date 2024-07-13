@@ -16,7 +16,7 @@ _This guide will provide step-by-step instructions on how to add the Simple Dire
 **Simple DirectMedia Layer (SDL)** is a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D.
 
 ### Download SDL ###
-+ Go to the SDL website (https://www.libsdl.org/)[https://www.libsdl.org/]
++ Go to the SDL website [https://www.libsdl.org/](https://www.libsdl.org/)
   + Go to the **Download SDL Releases**
   + Download ```SDL2-devel-####-VC.zip```
 <div align="left">
@@ -76,6 +76,13 @@ $(SolutionDir)ThirdParty\SDL2\include
 {: .prompt-info }
 
 #### Add SDL Library ####
++ Open the **Project Properties** that SDL will be used in
+  + Right-click the **Project** and select **Properties**
+ <div align="left">
+<img src="sdl-project.jpg" alt="Project" width="75%"/>
+<img src="sdl-properties.jpg" alt="Properties" width="75%"/>
+</div>
+
 + Add the directory of the SDL library folder in **Project Properties**.
   + **Additional Library Directories** is located in **Librarian>General** or **Linker>Input**
   + Add ```$(SolutionDir)ThirdParty\SDL2\lib\$(PlatformTarget)```
