@@ -194,6 +194,9 @@ exclude:
   - rollup.config.js
   - package*.json
 
+include:
+  - assets/js/countdown.js
+
 jekyll-archives:
   enabled: [categories, tags]
   layouts:
