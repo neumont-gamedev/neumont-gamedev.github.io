@@ -29,3 +29,7 @@ _This guide will walk you through downloading and installing **OBS** (Open Broad
 </div>
 
 ### Setup OBS ###
+
++ Launch OBS
++ There should already be a scene, add a **Source** to your scene
+  + Click the **+** symbol in the **Sources** window to add a source

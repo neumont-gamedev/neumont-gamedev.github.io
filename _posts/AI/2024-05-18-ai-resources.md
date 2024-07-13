@@ -55,6 +55,9 @@ img_path: /assets/img/ai
 <span title="Controllable Large-scale Generative Model for Creating High-quality 3D Assets.">HyperHuman Rodin: </span>
 [https://hyperhuman.deemos.com/rodin](https://hyperhuman.deemos.com/rodin)
 
+<span title="Effortlessly turn text and images into captivating 3D models in just minutes.">Meshy: </span>
+[https://www.meshy.ai/](https://www.meshy.ai/)
+
 <span title="Customize 3D models effortlessly, designed to fuel your creativity and efficiency in any project.">Sloyd: </span>
 [https://www.sloyd.ai/](https://www.sloyd.ai/)
 
@@ -66,6 +69,10 @@ img_path: /assets/img/ai
 [https://suno.com/](https://suno.com/)
 
 ### AI - Games
+
+<span title="Explore AI simulation and bring your creative projects to life effortlessly with powerful AI tools.">websim.ai: </span>
+[https://websim.ai/](https://websim.ai/)
+
 <span title="A free interactive game from Google that teaches you how to craft effective prompts for AI image generation.">Say what you see: </span>
 [https://artsandculture.google.com](https://artsandculture.google.com/experiment/say-what-you-see/jwG3m7wQShZngw)
 
