@@ -44,15 +44,16 @@ macOS, and Microsoft Windows operating systems.
 {: .prompt-tip }
 
 #### Add SDL True Type Font Library ####
+
+> The **sdl2_ttf.lib** only needs to added to the project that is the application (Game). Do not add it to the library project (Engine). If it is added to both, there will be a warning reported when built.
+{: .prompt-warning }
+
 + Open the **Project Properties** that SDL will be used in
   + Right-click the **Project** and select **Properties**
  <div align="left">
 <img src="sdl-font-project.jpg" alt="Project" width="75%"/>
 <img src="sdl-properties.jpg" alt="Properties" width="75%"/>
 </div>
-
-> The **sdl2_ttf.lib** only needs to added to the project that is the application (Game). Do not add it to the library project (Engine). If it is added to both, there will be a warning reported when built.
-{: .prompt-warning }
 
 + Add the SDL2 TTF .lib files that the project needs to function
   + **Additional Dependencies** is located in **Librarian>General** or **Linker>General**

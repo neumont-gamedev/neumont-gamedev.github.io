@@ -33,7 +33,7 @@ _This guide will provide step-by-step instructions on how to add the Simple Dire
   + Rename the extracted folder to "SDL2" to make is easier to reference the folder
   + Once extracted, the .zip file can be deleted
 <div align="left">
-<img src="sdl-unzip.jpg" alt="Unzip" width="75%"/>
+<img src="sdl-unzip-dir.jpg" alt="Unzip" width="75%"/>
 </div>
 
 ### Add SDL to the Solution Project(s) ###
