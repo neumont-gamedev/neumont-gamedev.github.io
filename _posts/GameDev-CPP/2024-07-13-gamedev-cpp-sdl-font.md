@@ -87,6 +87,7 @@ sdl2_ttf.lib
 
 ### Add TTF Fonts to the Renderer ###
 + In the Renderer.h header, include the **SDL TTF** header
+
 ```
 #include <SDL_ttf.h>
 ```
@@ -101,6 +102,7 @@ bool Renderer::Initialize()
 		std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
 		return false;
 	}
+	// initialize TTF SDL
 	if (TTF_Init() < 0)
 	{
 		std::cerr << "Error initializing SDL TTF: " << SDL_GetError() << std::endl;
@@ -118,3 +120,149 @@ void Renderer::Shutdown()
 	TTF_Quit();
 }
 ```
+
+### Create Font Class ###
+
++ Create Font.h file
+
+```
+class Font
+{
+public:
+	Font() = default;
+	~Font();
+
+	bool Load(const std::string& name, int fontSize);
+
+private:
+	_TTF_Font* m_ttfFont{ nullptr };
+};
+```
+
++ Create Font.cpp file
+
+```
+Font::~Font()
+{
+	if (m_ttfFont != nullptr)
+	{
+		TTF_CloseFont(m_ttfFont);
+	}
+}
+
+bool Font::Load(const std::string& name, int fontSize)
+{
+	m_ttfFont = TTF_OpenFont(name.c_str(), fontSize);
+	if (m_ttfFont == nullptr)
+	{
+		std::cerr << "Could not load font: " << name << std::endl;
+		return false;
+	}
+
+	return true;
+}
+```
+
+### Create Text Class ###
+
++ Create Text.h file
+
+```
+class Text
+{
+public:
+	Text() = default;
+	Text(Font* font) : m_font{ font } {}
+	~Text();
+
+	bool Create(Renderer& renderer, const std::string& text, const Color& color);
+	void Draw(Renderer& renderer, int x, int y);
+
+private:
+	Font* m_font{ nullptr };
+	SDL_Texture* m_texture{ nullptr };
+};
+```
+
++ Create Text.cpp file
+
+```
+Text::~Text()
+{
+	if (m_texture != nullptr)
+	{
+		SDL_DestroyTexture(m_texture);
+	}
+}
+
+bool Text::Create(Renderer& renderer, const std::string& text, const Color& color)
+{
+	// create a surface using the font, text string and color
+	SDL_Color c{ Color::ToInt(color.r), Color::ToInt(color.g), Color::ToInt(color.b), Color::ToInt(color.a) };
+	SDL_Surface* surface = TTF_RenderText_Solid(m_font->m_ttfFont, text.c_str(), c);
+	if (surface == nullptr)
+	{
+		std::cerr << "Could not create surface.\n";
+		return false;
+	}
+
+	// create a texture from the surface, only textures can render to the renderer
+	m_texture = SDL_CreateTextureFromSurface(renderer.m_renderer, surface);
+	if (surface == nullptr)
+	{
+		SDL_FreeSurface(surface);
+		std::cerr << "Could not create texture" << SDL_GetError() << std::endl;
+		return false;
+	}
+
+
+	// free the surface, no longer needed after creating the texture
+	SDL_FreeSurface(surface);
+
+	return true;
+}
+
+void Text::Draw(Renderer& renderer, int x, int y)
+{
+	assert(m_texture);
+
+	// query the texture for the texture width and height
+	int width, height;
+	SDL_QueryTexture(m_texture, nullptr, nullptr, &width, &height);
+
+	// copy the texture onto the renderer
+	SDL_Rect rect{ x, y, width, height };
+	SDL_RenderCopy(renderer.m_renderer, m_texture, NULL, &rect);
+}
+
+```
+
+### Create Text in Main ###
+
++ In main() create and load a font
+  + **Load(True Type Font Filename, Font Size)**
+
+```
+Font* font = new Font();
+font->Load("arcadeclassic.ttf", 20);
+```
+
++ After creating the font, create the text passing the font in the constructor
+  + **Text(Font)**
+  + **Create(Renderer, Text String, Color)**
+
+```
+Text* text = new Text(font);
+text->Create(g_engine.GetRenderer(), "Hello World", Color{ 1, 1, 1, 1 });
+```
+
++ In the render section of the main loop, draw the text
+  + **Draw(Renderer, X Position, Y Position)**
+
+```
+text->Draw(g_engine.GetRenderer(), 40, 40);
+```
+
+<div align="left">
+<img src="sdl-font-hello.jpg" alt="Lib" width="70%"/>
+</div>
