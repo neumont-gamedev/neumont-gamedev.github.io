@@ -96,7 +96,10 @@ $(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget)
 <div align="left">
 <img src="fmod-library.jpg" alt="Library" width="70%"/>
 </div>
- 
+ <br> 
+> The **fmod_vc.lib** only needs to be added on the project that is the application (Game). Do not add it to the library project (Engine). If it is added to both, there will be a warning reported when built.
+{: .prompt-warning }
+
 + Add the **FMOD** .lib files that the project needs to function
   + **Additional Dependencies** is located in **Librarian>General** or **Linker>General**
   + Add ```fmod_vc.lib```
@@ -107,7 +110,7 @@ fmod_vc.lib
 <div align="left">
 <img src="fmod-lib.jpg" alt="Library" width="70%"/>
 </div>
-
+<br>
 > If the **FMOD** library was properly added, building the project (CTRL+B) will result in no errors.
 {: .prompt-info }
 
@@ -125,7 +128,7 @@ fmod_vc.lib
 <img src="fmod-dll.jpg" alt="DLL" width="70%"/>
 <img src="fmod-dll-build.jpg" alt="DLL" width="70%"/>
 </div>
-
+<br>
 > The next step might have already been completed in a previous guide.
 {: .prompt-tip }
 
@@ -139,15 +142,9 @@ $(SolutionDir)Build
 <div align="left">
 <img src="fmod-working.jpg" alt="Working" width="70%"/>
 </div>
-
-
-> If the **FMOD** library was properly added, building the project (CTRL+B) will result in no errors.
+<br>
+> If **FMOD** was properly added, building and running the project will result in no errors.
 {: .prompt-info }
-
-> The following warning may appear. Ignore the warning for now.
-> 
-> ```sdl2.lib(SDL2.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in fmod_vc.lib(fmod.dll); second definition ignored```
-{: .prompt-warning }
 
 ### Create FMOD System ###
 
@@ -158,7 +155,7 @@ $(SolutionDir)Build
 + You can download this file if needed: 
 [test.wav](../../assets/downloads/test.wav)
 
-+ In main() add the following code to create the audio system (place where systems are created):
++ In main() add the following code to create the audio system (place where the engine systems are created):
 ```
 	// create audio system
 	FMOD::System* audio;

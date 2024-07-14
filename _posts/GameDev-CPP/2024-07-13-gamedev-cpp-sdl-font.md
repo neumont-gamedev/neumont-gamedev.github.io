@@ -47,11 +47,14 @@ macOS, and Microsoft Windows operating systems.
 + Open the **Project Properties** that SDL will be used in
   + Right-click the **Project** and select **Properties**
  <div align="left">
-<img src="sdl-project.jpg" alt="Project" width="75%"/>
+<img src="sdl-font-project.jpg" alt="Project" width="75%"/>
 <img src="sdl-properties.jpg" alt="Properties" width="75%"/>
 </div>
 
-+ Add the SDL2 TTF .lib files that the project needs to function.
+> The **sdl2_ttf.lib** only needs to added to the project that is the application (Game). Do not add it to the library project (Engine). If it is added to both, there will be a warning reported when built.
+{: .prompt-warning }
+
++ Add the SDL2 TTF .lib files that the project needs to function
   + **Additional Dependencies** is located in **Librarian>General** or **Linker>General**
   + Add ```sdl2_ttf.lib```
 
@@ -76,6 +79,9 @@ sdl2_ttf.lib
 <img src="sdl-font-dll.jpg" alt="DLL" width="70%"/>
 <img src="sdl-font-dll-build.jpg" alt="DLL" width="70%"/>
 </div>
+
+> If **SDL2 TT2** was properly added, building and running the project will result in no errors.
+{: .prompt-info }
 
 ### Add Fonts to the Build ###
 + Find fonts to use in the program
@@ -262,6 +268,9 @@ text->Create(g_engine.GetRenderer(), "Hello World", Color{ 1, 1, 1, 1 });
 ```
 text->Draw(g_engine.GetRenderer(), 40, 40);
 ```
+
+> Build and run the program and the text will show up on the screen at the set location. Multiple text objects can be created to draw text for player lives and game score.
+{: .prompt-info }
 
 <div align="left">
 <img src="sdl-font-hello.jpg" alt="Lib" width="70%"/>
