@@ -44,7 +44,10 @@ _This guide will walk you through creating a Git repository and hosting it remot
 
 ### Create Repository ###
 + Open a command prompt in the directory that you want to place under source conrol. _(See instructions above)_  
-+ Type ```git init``` to initialize a Git repository in the directory.
++ Use the ```git init``` command to initialize a Git repository in the directory.
+```
+git init
+```
 <div align="left">
 <img src="git-init.jpg" alt="Git Init" width="65%"/>
 </div>
@@ -62,16 +65,19 @@ _A .gitignore file serves to exclude specific files and directories from being t
 <img src="git-vs-ignore-download.jpg" alt="Git VS Ignore Download" width="80%"/>
 </div>
 + Copy the downloaded file to the project directory
-  + Remove the "VisualStudio" part of the filename
+  + Remove the "VisualStudio" part of the filename so the filename is ```.gitignore```
 <div align="left">
 <img src="git-ignore.jpg" alt="Git Ignore" width="100%"/>
 </div>
 
-+	Add the files to Git using the ```git add . ```command
++	Add the files to Git using the ```git add .``` command 
+```
+git add .
+```
 <div align="left">
 <img src="git-add.jpg" alt="Git Add" width="70%"/>
 </div>
-
+<br>
 > Individual files can be added using ```git add <filename>``` 
 > <br>
 > All files can be added using ```get add .```
@@ -80,14 +86,19 @@ _A .gitignore file serves to exclude specific files and directories from being t
 +	There will be warnings about the line ending of the files
   +	Different operating systems using different types of line endings
     +	Windows uses CRLF (Carriage Return Line Feed) and Unix uses LF (Line Feed)
-  +	To disable the warnings, type the following command
-```git config core.autocrlf true```
+  +	To disable the warnings, use the ```git config core.autocrlf true``` command
+```
+git config core.autocrlf true
+```
 <div align="left">
 <img src="git-line-config.jpg" alt="Git Line Config" width="70%"/>
 </div>
 
 +	Commit the changes using the git command ```commit -m <message>”```
   +	For the first commit, it will look like ```git commit -m “Initial commit”```
+```
+git commit -m “Initial commit”
+```
 <div align="left">
 <img src="git-commit.jpg" alt="Git Commit" width="70%"/>
 </div>
@@ -124,6 +135,9 @@ _The following steps assumes that you have a GitHub page already setup. If you d
 </div> 
 
 +	To push the changes to the remote repository (GitHub), use the command ```git push -u origin master```
+```
+git push -u origin master
+```
 <div align="left">
 <img src="git-push.jpg" alt="GitHub Push" width="75%"/>
 </div> 
