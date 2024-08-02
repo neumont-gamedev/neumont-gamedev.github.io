@@ -135,7 +135,7 @@ public:
 	Texture() = default;
 	~Texture();
 
-	bool Create(const std::string& filename, class Renderer& renderer);
+	bool Load(const std::string& filename, class Renderer& renderer);
 
 	Vector2 GetSize();
 
@@ -157,7 +157,7 @@ Texture::~Texture()
     if (...texture is not null...) SDL_DestroyTexture(m_texture);
 }
 
-bool Texture::Create(const std::string& filename, Renderer& renderer)
+bool Texture::Load(const std::string& filename, Renderer& renderer)
 {
     // load image onto surface
     SDL_Surface* surface = IMG_Load(...get the c-string of filename...);
@@ -235,7 +235,7 @@ void Renderer::DrawTexture(Texture* texture, float x, float y, float angle)
 ```
 // create texture, using shared_ptr so texture can be shared
 std::shared_ptr<Texture> texture = std::make_shared<Texture>();
-texture->Create(...texture filename... , ...renderer from engine...);
+texture->Load(...texture filename... , ...renderer from engine...);
 ```
 
 + Draw the texture between the renderer **BeginFrame()** and **EndFrame()**
