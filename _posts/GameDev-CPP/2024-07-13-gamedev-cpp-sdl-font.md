@@ -26,11 +26,11 @@ macOS, and Microsoft Windows operating systems.
 <div align="left">
 <img src="sdl-font-unzip.jpg" alt="Zip" width="65%"/>
 </div>
-+ Copy the **SDL2 TTF** ```include``` and ```lib``` directory to the **ThirdParty/SDL2** folder
++ Copy the **SDL2 TTF** ```include``` and ```lib``` directory to the existing **ThirdParty/SDL2** folder
   + This will add the True Type Font files to SDL2
 <div align="left">
 <img src="sdl-font-unzip-dir.jpg" alt="Zip" width="65%"/>
-<img src="sdl-font-unzip-dest.jpg" alt="Zip" width="65%"/>
+<img src="sdl-dir-dest.jpg" alt="Zip" width="65%"/>
 </div>
 
 ### Add SDL True Type Font to the Solution Project(s) ###
@@ -40,18 +40,18 @@ macOS, and Microsoft Windows operating systems.
 > </div>
 {: .prompt-warning }
 
-> SDL2 should've already been setup with the include directories and library directories for the projects, the only step necessary is to add the .lib library in the project properties.
+> SDL2 should've already been setup with the include directories and library directories for the projects, the only step necessary is to add the library (.lib) in the project properties.
 {: .prompt-tip }
 
 #### Add SDL True Type Font Library ####
 
-> The **sdl2_ttf.lib** only needs to added to the project that is the application (Game). Do not add it to the library project (Engine). If it is added to both, there will be a warning reported when built.
+> The **sdl2_ttf.lib** only needs to be added to the project that is the application (Game). Do not add it to the library project (Engine). If it is added to both, there will be a warning reported when built.
 {: .prompt-warning }
 
 + Open the **Project Properties** that SDL will be used in
   + Right-click the **Project** and select **Properties**
  <div align="left">
-<img src="sdl-font-project.jpg" alt="Project" width="75%"/>
+<img src="sdl-projects.jpg" alt="Project" width="75%"/>
 <img src="sdl-properties.jpg" alt="Properties" width="75%"/>
 </div>
 
@@ -68,7 +68,7 @@ sdl2_ttf.lib
 
 #### Add SDL True Type Font Dynamic Link Library (dll) ####
 + Create a folder in the **Solution** directory called "Build"
-  + This step might have already been done previously
+  + _This step may have already been completed earlier._
   + The **Build** folder will contain the **SDL TTF** dll (dynamic link library) files.
 <div align="left">
 <img src="sdl-build.jpg" alt="Build" width="70%"/>
@@ -91,6 +91,8 @@ sdl2_ttf.lib
 <div align="left">
 <img src="sdl-font-build.jpg" alt="Build" width="70%"/>
 </div>
+
+#### Update Code for SDL TTF Fonts ####
 
 ### Add TTF Fonts to the Renderer ###
 + In the Renderer.h header, include the **SDL TTF** header
