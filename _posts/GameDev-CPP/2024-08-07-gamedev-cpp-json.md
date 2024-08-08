@@ -97,12 +97,12 @@ $(SolutionDir)ThirdParty\rapidjson\include
 
 ### Create JSON Functions ###
 
-#### Create JSON header (.h) ####
 + Create a **Json.h** and **Json.cpp** in the **Core** filter, make sure the file is in the ```source/core``` folder
 <div align="left">
 <img src="json-files.jpg" alt="Json" width="75%"/>
 </div>
 
+#### Create JSON header (.h) ####
 + In the **Json.h** file, add code for the function declarations to load and read the **JSON** file
   + The functions are placed in a namespace to keep the function names in their own space
 
@@ -117,6 +117,7 @@ namespace Json
 }
 ```
 
+#### Create JSON source file (.cpp) ####
 + In the **Json.cpp** file, add code for the function definitions to load and read the **JSON** file
 
 ```
