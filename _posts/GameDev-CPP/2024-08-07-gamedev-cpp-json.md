@@ -211,14 +211,14 @@ _Add additional functions to load different data types from the **JSON**_
   + Include **Vector2.h** and **Color.h**
   + Add new functions to load **float**, **bool**, **std::string**, **Vector2**, and **Color**
 ```
-    #include "Math/Vector2.h"
-    #include "Math/Color.h"
+#include "Math/Vector2.h"
+#include "Math/Color.h"
 
-	bool Read(const rapidjson::Value& value, const std::string& name, float& data);
-	bool Read(const rapidjson::Value& value, const std::string& name, bool& data);
-	bool Read(const rapidjson::Value& value, const std::string& name, std::string& data);
-	bool Read(const rapidjson::Value& value, const std::string& name, class Vector2& data);
-	bool Read(const rapidjson::Value& value, const std::string& name, class Color& data);
+bool Read(const rapidjson::Value& value, const std::string& name, float& data);
+bool Read(const rapidjson::Value& value, const std::string& name, bool& data);
+bool Read(const rapidjson::Value& value, const std::string& name, std::string& data);
+bool Read(const rapidjson::Value& value, const std::string& name, Vector2& data);
+bool Read(const rapidjson::Value& value, const std::string& name, Color& data);
 ```
 
 + Create the definitions for the functions in Json.cpp
