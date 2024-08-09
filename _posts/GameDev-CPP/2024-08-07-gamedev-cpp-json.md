@@ -204,7 +204,7 @@ std::cout << name << std::endl;
 <img src="json-output.jpg" alt="Output" width="75%"/>
 </div>
 
-#### Add Addition JSON Functions ####
+### Add Addition JSON Functions ###
 _Add additional functions to load different data types from the **JSON**_
 
 + In the Json.h file, add the following functions
