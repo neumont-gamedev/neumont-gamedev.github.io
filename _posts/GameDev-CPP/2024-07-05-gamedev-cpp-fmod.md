@@ -52,6 +52,33 @@ C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows
 </div>
 
 ### Add FMOD to the Solution Project(s) ###
+
+#### Add FMOD Include Directories ####
++ Add the directory of the FMOD include folder to the **Additional Include Directories**.
+  + **Additional Include Directories** is located in **C/C++>General**.
+  + Add ```$(SolutionDir)ThirdParty\fmod\core\inc```
+
+```
+$(SolutionDir)ThirdParty\fmod\core\inc
+```
+<div align="left">
+<img src="fmod-include.jpg" alt="Include" width="75%"/>
+</div>
+ 
+>This needs to be done in all **Projects** in the **Solution**.
+{: .prompt-warning }
+
++ Once the directory is added to the list of included directories, the **FMOD** header can be add to the files.
+  + Add the following to a file 
+```
+#include <fmod.hpp>
+```
+
+> If the **FMOD** include directory was properly added, building the project (CTRL+B) will result in no errors.
+{: .prompt-info }
+
+#### Add FMOD Library Directories and Library (.lib)
+
 > If the **Solution** contains multiple **Projects**, the following steps will need to be done for each project. This is because each project needs the path to the FMOD includes and libraries.
 > <div align="left">
 > <img src="fmod-projects.jpg" alt="Projects" width="75%"/>
@@ -64,28 +91,6 @@ C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows
 > </div>
 {: .prompt-warning }
 
- 
-+ Add the directory of the FMOD include folder to the **Additional Include Directories**.
-  + **Additional Include Directories** is located in **C/C++>General**.
-  + Add ```$(SolutionDir)ThirdParty\fmod\core\inc```
-
-```
-$(SolutionDir)ThirdParty\fmod\core\inc
-```
-<div align="left">
-<img src="fmod-include.jpg" alt="Include" width="75%"/>
-</div>
- 
-+ Once the directory is added to the list of included directories, the **FMOD** header can be add to the files.
-  + Add the following to a file 
-```
-#include <fmod.hpp>
-```
-
-> If the **FMOD** include directory was properly added, building the project (CTRL+B) will result in no errors.
-{: .prompt-info }
-
-#### Add FMOD Library ####
 + Add the directory of the FMOD library folder in **Project Properties**
   + **Additional Library Directories** is located in **Librarian>General** or **Linker>Input**
   + Add ```$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget)```

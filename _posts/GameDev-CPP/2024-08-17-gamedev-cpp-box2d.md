@@ -47,8 +47,12 @@ _This guide will provide step-by-step instructions on how to add Box2D to a Visu
 <img src="box2d-zip.jpg" alt="Zip" width="70%"/>
 </div>
 
++ Rename the **box2d-main** folder to **box2d**
 + Delete the **box2d-main.zip** file after unzipping, it is no longer needed
-  
+<div align="left">
+<img src="box2d-folder.jpg" alt="Folder" width="70%"/>
+</div>
+
 ### Build Box2D ###
 
 The build instructions are in the **Building** section on the **Box2D GitHub** page. Instructions all also shown in this guide below.
@@ -111,3 +115,151 @@ _CMake is a tool to create the build environment for a project. It is used to pa
 
 > Save a screenshot of **Box2D** running in **Visual Studio** as it will be required for the submission of the assignment.
 {: .prompt-tip }
+
+### Add Box2D Library ###
+
+#### Add Box2D Include Directories ####
+>The includes need to be done in all **Projects** in the **Solution**.
+{: .prompt-warning }
+
++ Open the **Project Properties** that **Box2D** will be used in
+  + Right-click the **Project** and select **Properties**
+ <div align="left">
+<img src="box2d-projects.jpg" alt="Project" width="75%"/>
+<img src="box2d-properties.jpg" alt="Properties" width="75%"/>
+</div>
+
++ Add the directory of the **Box2D** include folder to the **Additional Include Directories**.
+  + **Additional Include Directories** is located in **C/C++>General**.
+  + Add ```$(SolutionDir)ThirdParty\box2d\include```
+
+```
+$(SolutionDir)ThirdParty\box2d\include
+```
+<div align="left">
+<img src="box2d-include.jpg" alt="Include" width="75%"/>
+</div>
+
+#### Add Box2D Library Directories and Library (.lib)
+> The Box2D Library Directories and Library (.lib) only need to be completed on the project that is the application (Game). Do not perform the steps with the library project (Engine). If it is done on both, there will be a warning reported when built.
+{: .prompt-warning }
+
++ In the **box2d** directory in **ThirdParty** create a folder called "lib"
+  + This will store the .lib file needed for the projects
+<div align="left">
+<img src="box2d-lib-directory.jpg" alt="Library" width="70%"/>
+</div>
+
++ To make it easier to find, the box2d.lib will be copied to the new **lib** directory
+  + Go to the ```ThirdParty\box2d\build\src\Debug``` folder and copy the ```box2d.lib``` to the ```ThirdParty\box2d\lib``` folder
+<div align="left">
+<img src="box2d-build-lib.jpg" alt="Library" width="70%"/>
+<img src="box2d-lib-dir-lib.jpg" alt="Library" width="70%"/>
+</div>
+
++ Add the directory of the **Box2D** library folder in **Project Properties**
+  + **Additional Library Directories** is located in **Librarian>General** or **Linker>Input**
+  + Add ```$(SolutionDir)ThirdParty\box2d\lib```
+
+```
+$(SolutionDir)ThirdParty\box2d\lib
+```
+<div align="left">
+<img src="box2d-library.jpg" alt="Library" width="70%"/>
+</div>
+ <br> 
+
++ Add the **Box2D** .lib files that the project needs to function
+  + **Additional Dependencies** is located in **Librarian>General** or **Linker>General**
+  + Add ```box2d.lib```
+
+```
+box2d.lib
+```
+<div align="left">
+<img src="box2d-lib.jpg" alt="Lib" width="70%"/>
+</div>
+
+### Create Physics Class ###
++ Create a new **Filter** called "Physics" in the **Engine** project
+<div align="left">
+<img src="box2d-physics-filter.jpg" alt="Lib" width="70%"/>
+</div>
+
++ Add a ```Physics.h``` header and ```Physics.cpp``` source file in the ```Engine\Source\Physics``` folder
+<div align="left">
+<img src="box2d-physics-h.jpg" alt="Lib" width="80%"/>
+</div>
+<div align="left">
+<img src="box2d-physics-files.jpg" alt="Lib" width="70%"/>
+</div>
+
+#### Physics.h ####
++ Add the following code for the Physics.h header
+
+```
+#include <box2d/box2d.h>
+#include <memory>
+
+class Physics
+{
+public:
+	Physics() = default;
+
+	bool Initialize();
+	void Shutdown();
+
+	void Update(float dt);
+
+private:
+	b2WorldId m_worldId;
+};
+```
+
+#### Physics.cpp ####
++ Add the following code for the Physics.cpp source code
+
+```
+#include "Physics.h"
+
+bool Physics::Initialize()
+{
+	b2WorldDef worldDef = b2DefaultWorldDef();
+	worldDef.gravity = b2Vec2{ 0.0f, -10.0f };
+	m_worldId = b2CreateWorld(&worldDef);
+
+	return true;
+}
+
+void Physics::Shutdown()
+{
+	b2DestroyWorld(m_worldId);
+}
+
+void Physics::Update(float dt)
+{
+	b2World_Step(m_worldId, 1.0f / 60.0f, 4);
+}
+```
+
+### Add Physics to the Engine ###
++ In the ```Engine.h``` header include the ```Physics.h``` header
++ Add the **Physics** class to the **Engine** class and create an accessor method
+
+```
+Physics& GetPhysics() { return *m_physics; }
+
+std::unique_ptr<Physics> m_physics;
+```
+
++ In the ```Engine.cpp``` source file, create, initialize, shutdown and update the **Physics** class
+
+```
+m_physics = std::make_unique<Physics>();
+
+m_physics->Initialize();
+
+m_physics->Shutdown();
+
+m_physics->Update(m_time->GetDeltaTime());
+```
