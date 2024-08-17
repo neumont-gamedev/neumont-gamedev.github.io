@@ -1,6 +1,6 @@
 ---
 title: BSGD Interviews
-date: 2024-15-8 10:00:00 +/-TTTT
+date: 2024-08-15 10:00:00 +/-TTTT
 categories: [BSGD]
 tags: [bsgd]     # TAG names should always be lowercase
 toc: true
