@@ -55,13 +55,14 @@ _This guide will provide step-by-step instructions on how to add Box2D to a Visu
 
 ### Build Box2D ###
 
-The build instructions are in the **Building** section on the **Box2D GitHub** page. Instructions all also shown in this guide below.
+The build instructions are in the **Building** section on the **Box2D GitHub** page. Detailed instructions are also provided in this guide below.
 
-> It is recommended to follow the instructions from this guide as they provide more details.
-{: .prompt-tip }
 <div align="left">
 <img src="box2d-building.jpg" alt="Building" width="50%"/>
 </div>
+
+> It is recommended to follow the instructions below as they provide more details.
+{: .prompt-tip }
 
 #### Install CMake ####
 _CMake is a tool to create the build environment for a project. It is used to package a project and then create the project files for the build environment (Visual Studio) and platform (Windows/Linux)._
@@ -105,14 +106,14 @@ _CMake is a tool to create the build environment for a project. It is used to pa
 
 + Build and Run the **Box2D  samples** project
 <div align="left">
-<img src="box2d-program.jpg" alt="Box2D Program" width="60%"/>
+<img src="box2d-program.jpg" alt="Box2D Program" width="75%"/>
 </div>
 
-+ Run some of the different **tests** to see the features and functionality of **Box2D**
++ Run some of the **tests** to see the different features and functionality of **Box2D**
 <div align="left">
 <img src="box2d-tests.jpg" alt="Box2D Tests" width="60%"/>
 </div>
-
+<br>
 > Save a screenshot of **Box2D** running in **Visual Studio** as it will be required for the submission of the assignment.
 {: .prompt-tip }
 
