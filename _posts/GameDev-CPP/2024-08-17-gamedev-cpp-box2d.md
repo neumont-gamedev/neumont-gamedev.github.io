@@ -1,6 +1,6 @@
 ---
 title: C++ Box2D Install
-date: 2024-07-13 10:00:00 +/-TTTT
+date: 2024-08-17 10:00:00 +/-TTTT
 categories: [GameDev,C++]
 tags: [gamedev,c++]     # TAG names should always be lowercase
 toc: true
