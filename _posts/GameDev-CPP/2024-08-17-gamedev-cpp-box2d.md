@@ -152,10 +152,10 @@ $(SolutionDir)ThirdParty\box2d\include
 </div>
 
 + To make it easier to find, the box2d.lib will be copied to the new **lib** directory
-  + Go to the ```ThirdParty\box2d\build\src\Debug``` folder and copy the ```box2d.lib``` to the ```ThirdParty\box2d\lib``` folder
+  + Go to the ```ThirdParty\box2d\build\src\Debug``` folder and copy the ```box2d.lib``` and ```box2d.pdb``` to the ```ThirdParty\box2d\lib``` folder
 <div align="left">
-<img src="box2d-build-lib.jpg" alt="Library" width="70%"/>
-<img src="box2d-lib-dir-lib.jpg" alt="Library" width="70%"/>
+<img src="box2d-build-lib.jpg" alt="Library" width="90%"/>
+<img src="box2d-lib-dir-lib.jpg" alt="Library" width="90%"/>
 </div>
 
 + Add the directory of the **Box2D** library folder in **Project Properties**
