@@ -43,7 +43,7 @@ _This guide will walk you through creating a Git repository and hosting it remot
 {: .prompt-warning }
 
 ### Create Repository ###
-+ Open a command prompt in the directory that you want to place under source conrol. _(See instructions above)_  
++ Open a command prompt in the directory that you want to place under source conrol.
 + Use the ```git init``` command to initialize a Git repository in the directory.
 ```
 git init
@@ -118,6 +118,8 @@ _The following steps assumes that you have a GitHub page already setup. If you d
 <img src="git-new.jpg" alt="GitHub New" width="60%"/>
 </div>
 +	Type the name of the repository
++ **Add a README file** (optional)
++ Click **Create repository**
 <div align="left">
 <img src="git-new-name.jpg" alt="GitHub New Name" width="60%"/>
 </div>
