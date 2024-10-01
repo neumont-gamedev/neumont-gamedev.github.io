@@ -1,5 +1,5 @@
 ---
-title: Computer Graphics 2D Setup
+title: Computer Graphics 2D Rasterization Setup
 date: 2024-09-30 12:45:00 +/-TTTT
 categories: [GameDev,ComputerGraphics]
 tags: [gamedev,c++,computergraphics]     # TAG names should always be lowercase
@@ -7,7 +7,7 @@ toc: true
 comments: true
 img_path: /assets/img/gamedev/cg/project
 ---
-_This guide will provide step-by-step instructions on how to create a Visual Studio C++ project for the Computer Graphics course. This project will use SDL to provide the 2D rendering._
+_This guide will provide step-by-step instructions on how to create a Visual Studio C++ project for the Computer Graphics course. This project will use SDL to provide 2D rasterization. 2D rasterization is the process of converting geometric shapes, such as lines, circles, and polygons, into pixels on a screen. It involves taking mathematical descriptions of these shapes and determining which pixels should be illuminated to represent them accurately._
 
 ### Create C++ Solution/Project ###
 + Open **Visual Studio** and select **Create a new project**
