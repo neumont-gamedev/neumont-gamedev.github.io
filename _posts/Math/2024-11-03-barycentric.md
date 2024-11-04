@@ -1,11 +1,11 @@
 ---
-title: Math - Barycentric
+title: Barycentric Coordinates
 date: 2024-11-03 12:45:00 +/-TTTT
 categories: [GameDev,ComputerGraphics,Math]
 tags: [gamedev,c++,computergraphics,math]     # TAG names should always be lowercase
 toc: true
 comments: true
-img_path: /assets/img/gamedev/cg/math
+img_path: /assets/img/math
 ---
 _Barycentric coordinates are a coordinate system used to express the position of a point within a triangle relative to its vertices. In computer graphics, they are particularly useful for tasks like interpolation, as they allow values (such as color, texture coordinates, or depth) to be smoothly distributed across a triangle's surface. By representing a point as a weighted combination of a triangle's vertices, barycentric coordinates enable efficient calculations of attributes at any point inside the triangle. This method is widely used in rasterization for shading and texture mapping, as it ensures that interpolated values appear smooth and realistic across 3D surfaces._
 

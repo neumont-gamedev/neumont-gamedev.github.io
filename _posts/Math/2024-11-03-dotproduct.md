@@ -1,5 +1,5 @@
 ---
-title: Math - Dot Product
+title: Dot Product
 date: 2024-11-03 12:45:00 +/-TTTT
 categories: [GameDev,ComputerGraphics,Math]
 tags: [gamedev,c++,computergraphics,math]     # TAG names should always be lowercase
