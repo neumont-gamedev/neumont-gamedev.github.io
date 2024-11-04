@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>2D Vector Dot Product Interactive Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            background: white;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        button {
+            padding: 8px 16px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+        button:hover {
+            filter: brightness(90%);
+        }
+        .button-a {
+            background: #0000ff;
+        }
+        .button-b {
+            background: #ff0000;
+        }
+        .normalize-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-left: 20px;
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        #info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <div class="controls">
+        <button id="normalizeA" class="button-a">Normalize Vector A</button>
+        <button id="normalizeB" class="button-b">Normalize Vector B</button>
+        <div class="normalize-controls">
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="Normalized" />
+                <label for="Normalized" style="color: red">Normalized</label>
+            </div>
+        </div>
+    </div>
+    <div id="info">Vector information will appear here</div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const info = document.getElementById('info');
+        const normalized = document.getElementById('Normalized');
+
+        // Scale: 100 pixels = 1 unit
+        const SCALE = 100;
+        const GRID_SIZE = SCALE;
+        const ORIGIN = { x: canvas.width / 2, y: canvas.height / 2 };
+
+        // Initialize vectors with scaled coordinates
+        let vectors = {
+            a: { start: { x: 0, y: 0 }, end: { x: 1, y: 1 } },
+            b: { start: { x: 0, y: 0 }, end: { x: 1.5, y: -0.5 } }
+        };
+
+        let dragging = null;
+        let originalVectors = JSON.parse(JSON.stringify(vectors));
+
+        // Convert world coordinates to screen coordinates
+        function worldToScreen(point) {
+            return {
+                x: ORIGIN.x + point.x * SCALE,
+                y: ORIGIN.y - point.y * SCALE  // Flip Y axis
+            };
+        }
+
+        // Convert screen coordinates to world coordinates
+        function screenToWorld(point) {
+            return {
+                x: (point.x - ORIGIN.x) / SCALE,
+                y: -(point.y - ORIGIN.y) / SCALE  // Flip Y axis
+            };
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+
+            // Draw vertical grid lines
+            for (let x = ORIGIN.x % GRID_SIZE; x < canvas.width; x += GRID_SIZE) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+
+            // Draw horizontal grid lines
+            for (let y = ORIGIN.y % GRID_SIZE; y < canvas.height; y += GRID_SIZE) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Draw axes
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(0, ORIGIN.y);
+            ctx.lineTo(canvas.width, ORIGIN.y);
+            ctx.stroke();
+
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(ORIGIN.x, 0);
+            ctx.lineTo(ORIGIN.x, canvas.height);
+            ctx.stroke();
+
+            // Draw axis labels
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            // X-axis labels
+            for (let x = Math.floor(-ORIGIN.x / SCALE); x <= Math.floor((canvas.width - ORIGIN.x) / SCALE); x++) {
+                if (x === 0) continue;
+                const screenX = ORIGIN.x + x * SCALE;
+                ctx.fillText(x.toString(), screenX, ORIGIN.y + 5);
+            }
+
+            // Y-axis labels
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            for (let y = Math.floor(-ORIGIN.y / SCALE); y <= Math.floor((canvas.height - ORIGIN.y) / SCALE); y++) {
+                if (y === 0) continue;
+                const screenY = ORIGIN.y - y * SCALE;
+                ctx.fillText(y.toString(), ORIGIN.x - 5, screenY);
+            }
+        }
+
+        function drawArrow(from, to, color) {
+            const headLength = 10;
+            const fromScreen = worldToScreen(from);
+            const toScreen = worldToScreen(to);
+            
+            const dx = toScreen.x - fromScreen.x;
+            const dy = toScreen.y - fromScreen.y;
+            const angle = Math.atan2(dy, dx);
+            
+            ctx.beginPath();
+            ctx.moveTo(fromScreen.x, fromScreen.y);
+            ctx.lineTo(toScreen.x, toScreen.y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Arrow head
+            ctx.beginPath();
+            ctx.moveTo(toScreen.x, toScreen.y);
+            ctx.lineTo(toScreen.x - headLength * Math.cos(angle - Math.PI / 6),
+                      toScreen.y - headLength * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(toScreen.x - headLength * Math.cos(angle + Math.PI / 6),
+                      toScreen.y - headLength * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        function drawProjection(vectorA, vectorB) {
+            const dotProduct = calculateDotProduct(vectorA, vectorB);
+            const magnitudeB = calculateMagnitude(vectorB);
+            const projection = dotProduct / (magnitudeB * magnitudeB);
+            
+            const projectedPoint = {
+                x: vectorB.start.x + (vectorB.end.x - vectorB.start.x) * projection,
+                y: vectorB.start.y + (vectorB.end.y - vectorB.start.y) * projection
+            };
+
+            const projectedPointScreen = worldToScreen(projectedPoint);
+            const vectorAEndScreen = worldToScreen(vectorA.end);
+            const vectorBStartScreen = worldToScreen(vectorB.start);
+
+            // Draw projection line
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(vectorAEndScreen.x, vectorAEndScreen.y);
+            ctx.lineTo(projectedPointScreen.x, projectedPointScreen.y);
+            ctx.strokeStyle = 'purple';
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw projected vector
+            ctx.beginPath();
+            ctx.moveTo(vectorBStartScreen.x, vectorBStartScreen.y);
+            ctx.lineTo(projectedPointScreen.x, projectedPointScreen.y);
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+            ctx.stroke();
+        }
+
+        function calculateVector(vector) {
+            return {
+                x: vector.end.x - vector.start.x,
+                y: vector.end.y - vector.start.y
+            };
+        }
+
+        function calculateMagnitude(vector) {
+            const v = calculateVector(vector);
+            return Math.sqrt(v.x * v.x + v.y * v.y);
+        }
+
+        function calculateDotProduct(vectorA, vectorB) {
+            const a = calculateVector(vectorA);
+            const b = calculateVector(vectorB);
+            return a.x * b.x + a.y * b.y;
+        }
+
+        function calculateAngle(vectorA, vectorB) {
+            const dotProduct = calculateDotProduct(vectorA, vectorB);
+            const magnitudeA = calculateMagnitude(vectorA);
+            const magnitudeB = calculateMagnitude(vectorB);
+            return Math.acos(dotProduct / (magnitudeA * magnitudeB)) * (180 / Math.PI);
+        }
+
+        function normalizeVector(vector) {
+            const magnitude = calculateMagnitude(vector);
+            const v = calculateVector(vector);
+            vector.end.x = vector.start.x + v.x / magnitude;
+            vector.end.y = vector.start.y + v.y / magnitude;
+        }
+
+        function updateVectorIfNeeded(vector, keepNormalized) {
+            if (keepNormalized) {
+                normalizeVector(vector);
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid and axes
+            drawGrid();
+
+            // Draw vectors
+            drawArrow(vectors.a.start, vectors.a.end, 'blue');
+            drawArrow(vectors.b.start, vectors.b.end, 'red');
+            
+            // Draw projection
+            drawProjection(vectors.a, vectors.b);
+
+            // Draw angle arc
+            const startPoint = worldToScreen(vectors.a.start);
+            const radius = 30;
+            const angleA = Math.atan2(
+                -(vectors.a.end.y - vectors.a.start.y), 
+                vectors.a.end.x - vectors.a.start.x
+            );
+            const angleB = Math.atan2(
+                -(vectors.b.end.y - vectors.b.start.y), 
+                vectors.b.end.x - vectors.b.start.x
+            );
+            
+            ctx.beginPath();
+            ctx.arc(startPoint.x, startPoint.y, radius, angleA, angleB);
+            ctx.strokeStyle = 'green';
+            ctx.stroke();
+
+            // Update info display
+            const dotProduct = calculateDotProduct(vectors.a, vectors.b);
+            const magnitudeA = calculateMagnitude(vectors.a);
+            const magnitudeB = calculateMagnitude(vectors.b);
+            
+            info.innerHTML = `
+                Dot Product: ${dotProduct.toFixed(2)}<br>
+                Angle: ${calculateAngle(vectors.a, vectors.b).toFixed(2)}°<br>
+                |A| = ${magnitudeA.toFixed(2)} units<br>
+                |B| = ${magnitudeB.toFixed(2)} units<br>
+                A = (${vectors.a.end.x.toFixed(2)}, ${vectors.a.end.y.toFixed(2)})<br>
+                B = (${vectors.b.end.x.toFixed(2)}, ${vectors.b.end.y.toFixed(2)})
+            `;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const screenX = e.clientX - rect.left;
+            const screenY = e.clientY - rect.top;
+            
+            // Check if clicking near vector endpoints
+            const checkPoint = (point) => {
+                const screenPoint = worldToScreen(point);
+                return Math.sqrt((screenX - screenPoint.x) ** 2 + (screenY - screenPoint.y) ** 2) < 10;
+            };
+
+            if (checkPoint(vectors.a.end)) dragging = 'a';
+            else if (checkPoint(vectors.b.end)) dragging = 'b';
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!dragging) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const worldPoint = screenToWorld({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            });
+            
+            vectors[dragging].end.x = worldPoint.x;
+            vectors[dragging].end.y = worldPoint.y;
+
+            // Check if vector needs to be normalized
+            if (dragging === 'a') updateVectorIfNeeded(vectors.a, normalized.checked);
+            if (dragging === 'b') updateVectorIfNeeded(vectors.b, normalized.checked);
+            
+            draw();
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            dragging = null;
+        });
+
+        document.getElementById('Normalized').addEventListener('click', () => {
+            normalizeVector(vectors.a);
+            normalizeVector(vectors.b);
+            draw();
+        });
+
+        // Initial draw
+        draw();
+    </script>
+</body>
+</html>

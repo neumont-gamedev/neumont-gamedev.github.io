@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Möller–Trumbore Intersection Demo</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+        #info {
+            font-family: monospace;
+            margin-top: 10px;
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                color: white;
+            }
+            #info {
+                color: white;
+            }
+            canvas {
+                border-color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <div id="info">Move mouse over canvas to see intersection weights</div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const info = document.getElementById('info');
+
+        // Triangle vertices (in 2D for visualization)
+        const triangle = {
+            v0: { x: 300, y: 100 },
+            v1: { x: 100, y: 300 },
+            v2: { x: 500, y: 300 }
+        };
+
+        function drawTriangle() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw triangle
+            ctx.beginPath();
+            ctx.moveTo(triangle.v0.x, triangle.v0.y);
+            ctx.lineTo(triangle.v1.x, triangle.v1.y);
+            ctx.lineTo(triangle.v2.x, triangle.v2.y);
+            ctx.closePath();
+            ctx.strokeStyle = '#000';
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(200, 200, 255, 0.5)';
+            ctx.fill();
+        }
+
+        function calculateBarycentricCoordinates(point, triangle) {
+            const { v0, v1, v2 } = triangle;
+            
+            // Calculate vectors
+            const v0v1 = { x: v1.x - v0.x, y: v1.y - v0.y };
+            const v0v2 = { x: v2.x - v0.x, y: v2.y - v0.y };
+            const v0p = { x: point.x - v0.x, y: point.y - v0.y };
+            
+            // Calculate dot products
+            const d00 = v0v1.x * v0v1.x + v0v1.y * v0v1.y;
+            const d01 = v0v1.x * v0v2.x + v0v1.y * v0v2.y;
+            const d11 = v0v2.x * v0v2.x + v0v2.y * v0v2.y;
+            const d20 = v0p.x * v0v1.x + v0p.y * v0v1.y;
+            const d21 = v0p.x * v0v2.x + v0p.y * v0v2.y;
+            
+            // Calculate barycentric coordinates
+            const denom = d00 * d11 - d01 * d01;
+            const v = (d11 * d20 - d01 * d21) / denom;
+            const w = (d00 * d21 - d01 * d20) / denom;
+            const u = 1.0 - v - w;
+            
+            return { u, v, w };
+        }
+
+        function isPointInTriangle(point, triangle) {
+            const { u, v, w } = calculateBarycentricCoordinates(point, triangle);
+            return u >= 0 && v >= 0 && w >= 0 && (u + v + w <= 1.001); // Small epsilon for floating point errors
+        }
+
+        function updateIntersectionPoint(event) {
+            const rect = canvas.getBoundingClientRect();
+            const point = {
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top
+            };
+            
+            drawTriangle();
+            
+            // Calculate and display barycentric coordinates
+            const { u, v, w } = calculateBarycentricCoordinates(point, triangle);
+            const isInside = isPointInTriangle(point, triangle);
+            
+            // Draw intersection point
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = isInside ? '#00ff00' : '#ff0000';
+            ctx.fill();
+            
+            // Update info text
+            info.textContent = `Barycentric coordinates: u=${u.toFixed(3)} v=${v.toFixed(3)} w=${w.toFixed(3)} | ${isInside ? 'Inside' : 'Outside'}`;
+            
+            // Draw lines to vertices with weights
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 0, 255, ${u})`;
+            ctx.moveTo(point.x, point.y);
+            ctx.lineTo(triangle.v0.x, triangle.v0.y);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 255, 0, ${v})`;
+            ctx.moveTo(point.x, point.y);
+            ctx.lineTo(triangle.v1.x, triangle.v1.y);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 0, 0, ${w})`;
+            ctx.moveTo(point.x, point.y);
+            ctx.lineTo(triangle.v2.x, triangle.v2.y);
+            ctx.stroke();
+        }
+
+        // Initial draw
+        drawTriangle();
+
+        // Add event listeners
+        canvas.addEventListener('mousemove', updateIntersectionPoint);
+    </script>
+</body>
+</html>
