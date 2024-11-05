@@ -82,6 +82,9 @@ is the actual label, and
 $$ \hat{y} $$ 
 is the predicted label.
 
+#### Supervised Learning ####
+**Supervised learning** is a type of machine learning where a model is trained on a labeled dataset, meaning each input data point is paired with the correct output. The model learns to map inputs to outputs by minimizing errors between its predictions and the actual labels, adjusting its parameters to improve accuracy over time. Once trained, the model can make predictions on new, unseen data based on the patterns it learned from the labeled examples.
+
 ### Perceptron Demostration ###
 <div style="text-align: center;">
 <iframe src="{{ site.baseurl }}/assets/pages/ai-perceptron.html" width="100%" height="900px" frameborder="0">
