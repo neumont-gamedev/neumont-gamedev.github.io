@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perceptron Demo</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <style>
+        .perceptron-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .slider-container {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .slider-label {
+            width: 100px;
+        }
+        .slider {
+            flex-grow: 1;
+        }
+        .value-display {
+            width: 50px;
+            text-align: right;
+        }
+        .node {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            transition: all 0.3s;
+        }
+        .input-node {
+            border: 4px solid #3B82F6;
+            background-color: #EFF6FF;
+        }
+        .perceptron-node {
+            border: 4px solid #8B5CF6;
+            background-color: #F3E8FF;
+        }
+        .output-node {
+            border: 4px solid #666;
+        }
+        .output-node-active {
+            background-color: #22C55E;
+            border-color: #16A34A;
+            color: white;
+        }
+        .output-node-inactive {
+            background-color: #EF4444;
+            border-color: #DC2626;
+            color: white;
+        }
+        .connection {
+            stroke: #666;
+            stroke-width: 2;
+        }
+        .connection.active {
+            stroke-dasharray: 5,5;
+            animation: dash 1s linear infinite;
+        }
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -10;
+            }
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                color: white;
+            }
+            #info {
+                color: white;
+            }
+            canvas {
+                border-color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="perceptron-root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function PerceptronDemo() {
+            const [inputs, setInputs] = useState([0, 0]);
+            const [weights, setWeights] = useState([0.5, 0.5]);
+            const [bias, setBias] = useState(0);
+            const [outputs, setOutputs] = useState([0, 0]);
+            const [animatingSignal, setAnimatingSignal] = useState(false);
+
+            const stepActivation = (x) => x >= 0 ? 1 : 0;
+
+            const calculateOutput = () => {
+                setAnimatingSignal(true);
+                const sum = inputs[0] * weights[0] + inputs[1] * weights[1] + bias;
+                const output = stepActivation(sum);
+                setOutputs([output, 1 - output]);
+                setTimeout(() => setAnimatingSignal(false), 1000);
+            };
+
+            useEffect(() => {
+                calculateOutput();
+            }, [inputs, weights, bias]);
+
+            return (
+                <div className="perceptron-container">
+                    <div className="mb-6">
+                        <h3 className="text-lg font-semibold">Weights</h3>
+                        {weights.map((weight, i) => (
+                            <div key={i} className="slider-container">
+                                <label className="slider-label">Weight {i + 1}:</label>
+                                <input
+                                    type="range"
+                                    min="-1"
+                                    max="1"
+                                    step="0.1"
+                                    value={weight}
+                                    className="slider"
+                                    onChange={(e) => {
+                                        const newWeights = [...weights];
+                                        newWeights[i] = parseFloat(e.target.value);
+                                        setWeights(newWeights);
+                                    }}
+                                />
+                                <span className="value-display">{weight.toFixed(1)}</span>
+                            </div>
+                        ))}
+
+                        <h3 className="text-lg font-semibold mt-4">Bias</h3>
+                        <div className="slider-container">
+                            <label className="slider-label">Bias:</label>
+                            <input
+                                type="range"
+                                min="-1"
+                                max="1"
+                                step="0.1"
+                                value={bias}
+                                className="slider"
+                                onChange={(e) => setBias(parseFloat(e.target.value))}
+                            />
+                            <span className="value-display">{bias.toFixed(1)}</span>
+                        </div>
+
+                        <h3 className="text-lg font-semibold mt-4">Inputs (Features)</h3>
+                        {inputs.map((input, i) => (
+                            <div key={i} className="slider-container">
+                                <label className="slider-label">Input {i + 1}:</label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.1"
+                                    value={input}
+                                    className="slider"
+                                    onChange={(e) => {
+                                        const newInputs = [...inputs];
+                                        newInputs[i] = parseFloat(e.target.value);
+                                        setInputs(newInputs);
+                                    }}
+                                />
+                                <span className="value-display">{input.toFixed(1)}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{ position: 'relative', height: '300px', margin: '20px 0' }}>
+                        <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
+                            <line x1="80" y1="75" x2="370" y2="150" className={`connection ${animatingSignal ? 'active' : ''}`} />
+                            <line x1="80" y1="225" x2="370" y2="150" className={`connection ${animatingSignal ? 'active' : ''}`} />
+                            <line x1="430" y1="150" x2="700" y2="75" className={`connection ${animatingSignal ? 'active' : ''}`} />
+                            <line x1="430" y1="150" x2="700" y2="225" className={`connection ${animatingSignal ? 'active' : ''}`} />
+                            
+                            <text x="210" y="100" fill="black" fontWeight="bold">w₁: {weights[0].toFixed(1)}</text>
+                            <text x="210" y="210" fill="black" fontWeight="bold">w₂: {weights[1].toFixed(1)}</text>
+                        </svg>
+
+                        {inputs.map((input, i) => (
+                            <div key={i} className="node input-node" style={{ left: '20px', top: i === 0 ? '45px' : '195px' }}>
+                                {input.toFixed(1)}
+                            </div>
+                        ))}
+
+                        <div className="node perceptron-node" style={{ left: '370px', top: '120px' }}>
+                            <div className="text-center">
+                                <div className="font-bold">Σ</div>
+                                <div className="text-sm">b: {bias.toFixed(1)}</div>
+                            </div>
+                        </div>
+
+                        {outputs.map((output, i) => (
+                            <div
+                                key={i}
+                                className={`node output-node ${output ? 'output-node-active' : 'output-node-inactive'}`}
+                                style={{ right: '20px', top: i === 0 ? '45px' : '195px' }}
+                            >
+                                {output}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="text-center text-lg">
+                        <div>
+                            Output = step({weights[0].toFixed(1)} × {inputs[0].toFixed(1)} + {weights[1].toFixed(1)} × {inputs[1].toFixed(1)} + {bias.toFixed(1)})
+                        </div>
+                        <div>
+                            = step({((weights[0] * inputs[0]) + (weights[1] * inputs[1]) + bias).toFixed(2)})
+                        </div>
+                        <div>= {outputs[0]}</div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('perceptron-root')).render(<PerceptronDemo />);
+    </script>
+</body>
+</html>
