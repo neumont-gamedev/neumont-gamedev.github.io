@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic Tac Toe with Minimax Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        .game-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 1px;
+            background-color: #333;
+            padding: 1px;
+            border-radius: 2px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .cell:hover {
+            background-color: #eee;
+        }
+        #tree-container {
+            width: 500px;
+            height: 400px;
+            background-color: white;
+            border-radius: 5px;
+            padding: 10px;
+            overflow: hidden;
+        }
+        .node {
+            fill: #4CAF50;
+            opacity: 0.8;
+        }
+        .node-text {
+            font-size: 10px;
+            fill: white;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+            stroke-width: 1px;
+        }
+        .current-node {
+            fill: #2196F3;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="board" id="board"></div>
+        <div id="tree-container"></div>
+    </div>
+    <div id="status">Your turn (X)</div>
+    <button onclick="resetGame()">Reset Game</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script>
+        // Previous code remains the same until the updateTree function
+        const EMPTY = '';
+        const PLAYER = 'X';
+        const AI = 'O';
+        let currentBoard = Array(9).fill(EMPTY);
+        let gameActive = true;
+
+        // Create the game board
+        const boardElement = document.getElementById('board');
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.index = i;
+            cell.addEventListener('click', handleCellClick);
+            boardElement.appendChild(cell);
+        }
+
+        // Set up the tree visualization
+        const margin = {top: 20, right: 20, bottom: 20, left: 20};
+        const width = 500 - margin.left - margin.right;
+        const height = 400 - margin.top - margin.bottom;
+
+        const svg = d3.select("#tree-container")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+
+        const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Tree layout
+        const treeLayout = d3.tree()
+            .size([width, height - 40]);
+
+        // Rest of the previous code remains the same until the updateTree function
+
+        function updateTree(treeData, bestMove) {
+            const root = d3.hierarchy(treeData);
+            treeLayout(root);
+
+            // Update links with straight lines
+            const links = g.selectAll('.link')
+                .data(root.links(), d => d.target.data.name);
+
+            links.enter()
+                .append('line')
+                .attr('class', 'link')
+                .merge(links)
+                .attr('x1', d => d.source.x)
+                .attr('y1', d => d.source.y)
+                .attr('x2', d => d.target.x)
+                .attr('y2', d => d.target.y);
+
+            links.exit().remove();
+
+            // Update nodes with smaller circles
+            const nodes = g.selectAll('.node-group')
+                .data(root.descendants(), d => d.data.name);
+
+            const nodeEnter = nodes.enter()
+                .append('g')
+                .attr('class', 'node-group')
+                .attr('transform', d => `translate(${d.x},${d.y})`);
+
+            nodeEnter.append('circle')
+                .attr('class', 'node')
+                .attr('r', 12)  // Reduced from 20 to 12
+                .classed('current-node', d => d.data.name === bestMove?.toString());
+
+            nodeEnter.append('text')
+                .attr('class', 'node-text')
+                .text(d => d.data.value);
+
+            nodes.transition()
+                .attr('transform', d => `translate(${d.x},${d.y})`);
+
+            nodes.exit().remove();
+        }
+
+        // Rest of the code remains the same
+
+        function handleCellClick(event) {
+            if (!gameActive) return;
+            
+            const index = event.target.dataset.index;
+            if (currentBoard[index] === EMPTY) {
+                // Player move
+                makeMove(index, PLAYER);
+                updateBoard();
+                
+                if (checkWinner(currentBoard, PLAYER)) {
+                    document.getElementById('status').textContent = 'You win!';
+                    gameActive = false;
+                    return;
+                }
+                
+                if (isBoardFull(currentBoard)) {
+                    document.getElementById('status').textContent = "It's a draw!";
+                    gameActive = false;
+                    return;
+                }
+
+                // AI move
+                document.getElementById('status').textContent = 'AI is thinking...';
+                setTimeout(() => {
+                    const aiMove = getBestMove(currentBoard);
+                    makeMove(aiMove, AI);
+                    updateBoard();
+                    
+                    if (checkWinner(currentBoard, AI)) {
+                        document.getElementById('status').textContent = 'AI wins!';
+                        gameActive = false;
+                        return;
+                    }
+                    
+                    if (isBoardFull(currentBoard)) {
+                        document.getElementById('status').textContent = "It's a draw!";
+                        gameActive = false;
+                        return;
+                    }
+                    
+                    document.getElementById('status').textContent = 'Your turn (X)';
+                }, 500);
+            }
+        }
+
+        function makeMove(index, player) {
+            currentBoard[index] = player;
+        }
+
+        function updateBoard() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, index) => {
+                cell.textContent = currentBoard[index];
+            });
+        }
+
+        function checkWinner(board, player) {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6] // Diagonals
+            ];
+
+            return winPatterns.some(pattern => {
+                const [a, b, c] = pattern;
+                return board[a] === player && board[b] === player && board[c] === player;
+            });
+        }
+
+        function isBoardFull(board) {
+            return board.every(cell => cell !== EMPTY);
+        }
+
+        function getBestMove(board) {
+            let bestScore = -Infinity;
+            let bestMove = null;
+            let treeData = { name: "root", children: [] };
+
+            // Try center first if available
+            if (board[4] === EMPTY) {
+                return 4;
+            }
+
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === EMPTY) {
+                    board[i] = AI;
+                    const childNode = { name: i.toString(), value: 0, children: [] };
+                    const score = minimax(board, 0, false, childNode);
+                    board[i] = EMPTY;
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = i;
+                    }
+                    childNode.value = score;
+                    treeData.children.push(childNode);
+                }
+            }
+
+            // Update tree visualization
+            updateTree(treeData, bestMove);
+            return bestMove;
+        }
+
+        function minimax(board, depth, isMaximizing, node) {
+            // Check terminal states
+            if (checkWinner(board, AI)) return 10 - depth;
+            if (checkWinner(board, PLAYER)) return depth - 10;
+            if (isBoardFull(board)) return 0;
+
+            if (depth >= 2) { // Limit depth for visualization
+                return evaluatePosition(board);
+            }
+
+            if (isMaximizing) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === EMPTY) {
+                        board[i] = AI;
+                        const childNode = { name: i.toString(), value: 0, children: [] };
+                        const score = minimax(board, depth + 1, false, childNode);
+                        board[i] = EMPTY;
+                        bestScore = Math.max(bestScore, score);
+                        childNode.value = score;
+                        node.children.push(childNode);
+                    }
+                }
+                return bestScore;
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < 9; i++) {
+                    if (board[i] === EMPTY) {
+                        board[i] = PLAYER;
+                        const childNode = { name: i.toString(), value: 0, children: [] };
+                        const score = minimax(board, depth + 1, true, childNode);
+                        board[i] = EMPTY;
+                        bestScore = Math.min(bestScore, score);
+                        childNode.value = score;
+                        node.children.push(childNode);
+                    }
+                }
+                return bestScore;
+            }
+        }
+
+        function evaluatePosition(board) {
+            // Simple position evaluation for truncated branches
+            let score = 0;
+            // Check center
+            if (board[4] === AI) score += 3;
+            else if (board[4] === PLAYER) score -= 3;
+            // Check corners
+            [0, 2, 6, 8].forEach(i => {
+                if (board[i] === AI) score += 2;
+                else if (board[i] === PLAYER) score -= 2;
+            });
+            return score;
+        }
+
+        function resetGame() {
+            currentBoard = Array(9).fill(EMPTY);
+            gameActive = true;
+            updateBoard();
+            document.getElementById('status').textContent = 'Your turn (X)';
+            
+            // Clear tree visualization
+            g.selectAll('.link').remove();
+            g.selectAll('.node-group').remove();
+        }
+    </script>
+</body>
+</html>
