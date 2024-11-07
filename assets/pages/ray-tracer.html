@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ray Tracing Simulation</title>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --border-color: #ccc;
+      --ground-color: #666;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1a1a1a;
+        --text-color: #ffffff;
+        --border-color: #444;
+        --ground-color: #888;
+      }
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 1rem;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    canvas {
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: var(--text-color);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="controls">
+      <button id="randomize">Randomize Spheres</button>
+      <div class="control-group">
+        <label for="bounces">Max Bounces: </label>
+        <input type="range" id="bounces" min="1" max="10" value="3">
+        <span id="bounceValue">3</span>
+      </div>
+      <div class="control-group">
+        <label for="sphereCount">Spheres: </label>
+        <input type="range" id="sphereCount" min="1" max="10" value="3">
+        <span id="sphereCountValue">3</span>
+      </div>
+      <div class="control-group">
+        <label for="samples">Samples: </label>
+        <input type="range" id="samples" min="1" max="10" value="1">
+        <span id="samplesValue">1</span>
+      </div>
+      <div class="control-group">
+        <label for="angleRange">Bounce Angle (±°): </label>
+        <input type="range" id="angleRange" min="0" max="90" value="45">
+        <span id="angleRangeValue">45</span>
+      </div>
+    </div>
+    <canvas id="canvas" width="800" height="600"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const bounceSlider = document.getElementById('bounces');
+    const bounceValue = document.getElementById('bounceValue');
+    const sphereCountSlider = document.getElementById('sphereCount');
+    const sphereCountValue = document.getElementById('sphereCountValue');
+    const samplesSlider = document.getElementById('samples');
+    const samplesValue = document.getElementById('samplesValue');
+    const angleRangeSlider = document.getElementById('angleRange');
+    const angleRangeValue = document.getElementById('angleRangeValue');
+    const randomizeBtn = document.getElementById('randomize');
+
+    let spheres = [];
+    let mouseY = 300;
+    let dashOffset = 0;
+    
+    const colors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD',
+      '#D4A5A5', '#9A8194', '#392F5A', '#FF8C42', '#31A2AC'
+    ];
+    
+    class Sphere {
+      constructor(x, y, radius, color) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.color = color;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+
+    function initializeSpheres() {
+      const count = parseInt(sphereCountSlider.value);
+      spheres = Array(count).fill(null).map((_, i) => 
+        new Sphere(0, 0, 40, colors[i % colors.length])
+      );
+      randomizeSpheres();
+    }
+
+    function randomizeSpheres() {
+      spheres.forEach(sphere => {
+        sphere.x = Math.random() * (canvas.width - 200) + 300;
+        sphere.y = Math.random() * (canvas.height - 200) + 100;
+      });
+    }
+
+    function calculateRayIntersection(startX, startY, dirX, dirY, sphere) {
+      const dx = startX - sphere.x;
+      const dy = startY - sphere.y;
+      const a = dirX * dirX + dirY * dirY;
+      const b = 2 * (dx * dirX + dy * dirY);
+      const c = dx * dx + dy * dy - sphere.radius * sphere.radius;
+      const discriminant = b * b - 4 * a * c;
+
+      if (discriminant < 0) return null;
+
+      const t = (-b - Math.sqrt(discriminant)) / (2 * a);
+      if (t < 0) return null;
+
+      const hitX = startX + dirX * t;
+      const hitY = startY + dirY * t;
+      
+      const normalX = (hitX - sphere.x) / sphere.radius;
+      const normalY = (hitY - sphere.y) / sphere.radius;
+
+      return { hitX, hitY, normalX, normalY, t };
+    }
+
+    function reflect(dirX, dirY, normalX, normalY, useRandomness) {
+      const dot = 2 * (dirX * normalX + dirY * normalY);
+      let reflectedX = dirX - dot * normalX;
+      let reflectedY = dirY - dot * normalY;
+
+      if (useRandomness) {
+        const angleRange = (parseInt(angleRangeSlider.value) * Math.PI) / 180;
+        const angle = (Math.random() - 0.5) * angleRange;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const tempX = reflectedX * cos - reflectedY * sin;
+        const tempY = reflectedX * sin + reflectedY * cos;
+        reflectedX = tempX;
+        reflectedY = tempY;
+      }
+
+      const length = Math.sqrt(reflectedX * reflectedX + reflectedY * reflectedY);
+      return {
+        x: reflectedX / length,
+        y: reflectedY / length
+      };
+    }
+
+    function drawDashedLine(startX, startY, endX, endY, opacity) {
+      const dx = endX - startX;
+      const dy = endY - startY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const normalizedDx = dx / distance;
+      const normalizedDy = dy / distance;
+      
+      const dashLength = 10;
+      let progress = dashOffset % (dashLength * 2);
+      
+      ctx.beginPath();
+      let currentX = startX;
+      let currentY = startY;
+      
+      while (progress < distance) {
+        if (progress + dashLength > distance) {
+          ctx.lineTo(endX, endY);
+        } else {
+          ctx.lineTo(
+            currentX + normalizedDx * dashLength,
+            currentY + normalizedDy * dashLength
+          );
+        }
+        
+        progress += dashLength;
+        currentX = startX + normalizedDx * progress;
+        currentY = startY + normalizedDy * progress;
+        
+        if (progress + dashLength < distance) {
+          progress += dashLength;
+          currentX = startX + normalizedDx * progress;
+          currentY = startY + normalizedDy * progress;
+          ctx.moveTo(currentX, currentY);
+        }
+      }
+      
+      ctx.strokeStyle = `rgba(255, 0, 0, ${opacity})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function traceRay(startX, startY, dirX, dirY, bounceCount, useRandomness) {
+      const path = [];
+      let currentX = startX;
+      let currentY = startY;
+      path.push({ x: currentX, y: currentY });
+
+      for (let bounce = 0; bounce < bounceCount; bounce++) {
+        let closestHit = null;
+        let hitSphere = null;
+        let minDist = Infinity;
+
+        for (const sphere of spheres) {
+          const hit = calculateRayIntersection(currentX, currentY, dirX, dirY, sphere);
+          if (hit && hit.t < minDist) {
+            minDist = hit.t;
+            closestHit = hit;
+            hitSphere = sphere;
+          }
+        }
+
+        const groundY = canvas.height - 50;
+        if (currentY + dirY * 1000 > groundY) {
+          const t = (groundY - currentY) / dirY;
+          const hitX = currentX + dirX * t;
+          if (!closestHit || t < minDist) {
+            closestHit = {
+              hitX,
+              hitY: groundY,
+              normalX: 0,
+              normalY: -1,
+              t
+            };
+          }
+        }
+
+        if (closestHit) {
+          path.push({ x: closestHit.hitX, y: closestHit.hitY });
+          const reflection = reflect(
+            dirX, dirY,
+            closestHit.normalX, closestHit.normalY,
+            useRandomness
+          );
+          dirX = reflection.x;
+          dirY = reflection.y;
+          currentX = closestHit.hitX;
+          currentY = closestHit.hitY;
+        } else {
+          path.push({ x: currentX + dirX * 1000, y: currentY + dirY * 1000 });
+          break;
+        }
+      }
+
+      return path;
+    }
+
+    function drawScene() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw ground line
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height - 50);
+      ctx.lineTo(canvas.width, canvas.height - 50);
+      ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--ground-color');
+      ctx.stroke();
+
+      // Draw spheres
+      spheres.forEach(sphere => sphere.draw());
+
+      // Draw rays
+      const samples = parseInt(samplesSlider.value);
+      const maxBounces = parseInt(bounceSlider.value);
+      const useRandomness = samples > 1;
+
+      for (let i = 0; i < samples; i++) {
+        const path = traceRay(0, mouseY, 1, 0, maxBounces, useRandomness);
+        
+        for (let j = 0; j < path.length - 1; j++) {
+          drawDashedLine(
+            path[j].x, path[j].y,
+            path[j + 1].x, path[j + 1].y,
+            1 / samples
+          );
+        }
+      }
+    }
+
+    function animate() {
+      dashOffset -= 1;
+      drawScene();
+      requestAnimationFrame(animate);
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseY = e.clientY - rect.top;
+    });
+
+    randomizeBtn.addEventListener('click', () => {
+      randomizeSpheres();
+    });
+
+    bounceSlider.addEventListener('input', () => {
+      bounceValue.textContent = bounceSlider.value;
+    });
+
+    sphereCountSlider.addEventListener('input', () => {
+      sphereCountValue.textContent = sphereCountSlider.value;
+      initializeSpheres();
+    });
+
+    samplesSlider.addEventListener('input', () => {
+      samplesValue.textContent = samplesSlider.value;
+    });
+
+    angleRangeSlider.addEventListener('input', () => {
+      angleRangeValue.textContent = angleRangeSlider.value;
+    });
+
+    initializeSpheres();
+    animate();
+  </script>
+</body>
+</html>
