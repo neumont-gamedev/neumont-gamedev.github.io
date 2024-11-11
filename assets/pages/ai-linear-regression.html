@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Linear Regression Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/7.8.3/simple-statistics.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .graph-container {
+            position: relative;
+            border: 1px solid #ccc;
+            background: white;
+        }
+        canvas {
+            cursor: crosshair;
+        }
+        input, button {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #0070f3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0051a2;
+        }
+        .stats {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <div>
+                <label for="xLabel">X-axis Label:</label>
+                <input type="text" id="xLabel" value="X" />
+            </div>
+            <div style="width: 120px;">
+                <label for="xMin">X Min:</label>
+                <input type="number" id="xMin" value="0" style="width: 100px;"/>
+            </div>
+            <div style="width: 120px;">
+                <label for="xMax">X Max:</label>
+                <input type="number" id="xMax" value="100" style="width: 100px;" />
+            </div>
+            <div>
+                <label for="yLabel">Y-axis Label:</label>
+                <input type="text" id="yLabel" value="Y" />
+            </div>     
+            <div style="width: 120px;">
+                <label for="yMin">Y Min:</label>
+                <input type="number" id="yMin" value="0" style="width: 100px;"/>
+            </div>
+            <div style="width: 120px;">
+                <label for="yMax">Y Max:</label>
+                <input type="number" id="yMax" value="100" style="width: 100px;"/>
+            </div>
+        </div>
+        
+        <button onclick="resetGraph()">Reset Graph</button>
+        
+        <div class="graph-container">
+            <canvas id="graph" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="stats" id="stats"></div>
+    </div>
+
+    <script>
+        // Wait for simple-statistics to load
+        window.onload = function() {
+            const canvas = document.getElementById('graph');
+            const ctx = canvas.getContext('2d');
+            let points = [];
+            
+            function calculateRegression(points) {
+                try {
+                    if (points.length < 2) return null;
+
+                    // Extract x and y values
+                    const xValues = points.map(p => p.x);
+                    const yValues = points.map(p => p.y);
+                    
+                    // Calculate means
+                    const xMean = ss.mean(xValues);
+                    const yMean = ss.mean(yValues);
+                    
+                    // Calculate coefficients
+                    let numerator = 0;
+                    let denominator = 0;
+                    
+                    for (let i = 0; i < points.length; i++) {
+                        const xDiff = xValues[i] - xMean;
+                        numerator += xDiff * (yValues[i] - yMean);
+                        denominator += xDiff * xDiff;
+                    }
+                    
+                    const slope = numerator / denominator;
+                    const intercept = yMean - slope * xMean;
+                    
+                    // Calculate R-squared
+                    const yPred = xValues.map(x => slope * x + intercept);
+                    const ssRes = ss.sum(yValues.map((y, i) => Math.pow(y - yPred[i], 2)));
+                    const ssTot = ss.sum(yValues.map(y => Math.pow(y - yMean, 2)));
+                    const rSquared = 1 - (ssRes / ssTot);
+                    
+                    return {
+                        regression: { m: slope, b: intercept },
+                        rSquared: rSquared
+                    };
+                } catch (error) {
+                    console.error('Error calculating regression:', error);
+                    return null;
+                }
+            }
+            
+            function updateGraph() {
+                try {
+                    const xMin = parseFloat(document.getElementById('xMin').value);
+                    const xMax = parseFloat(document.getElementById('xMax').value);
+                    const yMin = parseFloat(document.getElementById('yMin').value);
+                    const yMax = parseFloat(document.getElementById('yMax').value);
+                    const xLabel = document.getElementById('xLabel').value;
+                    const yLabel = document.getElementById('yLabel').value;
+                    
+                    // Clear canvas
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Draw axes
+                    const padding = 50;
+                    const graphWidth = canvas.width - 2 * padding;
+                    const graphHeight = canvas.height - 2 * padding;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(padding, padding);
+                    ctx.lineTo(padding, canvas.height - padding);
+                    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+                    ctx.stroke();
+                    
+                    // Draw labels
+                    ctx.font = '14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(xLabel, canvas.width / 2, canvas.height - 10);
+                    ctx.save();
+                    ctx.translate(20, canvas.height / 2);
+                    ctx.rotate(-Math.PI / 2);
+                    ctx.fillText(yLabel, 0, 0);
+                    ctx.restore();
+                    
+                    // Draw scale
+                    ctx.textAlign = 'right';
+                    for(let i = 0; i <= 10; i++) {
+                        const y = yMin + (yMax - yMin) * i / 10;
+                        ctx.fillText(y.toFixed(1), padding - 5, canvas.height - padding - (i * graphHeight / 10));
+                    }
+                    
+                    ctx.textAlign = 'center';
+                    for(let i = 0; i <= 10; i++) {
+                        const x = xMin + (xMax - xMin) * i / 10;
+                        ctx.fillText(x.toFixed(1), padding + (i * graphWidth / 10), canvas.height - padding + 15);
+                    }
+                    
+                    // Draw points
+                    points.forEach(point => {
+                        const x = padding + (point.x - xMin) * graphWidth / (xMax - xMin);
+                        const y = canvas.height - padding - (point.y - yMin) * graphHeight / (yMax - yMin);
+                        
+                        ctx.beginPath();
+                        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                        ctx.fillStyle = 'blue';
+                        ctx.fill();
+                    });
+                    
+                    // Calculate and draw regression line if we have points
+                    if(points.length >= 2) {
+                        const result = calculateRegression(points);
+                        if (result) {
+                            const { regression, rSquared } = result;
+                            
+                            // Draw regression line
+                            ctx.beginPath();
+                            ctx.strokeStyle = 'red';
+                            
+                            const x1 = xMin;
+                            const y1 = regression.b + regression.m * x1;
+                            const x2 = xMax;
+                            const y2 = regression.b + regression.m * x2;
+                            
+                            const px1 = padding + (x1 - xMin) * graphWidth / (xMax - xMin);
+                            const py1 = canvas.height - padding - (y1 - yMin) * graphHeight / (yMax - yMin);
+                            const px2 = padding + (x2 - xMin) * graphWidth / (xMax - xMin);
+                            const py2 = canvas.height - padding - (y2 - yMin) * graphHeight / (yMax - yMin);
+                            
+                            ctx.moveTo(px1, py1);
+                            ctx.lineTo(px2, py2);
+                            ctx.stroke();
+                            
+                            // Draw error terms
+                            ctx.strokeStyle = 'green';
+                            points.forEach(point => {
+                                const predictedY = regression.b + regression.m * point.x;
+                                const x = padding + (point.x - xMin) * graphWidth / (xMax - xMin);
+                                const actualY = canvas.height - padding - (point.y - yMin) * graphHeight / (yMax - yMin);
+                                const predictedYPixel = canvas.height - padding - (predictedY - yMin) * graphHeight / (yMax - yMin);
+                                
+                                ctx.beginPath();
+                                ctx.moveTo(x, actualY);
+                                ctx.lineTo(x, predictedYPixel);
+                                ctx.stroke();
+                            });
+                            
+                            // Update stats
+                            document.getElementById('stats').innerHTML = `
+                                <strong>Regression Statistics:</strong><br>
+                                Slope (m): ${regression.m.toFixed(4)}<br>
+                                Y-intercept (b): ${regression.b.toFixed(4)}<br>
+                                R² (coefficient of determination): ${rSquared.toFixed(4)}
+                            `;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating graph:', error);
+                }
+            }
+            
+            window.resetGraph = function() {
+                points = [];
+                updateGraph();
+                document.getElementById('stats').innerHTML = '';
+            }
+            
+            canvas.addEventListener('click', (e) => {
+                try {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const padding = 50;
+                    const graphWidth = canvas.width - 2 * padding;
+                    const graphHeight = canvas.height - 2 * padding;
+                    
+                    const xMin = parseFloat(document.getElementById('xMin').value);
+                    const xMax = parseFloat(document.getElementById('xMax').value);
+                    const yMin = parseFloat(document.getElementById('yMin').value);
+                    const yMax = parseFloat(document.getElementById('yMax').value);
+                    
+                    // Convert pixel coordinates to graph coordinates
+                    const xValue = xMin + (x - padding) * (xMax - xMin) / graphWidth;
+                    const yValue = yMax - (y - padding) * (yMax - yMin) / graphHeight;
+                    
+                    // Only add point if within graph bounds
+                    if(x >= padding && x <= canvas.width - padding && 
+                       y >= padding && y <= canvas.height - padding) {
+                        points.push({x: xValue, y: yValue});
+                        updateGraph();
+                    }
+                } catch (error) {
+                    console.error('Error adding point:', error);
+                }
+            });
+            
+            // Initial draw
+            updateGraph();
+            
+            // Update graph when inputs change
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('change', updateGraph);
+            });
+        }
+    </script>
+</body>
+</html>

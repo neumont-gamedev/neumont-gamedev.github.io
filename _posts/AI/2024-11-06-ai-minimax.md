@@ -18,7 +18,7 @@ What set Deep Blue apart was its use of massive computational power and a highly
 <img src="minimax-tree.png" alt="Minimax" width="100%"/>
 </div>
 
-### MiniMax Demostration ###
+### MiniMax Demonstration ###
 <div style="text-align: center;">
 <iframe src="{{ site.baseurl }}/assets/pages/ai-minimax.html" width="110%" height="600px" frameborder="0">
     Your browser does not support iframes.

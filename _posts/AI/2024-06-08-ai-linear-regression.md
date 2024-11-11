@@ -10,8 +10,19 @@ img_path: /assets/img/ai
 ---
 **Linear Regression** is a fundamental statistical method used in machine learning and data analysis to model the relationship between a dependent variable (often called the response variable) and one or more independent variables (also known as predictors or features). The primary goal is to find the best-fitting linear equation that can predict the value of the dependent variable based on the values of the independent variables.
 
-<div style="position: relative; width: 100%; height: 100%; padding-bottom: 56.25%; overflow: hidden;">
-  <iframe src="https://neumont-gamedev.github.io/assets/unity/test/index.html" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" frameborder="0" scrolling="no"></iframe>
+### MiniMax Demonstration ###
+This application demonstrates linear regression, a statistical method for modeling the relationship between two variables by fitting a straight line to the data points. The regression line is defined by the **slope (m)** and **y-intercept (b)**, which describe how changes in the independent variable impact the dependent variable. The **R² (coefficient of determination)** value indicates the accuracy of the model, with a higher R² meaning a better fit.
+
+The model aims to find the best-fitting line by adjusting the slope \( m \) and intercept \( b \) to match the data as closely as possible. This line is represented by the equation \( y = mx + b \). Each adjustment to \( m \) and \( b \) is made to reduce the **error**, or difference, between the actual data points and the values predicted by the line. The goal is to minimize these errors across all points, creating a line that represents the overall trend in the data as accurately as possible.
+
+$$
+y = mx + b
+$$
+
+<div style="text-align: center;">
+<iframe src="{{ site.baseurl }}/assets/pages/ai-linear-regression.html" width="110%" height="1000px" frameborder="0">
+    Your browser does not support iframes.
+</iframe>
 </div>
 
 ### Key Components
@@ -31,6 +42,8 @@ $$
   + $(\beta_0\)$ is the intercept (the value of $Y$ when all $Xs$ are 0).
 
 + $(\beta_1, \beta_2, \ldots, \beta_n)$ are the coefficients (the change in $Y$ for a one-unit change in each $X$).
+
+
 
 ### How It Works
 + Fit a Line:
