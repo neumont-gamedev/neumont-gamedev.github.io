@@ -8,16 +8,16 @@ comments: true
 math: true
 img_path: /assets/img/ai
 ---
-**Linear Regression** is a fundamental statistical method used in machine learning and data analysis to model the relationship between a dependent variable (often called the response variable) and one or more independent variables (also known as predictors or features). The primary goal is to find the best-fitting linear equation that can predict the value of the dependent variable based on the values of the independent variables.
-
-### MiniMax Demonstration ###
-This application demonstrates linear regression, a statistical method for modeling the relationship between two variables by fitting a straight line to the data points. The regression line is defined by the **slope (m)** and **y-intercept (b)**, which describe how changes in the independent variable impact the dependent variable. The **R² (coefficient of determination)** value indicates the accuracy of the model, with a higher R² meaning a better fit.
-
-The model aims to find the best-fitting line by adjusting the slope \( m \) and intercept \( b \) to match the data as closely as possible. This line is represented by the equation \( y = mx + b \). Each adjustment to \( m \) and \( b \) is made to reduce the **error**, or difference, between the actual data points and the values predicted by the line. The goal is to minimize these errors across all points, creating a line that represents the overall trend in the data as accurately as possible.
+**Linear Regression** is a core statistical technique in machine learning and data analysis, used to model the relationship between a target variable $y$ (dependent variable) and one or more predictors $x$ (independent variables or features). Its main objective is to determine the best-fitting line, represented by a slope $m$ and intercept $b$, that can accurately predict the target variable $y$ based on the input features $x$. The line follows the equation:
 
 $$
 y = mx + b
 $$
+
+### Linear Regression Demonstration ###
+This application demonstrates linear regression, a statistical method for modeling the relationship between two variables by fitting a straight line to the data points. The regression line is defined by the **slope (m)** and **y-intercept (b)**, which describe how changes in the independent variable impact the dependent variable. The **R² (coefficient of determination)** value indicates the accuracy of the model, with a higher R² meaning a better fit.
+
+The model aims to find the best-fitting line by adjusting the slope \( m \) and intercept \( b \) to match the data as closely as possible. This line is represented by the equation \( y = mx + b \). Each adjustment to \( m \) and \( b \) is made to reduce the **error**, or difference, between the actual data points and the values predicted by the line. The goal is to minimize these errors across all points, creating a line that represents the overall trend in the data as accurately as possible.
 
 <div style="text-align: center;">
 <iframe src="{{ site.baseurl }}/assets/pages/ai-linear-regression.html" width="110%" height="1000px" frameborder="0">
