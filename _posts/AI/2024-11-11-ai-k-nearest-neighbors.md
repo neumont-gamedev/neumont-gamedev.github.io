@@ -46,7 +46,7 @@ This allows you to:
     </iframe>
 </div>
 
-### k-NN Steps
+### k-NN Algorithm
 
 ##### Choose the Number of Neighbors ($k$):
 
