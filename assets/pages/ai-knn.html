@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive KNN Classification</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .controls label {
+            margin-right: 10px;
+        }
+        .plot-area {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            transition: opacity 0.2s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #classA {
+            background-color: #8884d8;
+        }
+        #classB {
+            background-color: #82ca9d;
+        }
+        button.selected {
+            box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+        }
+        button.clear {
+            background-color: #dc3545;
+        }
+        #clearPrediction {
+            background-color: #007bff;
+        }
+        .slider-container {
+            margin: 10px 0;
+        }
+        .slider {
+            width: 200px;
+        }
+        .instructions {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .legend {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+
+        @keyframes drawLine {
+            from {
+                stroke-dashoffset: 100;
+            }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .neighbor-line {
+            animation: drawLine 0.5s ease-out forwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .predicted {
+            animation: popIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="controls">
+            <div class="slider-container">
+                <label for="k-value">K Value:</label>
+                <input type="range" id="k-value" class="slider" min="1" max="10" value="3">
+                <span id="k-display">3</span>
+            </div>
+            
+            <div>
+                <label>Add Points For:</label>
+                <button id="classA" class="selected">Class A</button>
+                <button id="classB">Class B</button>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #8884d8;"></div>
+                    <span>Class A</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #82ca9d;"></div>
+                    <span>Class B</span>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                Left-click to add points, Right-click to predict
+            </div>
+        </div>
+
+        <div class="plot-area">
+            <svg id="plot" width="600" height="400"></svg>
+        </div>
+
+        <div>
+            <button id="clearPrediction">Clear Prediction</button>
+            <button id="clearAll" class="clear">Clear All</button>
+        </div>
+    </div>
+
+    <script>
+        const width = 600;
+        const height = 400;
+        const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+
+        const colors = {
+            'A': '#8884d8',
+            'B': '#82ca9d'
+        };
+
+        // Initialize SVG
+        const svg = d3.select("#plot")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Add background rect to capture events
+        svg.append("rect")
+            .attr("width", plotWidth)
+            .attr("height", plotHeight)
+            .attr("fill", "white");
+
+        // Scales
+        const xScale = d3.scaleLinear()
+            .domain([0, 100])
+            .range([0, plotWidth]);
+
+        const yScale = d3.scaleLinear()
+            .domain([0, 100])
+            .range([plotHeight, 0]);
+
+        // Add axes
+        svg.append("g")
+            .attr("transform", `translate(0,${plotHeight})`)
+            .call(d3.axisBottom(xScale));
+
+        svg.append("g")
+            .call(d3.axisLeft(yScale));
+
+        // State
+        let points = [];
+        let predictedPoint = null;
+        let nearestNeighbors = [];
+        let selectedClass = 'A';
+        let kValue = 3;
+
+        // Event Handlers
+        function updateKValue(value) {
+            kValue = value;
+            document.getElementById('k-display').textContent = value;
+            if (predictedPoint) {
+                updatePrediction(predictedPoint);
+            }
+        }
+
+        function distance(p1, p2) {
+            return Math.sqrt(
+                Math.pow(p1.x - p2.x, 2) + 
+                Math.pow(p1.y - p2.y, 2)
+            );
+        }
+
+        function updatePrediction(point) {
+            if (points.length === 0) return;
+
+            const distances = points.map(p => ({
+                ...p,
+                distance: distance(p, point)
+            }));
+
+            distances.sort((a, b) => a.distance - b.distance);
+            nearestNeighbors = distances.slice(0, kValue);
+
+            const classCounts = nearestNeighbors.reduce((acc, p) => {
+                acc[p.class] = (acc[p.class] || 0) + 1;
+                return acc;
+            }, {});
+
+            const predictedClass = Object.entries(classCounts)
+                .sort((a, b) => b[1] - a[1])[0][0];
+
+            predictedPoint = { ...point, class: predictedClass };
+            updatePlot();
+        }
+
+        function updatePlot() {
+            // Clear existing points
+            svg.selectAll("circle.point").remove();
+            svg.selectAll("circle.predicted").remove();
+            svg.selectAll(".neighbor-line").remove();
+
+            // Draw points
+            svg.selectAll("circle.point")
+                .data(points)
+                .enter()
+                .append("circle")
+                .attr("class", "point")
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("r", 5)
+                .style("fill", d => colors[d.class]);
+
+            // Draw prediction and nearest neighbors
+            if (predictedPoint) {
+                // Draw lines to nearest neighbors with animation
+                nearestNeighbors.forEach((neighbor, index) => {
+                    const lineLength = Math.sqrt(
+                        Math.pow(xScale(predictedPoint.x) - xScale(neighbor.x), 2) +
+                        Math.pow(yScale(predictedPoint.y) - yScale(neighbor.y), 2)
+                    );
+                    
+                    svg.append("line")
+                        .attr("class", "neighbor-line")
+                        .attr("x1", xScale(predictedPoint.x))
+                        .attr("y1", yScale(predictedPoint.y))
+                        .attr("x2", xScale(neighbor.x))
+                        .attr("y2", yScale(neighbor.y))
+                        .style("stroke", "#666")
+                        .style("stroke-width", 1)
+                        .style("stroke-dasharray", `${lineLength} ${lineLength}`)
+                        .style("stroke-dashoffset", lineLength)
+                        .transition()
+                        .duration(500)
+                        .style("stroke-dashoffset", 0);
+                });
+
+                // Draw predicted point with animation
+                svg.append("circle")
+                    .attr("class", "predicted")
+                    .attr("cx", xScale(predictedPoint.x))
+                    .attr("cy", yScale(predictedPoint.y))
+                    .attr("r", 7)
+                    .style("fill", colors[predictedPoint.class])
+                    .style("stroke", "#333")
+                    .style("stroke-width", 2)
+                    .style("transform-origin", `${xScale(predictedPoint.x)}px ${yScale(predictedPoint.y)}px`);
+            }
+        }
+
+        // Event Listeners
+        svg.on("click", function(event) {
+            // Handle left click to add points
+            if (event.button !== 0) return;
+            
+            const [x, y] = d3.pointer(event);
+            const point = {
+                x: xScale.invert(x),
+                y: yScale.invert(y),
+                class: selectedClass
+            };
+            points.push(point);
+            updatePlot();
+        });
+
+        document.getElementById("plot").addEventListener("contextmenu", function(event) {
+            event.preventDefault();
+            const rect = this.getBoundingClientRect();
+            const x = event.clientX - rect.left - margin.left;
+            const y = event.clientY - rect.top - margin.top;
+            
+            if (x >= 0 && x <= plotWidth && y >= 0 && y <= plotHeight) {
+                const point = {
+                    x: xScale.invert(x),
+                    y: yScale.invert(y)
+                };
+                updatePrediction(point);
+            }
+        });
+
+        document.getElementById("k-value").addEventListener("input", (e) => {
+            updateKValue(parseInt(e.target.value));
+        });
+
+        document.getElementById("classA").addEventListener("click", () => {
+            selectedClass = 'A';
+            document.getElementById("classA").classList.add("selected");
+            document.getElementById("classB").classList.remove("selected");
+        });
+
+        document.getElementById("classB").addEventListener("click", () => {
+            selectedClass = 'B';
+            document.getElementById("classB").classList.add("selected");
+            document.getElementById("classA").classList.remove("selected");
+        });
+
+        document.getElementById("clearPrediction").addEventListener("click", () => {
+            predictedPoint = null;
+            nearestNeighbors = [];
+            updatePlot();
+        });
+
+        document.getElementById("clearAll").addEventListener("click", () => {
+            points = [];
+            predictedPoint = null;
+            nearestNeighbors = [];
+            updatePlot();
+        });
+
+        // Initial plot
+        updatePlot();
+    </script>
+</body>
+</html>
