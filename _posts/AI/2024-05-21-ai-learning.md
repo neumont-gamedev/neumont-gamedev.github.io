@@ -7,25 +7,6 @@ toc: true
 comments: true
 img_path: /assets/img/ai
 ---
-#### A collection of AI-related information on learning AI algorithms and training models.
-
-### Word Embeddings
-*Word embeddings* are a type of word representation that allows words with similar meaning to have a similar representation. They are a class of techniques where individual words are represented as real-valued vectors in a predefined vector space. Each word is mapped to one vector, and the vector values are learned in a way that resembles a neural network, and hence they are often derived by training a neural network on a large corpus of text.
-
-Advancements in *word embeddings* continue with the development of contextual embeddings from models like BERT and GPT, where the representation of words can dynamically change based on the sentence context. This represents a significant shift from fixed embeddings to more flexible and context-aware models in natural language processing.
-
-The *Word Embedding Demo* shows how words are stored as vectors in space. Words that are closely related are closer in space to each other.
-
-[https://www.cs.cmu.edu/~dst/WordEmbeddingDemo/index.html](https://www.cs.cmu.edu/~dst/WordEmbeddingDemo/index.html)
-
-+ **Controls**
-  + Click and drag to rotate the view
-  + Use the scroll wheel to zoom in and out
-  + Hold down the control key and click and drag to pan the view
-+ Put the mouse pointer over a word in the 3D plot. A window will pop up showing the 10 closest words.
-+ Type a word in the text box below the 3D plot to add it to the plot.
-+ Click on a word to activate it and show its (cosine) similarity to the words in the slots in red.
-+ Click on a slot when a word is active to add it to the slots.
 
 ### Train a Neural Network
 
