@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Vector Cross Product</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        .p-4 { padding: 1rem; }
+        .bg-gray-100 { background-color: #f3f4f6; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .bg-white { background-color: white; }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .mb-4 { margin-bottom: 1rem; }
+        .shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .gap-4 { gap: 1rem; }
+        .font-bold { font-weight: bold; }
+        .mt-4 { margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const Vector2D = () => {
+            const [vector1, setVector1] = React.useState({ x: 1, y: 0 });
+            const [vector2, setVector2] = React.useState({ x: 0, y: 1 });
+            const [dragging, setDragging] = React.useState(null);
+
+            const scale = 30; // 30 pixels = 1 unit
+            const center = 150;
+
+            const handleMouseDown = (e, vector) => {
+                setDragging(vector);
+            };
+
+            const handleMouseMove = (e) => {
+                if (!dragging) return;
+
+                const svgRect = e.currentTarget.getBoundingClientRect();
+                const x = (e.clientX - svgRect.left - center) / scale;
+                const y = (e.clientY - svgRect.top - center) / scale;
+
+                if (dragging === 'vector1') {
+                    setVector1({ x, y });
+                } else {
+                    setVector2({ x, y });
+                }
+            };
+
+            const handleMouseUp = () => {
+                setDragging(null);
+            };
+
+            const crossProduct = vector1.x * vector2.y - vector1.y * vector2.x;
+            const magnitude = Math.abs(crossProduct);
+
+            return (
+                <div className="p-4 bg-gray-100 rounded-lg">
+                    <svg 
+                        width="300" 
+                        height="300" 
+                        className="bg-white rounded-lg shadow-lg mb-4"
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                    >
+                        {/* Grid */}
+                        <g stroke="#eee">
+                            {Array.from({ length: 11 }).map((_, i) => (
+                                <React.Fragment key={i}>
+                                    <line x1={i * scale} y1="0" x2={i * scale} y2="300" />
+                                    <line x1="0" y1={i * scale} x2="300" y2={i * scale} />
+                                </React.Fragment>
+                            ))}
+                        </g>
+
+                        {/* Axes */}
+                        <line x1={center} y1="0" x2={center} y2="300" stroke="#ccc" />
+                        <line x1="0" y1={center} x2="300" y2={center} stroke="#ccc" />
+
+                        {/* Cross Product Magnitude Line */}
+                        <line 
+                            x1={center + 120} 
+                            y1={center} 
+                            x2={center + 120} 
+                            y2={center - crossProduct * scale} 
+                            stroke="blue" 
+                            strokeWidth="2"
+                        />
+
+                        {/* Parallelogram */}
+                        <path
+                            d={`M ${center} ${center} 
+                               L ${center + vector1.x * scale} ${center + vector1.y * scale} 
+                               L ${center + (vector1.x + vector2.x) * scale} ${center + (vector1.y + vector2.y) * scale} 
+                               L ${center + vector2.x * scale} ${center + vector2.y * scale} Z`}
+                            fill="#eef"
+                            stroke="#99f"
+                            strokeWidth="1"
+                        />
+
+                        {/* Vectors */}
+                        <line 
+                            x1={center} y1={center} 
+                            x2={center + vector1.x * scale} y2={center + vector1.y * scale} 
+                            stroke="red" 
+                            strokeWidth="2" 
+                        />
+                        <circle 
+                            cx={center + vector1.x * scale} 
+                            cy={center + vector1.y * scale} 
+                            r="5" 
+                            fill="red"
+                            onMouseDown={(e) => handleMouseDown(e, 'vector1')}
+                            style={{ cursor: 'pointer' }}
+                        />
+
+                        <line 
+                            x1={center} y1={center} 
+                            x2={center + vector2.x * scale} y2={center + vector2.y * scale} 
+                            stroke="green" 
+                            strokeWidth="2" 
+                        />
+                        <circle 
+                            cx={center + vector2.x * scale} 
+                            cy={center + vector2.y * scale} 
+                            r="5" 
+                            fill="green"
+                            onMouseDown={(e) => handleMouseDown(e, 'vector2')}
+                            style={{ cursor: 'pointer' }}
+                        />
+                    </svg>
+
+                    <div className="bg-white rounded-lg shadow p-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <h3 className="font-bold">Vector 1 (Red)</h3>
+                                <p>X: {vector1.x.toFixed(2)} Y: {vector1.y.toFixed(2)}</p>
+                            </div>
+                            <div>
+                                <h3 className="font-bold">Vector 2 (Green)</h3>
+                                <p>X: {vector2.x.toFixed(2)} Y: {vector2.y.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div className="mt-4">
+                            <h3 className="font-bold">Cross Product</h3>
+                            <p>Value: {crossProduct.toFixed(2)}</p>
+                            <p>Magnitude (Area): {magnitude.toFixed(2)} square units</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Vector2D />);
+    </script>
+</body>
+</html>
