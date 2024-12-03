@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vector Reflection Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const VectorReflection = () => {
+            const [mousePos, setMousePos] = React.useState({ x: 200, y: 100 });
+            const svgRef = React.useRef(null);
+            
+            const origin = { x: 200, y: 150 };
+            const normalVector = { x: 0, y: -1 };
+            const scale = 80;
+            
+            const normalize = (v) => {
+                const mag = Math.sqrt(v.x * v.x + v.y * v.y);
+                return mag === 0 ? v : { x: v.x / mag, y: v.y / mag };
+            };
+            
+            const dot = (v1, v2) => v1.x * v2.x + v1.y * v2.y;
+            const multiply = (v, s) => ({ x: v.x * s, y: v.y * s });
+            const subtract = (v1, v2) => ({ x: v1.x - v2.x, y: v1.y - v2.y });
+            const add = (v1, v2) => ({ x: v1.x + v2.x, y: v1.y + v2.y });
+            
+            const handleMouseMove = (e) => {
+                if (!svgRef.current) return;
+                const rect = svgRef.current.getBoundingClientRect();
+                setMousePos({
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                });
+            };
+
+            const getIncidentVector = () => {
+                const raw = {
+                    x: mousePos.x - origin.x,
+                    y: mousePos.y - origin.y
+                };
+                return multiply(normalize(raw), scale);
+            };
+            
+            const getReflectionVectors = () => {
+                const v = normalize(getIncidentVector());
+                const n = normalVector;
+                const d = dot(v, n);
+                const doubled = multiply(n, 2 * d);
+                const r = subtract(v, doubled);
+                return {
+                    reflection: multiply(r, scale),
+                    doubled: multiply(doubled, scale)
+                };
+            };
+
+            const incident = getIncidentVector();
+            const { reflection } = getReflectionVectors();
+            const incidentTip = add(origin, incident);
+            const reflectionTip = add(origin, reflection);
+
+            return (
+                <div className="w-full max-w-2xl mx-auto p-4">
+                    <div className="bg-white rounded-lg shadow-lg p-4">
+                        <div className="border rounded-lg cursor-crosshair">
+                            <svg 
+                                ref={svgRef}
+                                width="400" 
+                                height="300" 
+                                className="bg-gray-50"
+                                onMouseMove={handleMouseMove}
+                            >
+                                <line 
+                                    x1="0" 
+                                    y1={origin.y} 
+                                    x2="400" 
+                                    y2={origin.y} 
+                                    stroke="black" 
+                                    strokeWidth="2"
+                                />
+                                
+                                <line 
+                                    x1={origin.x} 
+                                    y1={origin.y} 
+                                    x2={origin.x} 
+                                    y2={origin.y - scale} 
+                                    stroke="blue" 
+                                    strokeWidth="2" 
+                                    markerEnd="url(#arrowhead)"
+                                />
+                                
+                                <line 
+                                    x1={origin.x} 
+                                    y1={origin.y} 
+                                    x2={incidentTip.x} 
+                                    y2={incidentTip.y} 
+                                    stroke="red" 
+                                    strokeWidth="2" 
+                                    markerEnd="url(#arrowhead)"
+                                />
+                                
+                                <line 
+                                    x1={incidentTip.x} 
+                                    y1={incidentTip.y} 
+                                    x2={reflectionTip.x} 
+                                    y2={reflectionTip.y} 
+                                    stroke="purple" 
+                                    strokeWidth="2" 
+                                    strokeDasharray="4"
+                                />
+                                
+                                <line 
+                                    x1={origin.x} 
+                                    y1={origin.y} 
+                                    x2={reflectionTip.x} 
+                                    y2={reflectionTip.y} 
+                                    stroke="green" 
+                                    strokeWidth="2" 
+                                    markerEnd="url(#arrowhead)"
+                                />
+                                
+                                <circle
+                                    cx={origin.x}
+                                    cy={origin.y}
+                                    r="4"
+                                    fill="black"
+                                />
+                                
+                                <defs>
+                                    <marker 
+                                        id="arrowhead" 
+                                        markerWidth="10" 
+                                        markerHeight="7" 
+                                        refX="9" 
+                                        refY="3.5" 
+                                        orient="auto"
+                                    >
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="currentColor"/>
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                        <div className="mt-4 flex gap-4">
+                            <div className="flex items-center">
+                                <div className="w-4 h-0.5 bg-blue-500 mr-2"></div>
+                                <span>Normal (n)</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-4 h-0.5 bg-red-500 mr-2"></div>
+                                <span>Incident (v)</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-4 h-0.5 bg-purple-500 mr-2 border-dashed"></div>
+                                <span>2(dot(v,n))n</span>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="w-4 h-0.5 bg-green-500 mr-2"></div>
+                                <span>Reflection (r)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<VectorReflection />, document.getElementById('root'));
+    </script>
+</body>
+</html>
