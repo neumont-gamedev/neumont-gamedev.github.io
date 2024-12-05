@@ -149,7 +149,8 @@
                 }
                 else
                 {
-                    ctx.fillText('🎄', segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2);                  
+                    ctx.fillText('🔴', segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2);                  
+                    //ctx.fillText('🎄', segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2);                  
                     //ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
                 }
             });
@@ -159,7 +160,7 @@
             ctx.font = `${gridSize}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('🍎', food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2);
+            ctx.fillText('🍭', food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2);
         }
         
         function generateFood() {
