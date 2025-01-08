@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary to Decimal Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            text-align: center;
+        }
+        .binary-display {
+            font-size: 2rem;
+            font-family: monospace;
+            margin: 1rem 0;
+            letter-spacing: 0.2rem;
+        }
+        .game-container {
+            background: #f5f5f5;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input {
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            width: 100px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        .binary-values {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-family: monospace;
+        }
+        .value {
+            width: 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            border: 1px solid #ccc;
+            padding: 0.25rem;
+            background: #fff;
+        }
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .progress {
+            margin: 1rem 0;
+        }
+        .feedback {
+            margin: 1rem 0;
+            font-weight: bold;
+        }
+        .correct { color: #4CAF50; }
+        .incorrect { color: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="binary-values">
+            <div class="value">128</div>
+            <div class="value">64</div>
+            <div class="value">32</div>
+            <div class="value">16</div>
+            <div class="value">8</div>
+            <div class="value">4</div>
+            <div class="value">2</div>
+            <div class="value">1</div>
+        </div>
+        <h1>Binary to Decimal Converter Game</h1>
+        <p>Convert the binary number to decimal. Complete 5 sequences to win!</p>
+        <div class="progress">Sequence: <span id="current-sequence">1</span>/5</div>
+        <div class="binary-display" id="binary-number"></div>
+        <input type="number" id="user-input" placeholder="Decimal value">
+        <br>
+        <button id="check-button">Check Answer</button>
+        <button id="next-button" disabled>Next Sequence</button>
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        let currentSequence = 1;
+        let currentBinary = '';
+        let isCorrect = false;
+
+        function generateBinary() {
+            let num = Math.floor(Math.random() * 256);
+            return num.toString(2).padStart(8, '0');
+        }
+
+        function updateDisplay() {
+            document.getElementById('binary-number').textContent = currentBinary;
+            document.getElementById('current-sequence').textContent = currentSequence;
+            document.getElementById('user-input').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('check-button').disabled = false;
+            document.getElementById('next-button').disabled = true;
+            isCorrect = false;
+        }
+
+        function startNewSequence() {
+            currentBinary = generateBinary();
+            updateDisplay();
+        }
+
+        document.getElementById('check-button').addEventListener('click', () => {
+            const userValue = parseInt(document.getElementById('user-input').value);
+            const correctValue = parseInt(currentBinary, 2);
+            const feedback = document.getElementById('feedback');
+            
+            if (isNaN(userValue)) {
+                feedback.textContent = 'Please enter a valid number';
+                feedback.className = 'feedback incorrect';
+                return;
+            }
+
+            if (userValue === correctValue) {
+                feedback.textContent = 'Correct!';
+                feedback.className = 'feedback correct';
+                document.getElementById('check-button').disabled = true;
+                isCorrect = true;
+                
+                if (currentSequence < 5) {
+                    document.getElementById('next-button').disabled = false;
+                } else {
+                    feedback.textContent = 'Congratulations! You have completed all sequences!';
+                }
+            } else {
+                feedback.textContent = `Incorrect. Try again!`;
+                feedback.className = 'feedback incorrect';
+            }
+        });
+
+        document.getElementById('next-button').addEventListener('click', () => {
+            if (isCorrect && currentSequence < 5) {
+                currentSequence++;
+                startNewSequence();
+            }
+        });
+
+        // Start the game
+        startNewSequence();
+    </script>
+</body>
+</html>
