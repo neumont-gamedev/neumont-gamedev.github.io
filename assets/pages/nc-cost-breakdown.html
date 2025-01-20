@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utah College Cost Breakdown Comparison</title>
+    <meta name="description" content="Detailed cost comparison of Utah colleges by category">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+    <style>
+        canvas {
+            background-color: rgb(31, 41, 55);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-4">Utah College Cost Breakdown</h1>
+            <p class="text-gray-300">Annual costs broken down by category for Utah colleges and universities</p>
+        </header>
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow">
+            <div style="width: 100%; height: 500px;">
+                <canvas id="costChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg space-y-2 text-white mt-8">
+            <p class="font-semibold">Key Observations:</p>
+            <ul class="list-disc pl-5 space-y-1">
+                <li>Tuition represents the largest portion of costs across all institutions</li>
+                <li>Neumont's quarterly system and accelerated program affects how costs are distributed</li>
+                <li>Housing costs are relatively consistent across institutions</li>
+                <li>Neumont's technology package is unique among Utah colleges</li>
+            </ul>
+            <div class="mt-4 p-4 bg-gray-700 rounded">
+                <p class="font-semibold mb-2">Cost Categories Explained:</p>
+                <ul class="list-disc pl-5 space-y-1 text-gray-300">
+                    <li>Tuition: Base educational costs</li>
+                    <li>Housing: On-campus or estimated off-campus living costs</li>
+                    <li>Technology Fees: Computer lab access, internet, and basic tech services</li>
+                    <li>Activity Fees: Student activities, gym access, and campus events</li>
+                    <li>Transportation Fees: Parking or public transit passes</li>
+                    <li>Program Fees: Additional costs specific to certain majors</li>
+                    <li>Technology Package: Specialized equipment and software (Neumont-specific)</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer class="text-center text-gray-400 mt-12">
+            <p>Data is approximate and subject to change. Last updated: January 2024</p>
+        </footer>
+    </div>
+
+    <script>
+        const collegeData = [
+            {
+                name: 'Neumont College',
+                tuition: 34680,
+                housing: 9500,
+                techFees: 1440,
+                activityFees: 600,
+                transportFees: 480,
+                programFees: 1000,
+                techPackage: 3100
+            },
+            {
+                name: 'University of Utah',
+                tuition: 19452,
+                housing: 9942,
+                techFees: 500,
+                activityFees: 996,
+                transportFees: 199,
+                programFees: 300,
+                techPackage: 0
+            },
+            {
+                name: 'Utah State',
+                tuition: 15295,
+                housing: 8505,
+                techFees: 450,
+                activityFees: 900,
+                transportFees: 150,
+                programFees: 300,
+                techPackage: 0
+            },
+            {
+                name: 'Weber State',
+                tuition: 12262,
+                housing: 7200,
+                techFees: 400,
+                activityFees: 600,
+                transportFees: 200,
+                programFees: 200,
+                techPackage: 0
+            },
+            {
+                name: 'BYU',
+                tuition: 13484,
+                housing: 8900,
+                techFees: 500,
+                activityFees: 800,
+                transportFees: 0,
+                programFees: 500,
+                techPackage: 0
+            },
+            {
+                name: 'Westminster',
+                tuition: 27500,
+                housing: 10500,
+                techFees: 800,
+                activityFees: 700,
+                transportFees: 0,
+                programFees: 500,
+                techPackage: 0
+            },
+            {
+                name: 'SUU',
+                tuition: 13500,
+                housing: 8000,
+                techFees: 450,
+                activityFees: 650,
+                transportFees: 200,
+                programFees: 200,
+                techPackage: 0
+            }
+        ];
+
+        function initChart() {
+            // Sort colleges by total cost
+            collegeData.sort((a, b) => {
+                const totalA = Object.values(a).reduce((sum, val) => typeof val === 'number' ? sum + val : sum, 0);
+                const totalB = Object.values(b).reduce((sum, val) => typeof val === 'number' ? sum + val : sum, 0);
+                return totalB - totalA;
+            });
+
+            const ctx = document.getElementById('costChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: collegeData.map(college => college.name),
+                    datasets: [
+                        {
+                            label: 'Tuition',
+                            data: collegeData.map(college => college.tuition),
+                            backgroundColor: '#00BFB3'
+                        },
+                        {
+                            label: 'Housing',
+                            data: collegeData.map(college => college.housing),
+                            backgroundColor: '#FF6B6B'
+                        },
+                        {
+                            label: 'Technology Fees',
+                            data: collegeData.map(college => college.techFees),
+                            backgroundColor: '#4ECDC4'
+                        },
+                        {
+                            label: 'Activity Fees',
+                            data: collegeData.map(college => college.activityFees),
+                            backgroundColor: '#45B7D1'
+                        },
+                        {
+                            label: 'Transportation Fees',
+                            data: collegeData.map(college => college.transportFees),
+                            backgroundColor: '#96CEB4'
+                        },
+                        {
+                            label: 'Program Fees',
+                            data: collegeData.map(college => college.programFees),
+                            backgroundColor: '#FFEEAD'
+                        },
+                        {
+                            label: 'Technology Package',
+                            data: collegeData.map(college => college.techPackage),
+                            backgroundColor: '#88D8B0'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                color: 'white'
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            ticks: {
+                                color: 'white',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'white',
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Wait for both DOM and Chart.js to load
+        function checkChartAndInit() {
+            if (typeof Chart === 'undefined') {
+                setTimeout(checkChartAndInit, 100);
+                return;
+            }
+            initChart();
+        }
+
+        document.addEventListener('DOMContentLoaded', checkChartAndInit);
+    </script>
+</body>
+</html>
