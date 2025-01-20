@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Trainer</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timer {
+            color: #00d2ff;
+        }
+
+        .accuracy {
+            color: #48bb78;
+        }
+
+        .word-display {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+
+        .word-label {
+            font-size: 1rem;
+            color: #a0aec0;
+            margin-bottom: 10px;
+        }
+
+        .current-word {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .input-container {
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+        }
+
+        input.correct {
+            border-color: #48bb78;
+            box-shadow: 0 0 15px rgba(72, 187, 120, 0.3);
+        }
+
+        input.incorrect {
+            border-color: #f56565;
+            box-shadow: 0 0 15px rgba(245, 101, 101, 0.3);
+        }
+
+        .game-over {
+            text-align: center;
+        }
+
+        .result-container {
+            margin-bottom: 30px;
+        }
+
+        .wpm {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #00d2ff;
+            margin-bottom: 10px;
+        }
+
+        .final-accuracy {
+            font-size: 1.5rem;
+            color: #48bb78;
+        }
+
+        button {
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .word-animation {
+            animation: pulse 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Typing Speed Trainer</h1>
+        
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-value timer" id="timer">60</div>
+                <div class="stat-label">Seconds Left</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value accuracy" id="accuracy">100%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+        </div>
+
+        <div class="word-display">
+            <div class="word-label">Type this word:</div>
+            <div class="current-word" id="current-word"></div>
+        </div>
+
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="word-input" 
+                placeholder="Start typing..." 
+                autocomplete="off"
+                autofocus
+            >
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Words</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="wpm">0</div>
+                <div class="stat-label">WPM</div>
+            </div>
+        </div>
+
+        <div class="game-over hidden" id="game-over">
+            <div class="result-container">
+                <div class="wpm">0 WPM</div>
+                <div class="final-accuracy">0% Accuracy</div>
+            </div>
+            <button onclick="resetGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Same JavaScript code as before...
+        const words = [
+        'the', 'be', 'to', 'of', 'and', 'in', 'that', 'have', 'programming', 
+        'javascript', 'react', 'development', 'computer', 'software', 'code',
+        'application', 'web', 'design', 'interface', 'database', 'algorithm',
+        'apple', 'orange', 'banana', 'grape', 'dog', 'cat', 'bird', 'tree', 
+        'flower', 'mountain', 'river', 'ocean', 'happy', 'sad', 'angry', 'calm',
+        'morning', 'night', 'day', 'light', 'shadow', 'music', 'song', 'dance',
+        'book', 'pen', 'paper', 'school', 'teacher', 'student', 'friend', 'family',
+        'child', 'parent', 'work', 'play', 'house', 'car', 'train', 'plane', 'bicycle',
+        'road', 'path', 'bridge', 'city', 'village', 'country', 'world', 'sky', 
+        'star', 'moon', 'sun', 'rain', 'cloud', 'wind', 'snow', 'fire', 'earth',
+        'water', 'air', 'food', 'drink', 'table', 'chair', 'bed', 'room', 'kitchen',
+        'bathroom', 'garden', 'door', 'window', 'wall', 'floor', 'ceiling', 'picture',
+        'clock', 'phone', 'laptop', 'bag', 'shoes', 'clothes', 'key', 'wallet'
+        ];
+
+
+        let currentWord = '';
+        let timeLeft = 60;
+        let timer = null;
+        let score = 0;
+        let totalKeystrokes = 0;
+        let correctKeystrokes = 0;
+        let isPlaying = false;
+
+        const wordInput = document.getElementById('word-input');
+        const currentWordDisplay = document.getElementById('current-word');
+        const timerDisplay = document.getElementById('timer');
+        const scoreDisplay = document.getElementById('score');
+        const accuracyDisplay = document.getElementById('accuracy');
+        const gameOverDisplay = document.getElementById('game-over');
+        const wpmDisplay = document.getElementById('wpm');
+
+        function getRandomWord() {
+            return words[Math.floor(Math.random() * words.length)];
+        }
+
+        function updateWord() {
+            currentWord = getRandomWord();
+            currentWordDisplay.textContent = currentWord;
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                
+                if (timeLeft === 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function updateAccuracy() {
+            const accuracy = totalKeystrokes === 0 ? 100 : Math.round((correctKeystrokes / totalKeystrokes) * 100);
+            accuracyDisplay.textContent = `${accuracy}%`;
+            return accuracy;
+        }
+
+        function checkInput() {
+            const value = wordInput.value;
+            totalKeystrokes++;
+
+            if (currentWord.startsWith(value)) {
+                wordInput.classList.remove('incorrect');
+                wordInput.classList.add('correct');
+                correctKeystrokes++;
+            } else {
+                wordInput.classList.remove('correct');
+                wordInput.classList.add('incorrect');
+            }
+
+            updateAccuracy();
+
+            if (value === currentWord) {
+                score++;
+                scoreDisplay.textContent = score;
+                wpmDisplay.textContent = Math.round((score / (60 - timeLeft)) * 60);
+                wordInput.value = '';
+                updateWord();
+                currentWordDisplay.classList.add('word-animation');
+                setTimeout(() => currentWordDisplay.classList.remove('word-animation'), 500);
+            }
+        }
+
+        function endGame() {
+            clearInterval(timer);
+            isPlaying = false;
+            
+            const accuracy = updateAccuracy();
+            const wpm = Math.round(score);
+
+            gameOverDisplay.classList.remove('hidden');
+            gameOverDisplay.querySelector('.wpm').textContent = `${wpm} WPM`;
+            gameOverDisplay.querySelector('.final-accuracy').textContent = `${accuracy}% Accuracy`;
+            
+            wordInput.disabled = true;
+        }
+
+        function resetGame() {
+            timeLeft = 60;
+            score = 0;
+            totalKeystrokes = 0;
+            correctKeystrokes = 0;
+            isPlaying = false;
+            
+            timerDisplay.textContent = timeLeft;
+            scoreDisplay.textContent = score;
+            wpmDisplay.textContent = '0';
+            updateAccuracy();
+            updateWord();
+            
+            wordInput.value = '';
+            wordInput.disabled = false;
+            wordInput.classList.remove('correct', 'incorrect');
+            
+            gameOverDisplay.classList.add('hidden');
+            
+            clearInterval(timer);
+            wordInput.focus();
+        }
+
+        wordInput.addEventListener('input', (e) => {
+            if (!isPlaying) {
+                isPlaying = true;
+                startTimer();
+            }
+            checkInput();
+        });
+
+        // Initialize game
+        updateWord();
+        wordInput.focus();
+    </script>
+</body>
+</html>
