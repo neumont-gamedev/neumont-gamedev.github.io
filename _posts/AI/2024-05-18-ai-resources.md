@@ -98,6 +98,9 @@ img_path: /assets/img/ai
 <span title="The Rundown is a daily AI newsletter.Get the latest AI news and learn how to apply it in 5 minutes.">The Rundown:</span>
 [https://www.therundown.ai/subscribe/](https://www.therundown.ai/subscribe/)
 
+<span title="Online glossary for generative AI.">AIPRM’s Ultimate Generative AI Glossary:</span>
+[https://www.aiprm.com/ai-glossary/](https:www.aiprm.com/ai-glossary/)
+
 
 
 
