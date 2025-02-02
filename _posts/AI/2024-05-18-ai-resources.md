@@ -99,8 +99,5 @@ img_path: /assets/img/ai
 [https://www.therundown.ai/subscribe/](https://www.therundown.ai/subscribe/)
 
 <span title="Online glossary for generative AI.">AIPRM’s Ultimate Generative AI Glossary:</span>
-[https://www.aiprm.com/ai-glossary/](https:www.aiprm.com/ai-glossary/)
-
-
-
+[https://www.aiprm.com/ai-glossary/](https://www.aiprm.com/ai-glossary/)
 
