@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dijkstra's Algorithm Visualization</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 16px;
+            background: #f1f5f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .header {
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #1e293b;
+        }
+        .graph-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-outline {
+            background: white;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+        }
+        .info-section {
+            margin-bottom: 16px;
+        }
+        .info-section h3 {
+            font-size: 16px;
+            margin: 0 0 8px 0;
+            color: #1e293b;
+        }
+        .info-section p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dijkstra's Algorithm Visualization</h1>
+        </div>
+        
+        <div class="graph-container">
+            <svg id="graph" width="500" height="300"></svg>
+        </div>
+
+        <div class="controls">
+            <div>
+                <button id="nextBtn" class="btn btn-primary">
+                    ▶ Next Step
+                </button>
+                <button id="resetBtn" class="btn btn-outline">
+                    ↺ Reset
+                </button>
+            </div>
+            <div class="info-section">
+                <h3>Current Step</h3>
+                <p id="currentStep"></p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>Current Node</h3>
+            <p id="currentNode">-</p>
+        </div>
+
+        <div class="info-section">
+            <h3>Priority Queue</h3>
+            <p id="priorityQueue"></p>
+        </div>
+
+        <div class="info-section">
+            <h3>Current Path</h3>
+            <p id="path"></p>
+        </div>
+    </div>
+
+    <script>
+        const graph = {
+            nodes: [
+                { id: 'A', x: 50, y: 150 },
+                { id: 'C', x: 150, y: 225 },
+                { id: 'D', x: 250, y: 150 },
+                { id: 'B', x: 350, y: 75 },
+                { id: 'E', x: 450, y: 150 }
+            ],
+            edges: [
+                { from: 'A', to: 'B', weight: 4 },
+                { from: 'A', to: 'C', weight: 2 },
+                { from: 'B', to: 'D', weight: 3 },
+                { from: 'C', to: 'D', weight: 1 },
+                { from: 'D', to: 'E', weight: 5 }
+            ]
+        };
+
+        const steps = [
+            { node: 'A', description: 'Initialize with node A' },
+            { node: 'A', description: 'Update neighbors of A: B(4) and C(2)' },
+            { node: 'C', description: 'Visit C (shortest distance: 2)' },
+            { node: 'D', description: 'Visit D through C (total distance: 3)' },
+            { node: 'B', description: 'Visit B (total distance: 4)' },
+            { node: 'E', description: 'Visit E through D (total distance: 8)' }
+        ];
+
+        // Initialize all distances to Infinity except start node
+        const initialDistances = { A: 0, B: Infinity, C: Infinity, D: Infinity, E: Infinity };
+        const initialPreviousNodes = { A: null, B: null, C: null, D: null, E: null };
+
+        let state = {
+            currentStep: 0,
+            distances: initialDistances,
+            previousNodes: initialPreviousNodes,
+            visited: new Set(['A']),
+            priorityQueue: []
+        };
+
+        function getShortestPath(target) {
+            const path = [];
+            let current = target;
+            while (current !== null) {
+                path.unshift(current);
+                current = state.previousNodes[current];
+            }
+            return path;
+        }
+
+        function createSvgElement(type, attributes) {
+            const element = document.createElementNS('http://www.w3.org/2000/svg', type);
+            for (const [key, value] of Object.entries(attributes)) {
+                element.setAttribute(key, value);
+            }
+            return element;
+        }
+
+        function drawGraph() {
+            const svg = document.getElementById('graph');
+            svg.innerHTML = '';
+
+            // Draw edges
+            for (const edge of graph.edges) {
+                const fromNode = graph.nodes.find(n => n.id === edge.from);
+                const toNode = graph.nodes.find(n => n.id === edge.to);
+                
+                // Check if this edge is part of the current shortest path
+                const currentNode = steps[state.currentStep].node;
+                const shortestPath = getShortestPath(currentNode);
+                const isShortestPath = shortestPath.includes(edge.from) && 
+                                     shortestPath.includes(edge.to) &&
+                                     state.previousNodes[edge.to] === edge.from;
+
+                const line = createSvgElement('line', {
+                    x1: fromNode.x,
+                    y1: fromNode.y,
+                    x2: toNode.x,
+                    y2: toNode.y,
+                    stroke: isShortestPath ? '#22C55E' : '#94A3B8',
+                    'stroke-width': isShortestPath ? '3' : '2'
+                });
+                svg.appendChild(line);
+
+                const text = createSvgElement('text', {
+                    x: (fromNode.x + toNode.x) / 2,
+                    y: (fromNode.y + toNode.y) / 2 - 10,
+                    'text-anchor': 'middle',
+                    fill: '#16A34A',
+                    'font-size': '12px',
+                    'font-weight': 'bold'
+                });
+                text.textContent = edge.weight;
+                svg.appendChild(text);
+            }
+
+            // Draw nodes
+            for (const node of graph.nodes) {
+                const isVisited = state.visited.has(node.id);
+                const isCurrent = steps[state.currentStep].node === node.id;
+                const isStart = node.id === 'A';
+                const isEnd = node.id === 'E';
+
+                let fillColor = 'white';
+                if (isCurrent) fillColor = '#60A5FA';
+                else if (isVisited) fillColor = '#93C5FD';
+
+                let borderColor = '#1E40AF';
+                if (isStart) borderColor = '#047857';
+                else if (isEnd) borderColor = '#991B1B';
+
+                const circle = createSvgElement('circle', {
+                    cx: node.x,
+                    cy: node.y,
+                    r: '20',
+                    fill: fillColor,
+                    stroke: borderColor,
+                    'stroke-width': '2'
+                });
+                svg.appendChild(circle);
+
+                // Draw previous node above
+                const prevNode = createSvgElement('text', {
+                    x: node.x,
+                    y: node.y - 35,
+                    'text-anchor': 'middle',
+                    'dominant-baseline': 'middle',
+                    fill: '#475569',
+                    'font-size': '12px'
+                });
+                prevNode.textContent = state.previousNodes[node.id] || '-';
+                svg.appendChild(prevNode);
+
+                // Draw node ID
+                const nodeId = createSvgElement('text', {
+                    x: node.x,
+                    y: node.y,
+                    'text-anchor': 'middle',
+                    'dominant-baseline': 'middle',
+                    fill: '#1E293B',
+                    'font-size': '14px',
+                    'font-weight': '500'
+                });
+                nodeId.textContent = node.id;
+                svg.appendChild(nodeId);
+
+                // Draw distance below
+                const distance = createSvgElement('text', {
+                    x: node.x,
+                    y: node.y + 35,
+                    'text-anchor': 'middle',
+                    'dominant-baseline': 'middle',
+                    fill: '#475569',
+                    'font-size': '12px'
+                });
+                distance.textContent = state.distances[node.id] === Infinity ? '∞' : state.distances[node.id];
+                svg.appendChild(distance);
+            }
+        }
+
+        function getPath() {
+            const currentNode = steps[state.currentStep].node;
+            const path = [];
+            let node = currentNode;
+            
+            while (node !== null) {
+                path.unshift(node);
+                node = state.previousNodes[node];
+            }
+            
+            return path;
+        }
+
+        function updateUI() {
+            const currentNode = steps[state.currentStep].node;
+            document.getElementById('currentNode').textContent = `Node ${currentNode} (Distance: ${state.distances[currentNode]})`;
+            document.getElementById('currentStep').textContent = steps[state.currentStep].description;
+            document.getElementById('priorityQueue').textContent = state.priorityQueue.length > 0 
+                ? state.priorityQueue.map(item => `${item.node}: ${item.distance}`).join(', ')
+                : 'Empty';
+            document.getElementById('path').textContent = getPath().join(' → ');
+            document.getElementById('nextBtn').disabled = state.currentStep >= steps.length - 1;
+            drawGraph();
+        }
+
+        function nextStep() {
+            if (state.currentStep >= steps.length - 1) return;
+
+            const newStep = state.currentStep + 1;
+            const newVisited = new Set(state.visited);
+            const newDistances = { ...state.distances };
+            const newPreviousNodes = { ...state.previousNodes };
+            const newQueue = [];
+            
+            switch(newStep) {
+                case 1: // Initialize neighbors of A
+                    newDistances.B = 4;
+                    newDistances.C = 2;
+                    newPreviousNodes.B = 'A';
+                    newPreviousNodes.C = 'A';
+                    newQueue.push({ node: 'B', distance: 4 }, { node: 'C', distance: 2 });
+                    break;
+                case 2: // Visit C
+                    newVisited.add('C');
+                    newQueue.push({ node: 'D', distance: 3 }, { node: 'B', distance: 4 });
+                    break;
+                case 3: // Visit D
+                    newVisited.add('D');
+                    newDistances.D = 3;
+                    newPreviousNodes.D = 'C';
+                    newQueue.push({ node: 'B', distance: 4 }, { node: 'E', distance: 8 });
+                    break;
+                case 4: // Visit B
+                    newVisited.add('B');
+                    newQueue.push({ node: 'E', distance: 8 });
+                    break;
+                case 5: // Visit E
+                    newVisited.add('E');
+                    newDistances.E = 8;
+                    newPreviousNodes.E = 'D';
+                    break;
+            }
+
+            state = {
+                currentStep: newStep,
+                distances: newDistances,
+                previousNodes: newPreviousNodes,
+                visited: newVisited,
+                priorityQueue: newQueue,
+            };
+
+            updateUI();
+        }
+
+        function reset() {
+            state = {
+                currentStep: 0,
+                distances: { A: 0, B: 4, C: 2, D: Infinity, E: Infinity },
+                previousNodes: { A: null, B: 'A', C: 'A', D: null, E: null },
+                visited: new Set(['A']),
+                priorityQueue: [
+                    { node: 'B', distance: 4 },
+                    { node: 'C', distance: 2 }
+                ],
+                path: ['A']
+            };
+            updateUI();
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', nextStep);
+        document.getElementById('resetBtn').addEventListener('click', reset);
+
+        // Initial render
+        updateUI();
+    </script>
+</body>
+</html>
