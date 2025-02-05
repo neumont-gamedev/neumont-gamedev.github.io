@@ -15,39 +15,51 @@ _Dijkstra’s Algorithm is a widely used graph-based algorithm for finding the s
 
 ```
 function Dijkstra(startNode, endNode):
-    // Initialize priority queue for nodes
+    // Initialize a priority queue to manage nodes by their cost
+    // Nodes with lower costs will be processed first
     nodes = PriorityQueue()
 
-    // Set the cost of the start node to 0
+    // Initialize the start node with cost 0
+    // All other nodes implicitly have infinite cost
     startNode.Cost = 0
     nodes.Enqueue(startNode, priority = startNode.Cost)
 
-    // Flag to check if the destination is found
+    // Track if we've found the end node
+    // This allows early exit once the shortest path is found
     found = false
 
     while nodes is not empty and found is false:
-        // Get the node with the lowest cost
+        // Get the unvisited node with smallest cost
+        // This node is guaranteed to have the shortest path from start
         currentNode = nodes.Dequeue()
 
-        // If we reached the destination, stop
+        // If this is our target node, we've found the shortest path
+        // No need to explore further nodes
         if currentNode == endNode:
             found = true
             break
 
-        // Iterate through all neighboring nodes
+        // Check each connection from current node
+        // This explores all possible paths one step further
         for each neighbor in currentNode.neighbors:
-            // Calculate cost to reach the neighbor
+            // Calculate total cost to reach this neighbor
+            // Cost = (cost to current) + (distance from current to neighbor)
             cost = currentNode.Cost + Distance(currentNode, neighbor)
 
-            // If this path is shorter, update the neighbor's cost and previous
+            // If we found a shorter path to this neighbor
+            // Update its cost and set current node as its predecessor
             if cost < neighbor.Cost:
                 neighbor.Cost = cost
                 neighbor.Previous = currentNode
 
-                // Add the neighbor to the queue with updated cost
+                // Add/Update neighbor in priority queue
+                // It will be explored later based on its new priority
                 nodes.Enqueue(neighbor, priority = neighbor.Cost)
 
-    return // Shortest path can be reconstructed using the Previous references
+    // At this point, each node's Previous reference forms a chain
+    // Follow Previous references from endNode to startNode to get path
+    
+    return
 ```
 ### Interactive Demonstration ###
 
