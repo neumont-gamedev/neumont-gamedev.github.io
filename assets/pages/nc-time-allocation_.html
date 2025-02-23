@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Time Allocation</title>
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+
+    <style>
+        :root {
+            --background: #f5f5f5;
+            --container-bg: white;
+            --text: #333;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #1a1a1a;
+                --container-bg: #2d2d2d;
+                --text: #ffffff;
+                --shadow: rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        /* Support GitHub Pages dark theme */
+        .dark-theme {
+            --background: #1a1a1a;
+            --container-bg: #2d2d2d;
+            --text: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background);
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--container-bg);
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px var(--shadow);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .title {
+            color: var(--text);
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--text);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            opacity: 0.8;
+        }
+
+        .chart-container {
+            height: 400px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .sliders-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slider-header {
+            display: grid;
+            grid-template-columns: 100px 1fr 80px;
+            gap: 12px;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .category-tip {
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+
+        .category-tip.warning {
+            color: #ff4d4d;
+        }
+
+        .category-tip.positive {
+            color: #4caf50;
+        }
+
+        .category-tip.suggestion {
+            color: #ffbb28;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin: 8px 0;
+        }
+
+        .total {
+            text-align: center;
+            margin-top: 16px;
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        .total.exceeded {
+            color: #ff4d4d;
+        }
+
+        .total.valid {
+            color: #4caf50;
+        }
+
+        .tips-container {
+            margin: 32px 0;
+            padding: 16px;
+            border-radius: 8px;
+            background-color: var(--container-bg);
+            color: var(--text);
+            border: 1px solid var(--shadow);
+        }
+
+        .tips-title {
+            color: var(--text);
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        .tip {
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 4px;
+        }
+
+        .tip.warning {
+            background-color: rgba(255, 77, 77, 0.1);
+            border-left: 4px solid #ff4d4d;
+        }
+
+        .tip.suggestion {
+            background-color: rgba(255, 187, 40, 0.1);
+            border-left: 4px solid #ffbb28;
+        }
+
+        .tip.positive {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4caf50;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            .container {
+                padding: 16px;
+            }
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Daily Time Allocation</h1>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <div class="sliders-container" id="sliders"></div>
+    </div>
+
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const activities = [
+                { name: 'Sleep', hours: 8, color: '#FF8042' },
+                { name: 'School', hours: 6, color: '#00C49F' },
+                { name: 'Homework', hours: 3, color: '#FFBB28' },
+                { name: 'Social', hours: 3, color: '#0088FE' },
+                { name: 'Work', hours: 2, color: '#FF4D4D' },
+                { name: 'Daily Tasks', hours: 2, color: '#9C27B0' }
+            ];
+
+            let pieChart;
+
+            function getTip(activity, hours, context = {}) {
+                const { totalAcademic } = context;
+                
+                switch(activity) {
+                    case 'Sleep':
+                        if (hours < 7) {
+                            return {
+                                text: "Get more sleep! (7-9h recommended)",
+                                type: "warning"
+                            };
+                        } else if (hours > 9) {
+                            return {
+                                text: "Consider reducing sleep time",
+                                type: "suggestion"
+                            };
+                        } else {
+                            return {
+                                text: "Healthy sleep schedule!",
+                                type: "positive"
+                            };
+                        }
+                    case 'School':
+                        if (hours < 4) {
+                            return {
+                                text: "Very low class time",
+                                type: "warning"
+                            };
+                        } else if (hours > 8) {
+                            return {
+                                text: "Heavy course load - plan accordingly",
+                                type: "suggestion"
+                            };
+                        }
+                        return {
+                                text: "Good class time balance",
+                                type: "positive"
+                            };
+                    case 'Homework':
+                        const schoolHours = activities.find(a => a.name === 'School').hours;
+                        if (hours < schoolHours * 0.3) {
+                            return {
+                                text: "Increase study time (30-50% of class time)",
+                                type: "warning"
+                            };
+                        }
+                        return {
+                            text: "Good study time allocation",
+                            type: "positive"
+                        };
+                    case 'Social':
+                        if (hours > totalAcademic) {
+                            return {
+                                text: "Reduce social time for better balance",
+                                type: "warning"
+                            };
+                        } else if (hours < 1) {
+                            return {
+                                text: "Consider some social time for wellbeing",
+                                type: "suggestion"
+                            };
+                        }
+                        return {
+                            text: "Good social balance",
+                            type: "positive"
+                        };
+                    case 'Work':
+                        if (hours > 4 && totalAcademic < 8) {
+                            return {
+                                text: "Work may impact studies",
+                                type: "warning"
+                            };
+                        } else if (hours > 6) {
+                            return {
+                                text: "Heavy work schedule - manage carefully",
+                                type: "suggestion"
+                            };
+                        }
+                        return {
+                            text: "Balanced work hours",
+                            type: "positive"
+                        };
+                    case 'Daily Tasks':
+                        if (hours < 2) {
+                            return {
+                                text: "Allow time for meals & self-care",
+                                type: "warning"
+                            };
+                        } else if (hours > 4) {
+                            return {
+                                text: "Consider optimizing daily tasks",
+                                type: "suggestion"
+                            };
+                        }
+                        return {
+                            text: "Good daily routine time",
+                            type: "positive"
+                        };
+                    default:
+                        return null;
+                }
+            }
+
+            // Function to check dark mode
+            function isDarkMode() {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches || 
+                       document.documentElement.classList.contains('dark-theme');
+            }
+
+            // Watch for system dark mode changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                updateChartTheme(e.matches);
+            });
+
+            function createChart() {
+                const ctx = document.getElementById('pieChart').getContext('2d');
+                pieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: activities.map(a => `${a.name} (${a.hours}h)`),
+                        datasets: [{
+                            data: activities.map(a => a.hours),
+                            backgroundColor: activities.map(a => a.color),
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: isDarkMode() ? '#ffffff' : '#333333',
+                                    boxWidth: 12,
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw} hours`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateChartTheme(darkMode) {
+                pieChart.options.plugins.legend.labels.color = darkMode ? '#ffffff' : '#333333';
+                pieChart.update();
+            }
+
+            window.toggleTheme = function() {
+                const html = document.documentElement;
+                const isDark = html.getAttribute('data-theme') === 'dark';
+                html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+                updateChartTheme(!isDark);
+            }
+
+            // Create sliders
+            const slidersContainer = document.getElementById('sliders');
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'total';
+            slidersContainer.appendChild(totalDiv);
+
+            activities.forEach((activity, index) => {
+                const sliderGroup = document.createElement('div');
+                sliderGroup.className = 'slider-group';
+
+                const header = document.createElement('div');
+                header.className = 'slider-header';
+                
+                const label = document.createElement('span');
+                label.textContent = activity.name;
+                
+                const tip = document.createElement('span');
+                tip.className = 'category-tip';
+                const school = activities.find(a => a.name === 'School').hours;
+                const homework = activities.find(a => a.name === 'Homework').hours;
+                const initialTip = getTip(activity.name, activity.hours, { totalAcademic: school + homework });
+                tip.textContent = initialTip.text;
+                tip.classList.add(initialTip.type);
+                
+                const value = document.createElement('span');
+                value.textContent = `${activity.hours}h`;
+                
+                header.appendChild(label);
+                header.appendChild(tip);
+                header.appendChild(value);
+
+                const slider = document.createElement('input');
+                slider.type = 'range';
+                slider.min = '0';
+                slider.max = '24';
+                slider.value = activity.hours;
+                slider.style.accentColor = activity.color;
+
+                slider.addEventListener('input', (e) => {
+                    const newHours = parseInt(e.target.value);
+                    activities[index].hours = newHours;
+                    value.textContent = `${newHours}h`;
+                    
+                    // Update chart data and labels
+                    pieChart.data.labels = activities.map(a => `${a.name} (${a.hours}h)`);
+                    pieChart.data.datasets[0].data = activities.map(a => a.hours);
+                    pieChart.update();
+
+                    // Update total
+                    const total = activities.reduce((sum, act) => sum + act.hours, 0);
+                    totalDiv.textContent = `Total: ${total} hours ${total > 24 ? '(Exceeds 24 hours!)' : ''}`;
+                    totalDiv.className = `total ${total > 24 ? 'exceeded' : 'valid'}`;
+
+                    // Update tip for this slider
+                    const school = activities.find(a => a.name === 'School').hours;
+                    const homework = activities.find(a => a.name === 'Homework').hours;
+                    const newTip = getTip(activity.name, newHours, { totalAcademic: school + homework });
+                    tip.textContent = newTip.text;
+                    tip.className = `category-tip ${newTip.type}`;
+                });
+
+                sliderGroup.appendChild(header);
+                sliderGroup.appendChild(slider);
+                slidersContainer.appendChild(sliderGroup);
+            });
+
+            // Initial total calculation
+            const initial = activities.reduce((sum, act) => sum + act.hours, 0);
+            totalDiv.textContent = `Total: ${initial} hours`;
+            totalDiv.className = 'total valid';
+
+            // Create initial chart
+            createChart();
+        });
+    </script>
+</body>
+</html>

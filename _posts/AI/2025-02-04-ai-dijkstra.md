@@ -58,7 +58,7 @@ function Dijkstra(startNode, endNode):
 
     // At this point, each node's Previous reference forms a chain
     // Follow Previous references from endNode to startNode to get path
-    
+
     return
 ```
 ### Interactive Demonstration ###
