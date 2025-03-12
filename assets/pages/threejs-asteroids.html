@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Simple Three.js Asteroids</title>
+    <!-- Add Google Fonts for the party invite -->
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            z-index: 100;
+            pointer-events: none;
+        }
+        #score {
+            position: absolute;
+            top: 40px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            z-index: 100;
+            pointer-events: none;
+        }
+        #partyInvite {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffcc00;
+            font-family: 'Audiowide', 'Orbitron', sans-serif;
+            font-size: 24px;
+            text-align: center;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #0000ff;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #00ccff;
+            box-shadow: 0 0 30px #00ffcc;
+            z-index: 200;
+            pointer-events: none;
+            display: none;
+        }
+        #partyInvite span {
+            display: block;
+            margin: 10px 0;
+        }
+        #partyInvite .title {
+            font-size: 32px;
+            color: #ff00cc;
+            margin-bottom: 20px;
+        }
+        #partyInvite .details {
+            font-size: 28px;
+            color: #00ffff;
+        }
+        #partyInvite .location {
+            font-size: 36px;
+            color: #ffff00;
+            margin-top: 20px;
+        }
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        #partyInvite.show {
+            display: block;
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">PRESS SPACE TO START</div>
+    <div id="score">Score: 0</div>
+    <div id="partyInvite">
+        <span class="title">BSGD</span>
+        <span class="details">Winter Party 2025</span>
+        <span class="location">Room 325</span>
+        <span class="details">Thursday at Noon</span>
+    </div>
+    <div id="gameCanvas"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Make sure Three.js is loaded
+        if (typeof THREE === 'undefined') {
+            document.body.innerHTML = '<div style="color: white; text-align: center; margin-top: 100px;">Error: Three.js failed to load</div>';
+            throw new Error('Three.js failed to load');
+        }
+
+        // Game variables
+        let scene, camera, renderer;
+        let ship, bullets = [], asteroids = [];
+        let particles = [];
+        let score = 0;
+        let scoreElement, infoElement;
+        let gameOver = false;
+        let lastShootTime = 0;
+        let gameStarted = false; // Track if game has started
+        let partyInviteShown = false; // Track if party invite has been shown
+
+        // Key states
+        const keys = {
+            w: false,
+            a: false,
+            s: false,
+            d: false,
+            space: false
+        };
+
+        // Initialize the game
+        function init() {
+            console.log("Initializing game...");
+            
+            // Get container element and dimensions
+            const container = document.getElementById('gameCanvas');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            // Create scene
+            scene = new THREE.Scene();
+            
+            // Create camera with adjusted field of view
+            camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            camera.position.z = 40;
+            
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setClearColor(0x000000);
+            renderer.setSize(width, height);
+            container.appendChild(renderer.domElement);
+            
+            // Get score and info elements
+            scoreElement = document.getElementById('score');
+            infoElement = document.getElementById('info');
+            
+            // Initially hide score
+            scoreElement.style.display = 'none';
+            
+            // Create ship
+            createShip();
+            
+            // Set up event listeners
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            window.addEventListener('resize', onWindowResize);
+            
+            // Start animation loop
+            console.log("Starting game loop...");
+            animate();
+        }
+        
+        // Create the player's ship
+        function createShip() {
+            // Create a custom triangle shape for the ship that points in the right direction
+            const shipGeometry = new THREE.BufferGeometry();
+            
+            // Define vertices for a triangle pointing right (along positive X axis)
+            const vertices = new Float32Array([
+                 1.0,  0.0, 0.0,  // tip (front)
+                -0.5,  0.5, 0.0,  // top-left
+                -0.5, -0.5, 0.0   // bottom-left
+            ]);
+            
+            shipGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+            
+            // Add faces
+            shipGeometry.setIndex([0, 1, 2]);
+            
+            // Calculate normals
+            shipGeometry.computeVertexNormals();
+            
+            const shipMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xffffff,
+                side: THREE.DoubleSide // Make both sides visible
+            });
+            
+            ship = new THREE.Mesh(shipGeometry, shipMaterial);
+            ship.vx = 0;
+            ship.vy = 0;
+            scene.add(ship);
+        }
+        
+        // Create an asteroid
+        function createAsteroid(size = Math.random() * 2 + 1) {
+            const geometry = new THREE.IcosahedronGeometry(size, 0);
+            
+            // Random color
+            const color = new THREE.Color(
+                Math.random(),
+                Math.random(),
+                Math.random()
+            );
+            
+            const material = new THREE.MeshBasicMaterial({
+                color: color,
+                wireframe: true
+            });
+            
+            const asteroid = new THREE.Mesh(geometry, material);
+            
+            // Position around the edges
+            const aspectRatio = camera ? camera.aspect : 1;
+            const verticalBound = 30;
+            const horizontalBound = verticalBound * aspectRatio;
+            
+            // Randomly choose a side to spawn from
+            const side = Math.floor(Math.random() * 4); // 0=top, 1=right, 2=bottom, 3=left
+            
+            switch(side) {
+                case 0: // Top
+                    asteroid.position.x = (Math.random() * 2 - 1) * horizontalBound;
+                    asteroid.position.y = verticalBound + size;
+                    break;
+                case 1: // Right
+                    asteroid.position.x = horizontalBound + size;
+                    asteroid.position.y = (Math.random() * 2 - 1) * verticalBound;
+                    break;
+                case 2: // Bottom
+                    asteroid.position.x = (Math.random() * 2 - 1) * horizontalBound;
+                    asteroid.position.y = -verticalBound - size;
+                    break;
+                case 3: // Left
+                    asteroid.position.x = -horizontalBound - size;
+                    asteroid.position.y = (Math.random() * 2 - 1) * verticalBound;
+                    break;
+            }
+            
+            // Set random velocity instead of moving toward center
+            const speed = 0.1 + Math.random() * 0.1;
+            const randomAngle = Math.random() * Math.PI * 2;
+
+            asteroid.speed = (5 - size) + Math.random() * 0.5;
+
+            asteroid.vx = Math.cos(randomAngle) * speed;
+            asteroid.vy = Math.sin(randomAngle) * speed;
+            
+            scene.add(asteroid);
+            asteroids.push(asteroid);
+            
+            return asteroid;
+        }
+        
+        // Create explosion particles
+        function createExplosion(position, color, count = 15, size = 0.3) {
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlePositions = [];
+            const particleVelocities = [];
+            
+            for (let i = 0; i < count; i++) {
+                // Random position near the center point
+                const offset = new THREE.Vector3(
+                    (Math.random() - 0.5) * 2,
+                    (Math.random() - 0.5) * 2,
+                    0
+                );
+                
+                // Add position
+                particlePositions.push(
+                    position.x + offset.x * 0.3,
+                    position.y + offset.y * 0.3,
+                    position.z
+                );
+                
+                // Set velocity
+                particleVelocities.push(
+                    offset.x * 0.2,
+                    offset.y * 0.2,
+                    0
+                );
+            }
+            
+            particlesGeometry.setAttribute(
+                'position',
+                new THREE.Float32BufferAttribute(particlePositions, 3)
+            );
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                color: color,
+                size: size,
+                transparent: true,
+                opacity: 1
+            });
+            
+            const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
+            particleSystem.velocities = particleVelocities;
+            particleSystem.life = 40;
+            
+            scene.add(particleSystem);
+            particles.push(particleSystem);
+            
+            return particleSystem;
+        }
+        
+        // Create celebratory particles across screen
+        function createCelebrationParticles() {
+            // Create multiple particle systems at different locations
+            for (let i = 0; i < 30; i++) {
+                const x = (Math.random() - 0.5) * 160;
+                const y = (Math.random() - 0.5) * 140;
+                
+                // Random festive color
+                const festiveColors = [
+                    0xff0000, // Red
+                    0x00ff00, // Green
+                    0x0000ff, // Blue
+                    0xffff00, // Yellow
+                    0xff00ff, // Magenta
+                    0x00ffff  // Cyan
+                ];
+                
+                const color = festiveColors[Math.floor(Math.random() * festiveColors.length)];
+                
+                createExplosion(
+                    new THREE.Vector3(x, y, 0),
+                    color,
+                    20,  // More particles
+                    0.4  // Larger particles
+                );
+            }
+        }
+        
+        // Show party invitation
+        function showPartyInvite() {
+            if (partyInviteShown) return;
+            
+            // Mark as shown first to prevent multiple calls
+            partyInviteShown = true;
+            
+            console.log("Showing party invitation!");
+            
+            // Create celebration effects
+            createCelebrationParticles();
+            
+            // Get the party invite element
+            const partyInvite = document.getElementById('partyInvite');
+            
+            // Show it (separate from animation)
+            partyInvite.style.display = 'block';
+            
+            // Add animation class in the next frame
+            setTimeout(() => {
+                partyInvite.classList.add('show');
+            }, 50);
+        }
+        
+        // Handle window resize
+        function onWindowResize() {
+            const container = document.getElementById('gameCanvas');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+        
+        // Handle key down
+        function handleKeyDown(event) {
+            const key = event.key.toLowerCase();
+            
+            // Space key to start game or reset after game over
+            if (key === ' ') {
+                if (!gameStarted) {
+                    startGame();
+                } else if (gameOver) {
+                    resetGame();
+                } else {
+                    shootBullet();
+                }
+                event.preventDefault(); // Prevent page scroll
+                return;
+            }
+            
+            // Update key states
+            if (key in keys) {
+                keys[key] = true;
+            }
+        }
+        
+        // Handle key up
+        function handleKeyUp(event) {
+            const key = event.key.toLowerCase();
+            
+            if (key in keys) {
+                keys[key] = false;
+            }
+        }
+        
+        // Start the game
+        function startGame() {
+            gameStarted = true;
+            gameOver = false;
+            
+            // Show game controls and score
+            infoElement.textContent = "WASD to move, SPACE to shoot";
+            scoreElement.style.display = 'block';
+            
+            // Create initial asteroids
+            createInitialAsteroids();
+            
+            // Make ship visible if it was hidden
+            if (ship) ship.visible = true;
+        }
+        
+        // Create initial set of asteroids
+        function createInitialAsteroids() {
+            // Clear any existing asteroids first
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                scene.remove(asteroids[i]);
+            }
+            asteroids = [];
+            
+            // Create new set of asteroids
+            for (let i = 0; i < 8; i++) {
+                createAsteroid();
+            }
+        }
+        
+        // Reset the game
+        function resetGame() {
+            // Clear all game objects
+            clearGameObjects();
+            
+            // Reset score
+            score = 0;
+            scoreElement.textContent = "Score: 0";
+            
+            // Reset game state
+            gameOver = false;
+            gameStarted = true;
+            partyInviteShown = false;
+            
+            // Hide party invite
+            const partyInvite = document.getElementById('partyInvite');
+            partyInvite.classList.remove('show');
+            partyInvite.style.display = 'none';
+            
+            // Show game controls
+            infoElement.textContent = "A/D/W to move, SPACE to shoot";
+            
+            // Create new ship
+            createShip();
+            
+            // Create new asteroids
+            for (let i = 0; i < 8; i++) {
+                createAsteroid();
+            }
+        }
+        
+        // Clear all game objects
+        function clearGameObjects() {
+            // Remove ship
+            if (ship) {
+                scene.remove(ship);
+                ship = null;
+            }
+            
+            // Remove all asteroids
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                scene.remove(asteroids[i]);
+            }
+            asteroids = [];
+            
+            // Remove all bullets
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                scene.remove(bullets[i]);
+            }
+            bullets = [];
+            
+            // Remove all particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                scene.remove(particles[i]);
+            }
+            particles = [];
+        }
+        
+        // Shoot a bullet
+        function shootBullet() {
+            if (!gameStarted || gameOver) return;
+            
+            // Check cooldown (limit to 5 shots per second)
+            const now = Date.now();
+            if (now - lastShootTime < 200) {
+                return;
+            }
+            lastShootTime = now;
+            
+            // Random color
+            const color = new THREE.Color(
+                Math.random(),
+                Math.random(),
+                Math.random()
+            );
+          
+            // Create bullet
+            const bulletGeometry = new THREE.SphereGeometry(0.2, 8, 8);
+            const bulletMaterial = new THREE.MeshBasicMaterial({color: color});
+            const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
+            
+            // Calculate direction based on ship rotation
+            const dirX = Math.cos(ship.rotation.z);
+            const dirY = Math.sin(ship.rotation.z);
+            
+            // Position at ship tip (in front of the ship based on its rotation)
+            bullet.position.set(
+                ship.position.x + dirX * 2,
+                ship.position.y + dirY * 2,
+                ship.position.z
+            );
+            
+            // Set velocity
+            bullet.vx = dirX * 0.8;
+            bullet.vy = dirY * 0.8;
+            
+            // Add to scene
+            scene.add(bullet);
+            bullets.push(bullet);
+            
+            // Remove after 2 seconds
+            setTimeout(() => {
+                if (bullets.includes(bullet)) {
+                    scene.remove(bullet);
+                    bullets.splice(bullets.indexOf(bullet), 1);
+                }
+            }, 2000);
+        }
+        
+        // Update ship position and rotation
+        function updateShip() {
+            if (!gameStarted || gameOver) return;
+            
+            // Rotate ship
+            if (keys.a) ship.rotation.z += 0.05;
+            if (keys.d) ship.rotation.z -= 0.05;
+            
+            // Apply thrust
+            if (keys.w) {
+                // Move in direction ship is facing
+                const dirX = Math.cos(ship.rotation.z);
+                const dirY = Math.sin(ship.rotation.z);
+                
+                ship.vx += dirX * 0.02;
+                ship.vy += dirY * 0.02;
+            }
+            
+            // Apply friction
+            ship.vx *= 0.98;
+            ship.vy *= 0.98;
+            
+            // Update position
+            ship.position.x += ship.vx;
+            ship.position.y += ship.vy;
+            
+            // Screen wrapping
+            const aspectRatio = camera.aspect;
+            const verticalBound = 30;
+            const horizontalBound = verticalBound * aspectRatio;
+            
+            if (ship.position.x > horizontalBound) ship.position.x = -horizontalBound;
+            if (ship.position.x < -horizontalBound) ship.position.x = horizontalBound;
+            if (ship.position.y > verticalBound) ship.position.y = -verticalBound;
+            if (ship.position.y < -verticalBound) ship.position.y = verticalBound;
+        }
+        
+        // Update bullets
+        function updateBullets() {
+            for (let i = 0; i < bullets.length; i++) {
+                bullets[i].position.x += bullets[i].vx;
+                bullets[i].position.y += bullets[i].vy;
+            }
+        }
+        
+        // Update asteroids
+        function updateAsteroids() {
+            if (!gameStarted) return;
+            
+            // Update existing asteroids
+            for (let i = 0; i < asteroids.length; i++) {
+                const asteroid = asteroids[i];
+                
+                // Move asteroid
+                asteroid.position.x += asteroid.vx;
+                asteroid.position.y += asteroid.vy;
+                
+                // Rotate asteroid
+                asteroid.rotation.x += asteroid.speed * 0.01;
+                asteroid.rotation.y += asteroid.speed * 0.01;
+                
+                // Screen wrapping
+                const aspectRatio = camera.aspect;
+                const verticalBound = 30;
+                const horizontalBound = verticalBound * aspectRatio;
+                
+                if (asteroid.position.x > horizontalBound) asteroid.position.x = -horizontalBound;
+                if (asteroid.position.x < -horizontalBound) asteroid.position.x = horizontalBound;
+                if (asteroid.position.y > verticalBound) asteroid.position.y = -verticalBound;
+                if (asteroid.position.y < -verticalBound) asteroid.position.y = verticalBound;
+            }
+            
+            // Spawn more asteroids if needed
+            if (asteroids.length < 5 && gameStarted && !gameOver) {
+                createAsteroid();
+            }
+        }
+        
+        // Update particles
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particleSystem = particles[i];
+                
+                // Update positions
+                const positions = particleSystem.geometry.attributes.position.array;
+                const velocities = particleSystem.velocities;
+                
+                for (let j = 0; j < positions.length; j += 3) {
+                    positions[j] += velocities[Math.floor(j / 3) * 2];
+                    positions[j + 1] += velocities[Math.floor(j / 3) * 2 + 1];
+                }
+                
+                particleSystem.geometry.attributes.position.needsUpdate = true;
+                
+                // Fade out
+                particleSystem.material.opacity = particleSystem.life / 40;
+                
+                // Decrease life
+                particleSystem.life--;
+                
+                // Remove if expired
+                if (particleSystem.life <= 0) {
+                    scene.remove(particleSystem);
+                    particles.splice(i, 1);
+                }
+            }
+        }
+        
+        // Check for collisions
+        function checkCollisions() {
+            // Check bullet-asteroid collisions
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const bullet = bullets[i];
+                
+                for (let j = asteroids.length - 1; j >= 0; j--) {
+                    const asteroid = asteroids[j];
+                    const dx = bullet.position.x - asteroid.position.x;
+                    const dy = bullet.position.y - asteroid.position.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < asteroid.geometry.parameters.radius) {
+                        // Remove bullet
+                        scene.remove(bullet);
+                        bullets.splice(i, 1);
+                        
+                        // Remove asteroid
+                        scene.remove(asteroid);
+                        asteroids.splice(j, 1);
+                        
+                        // Create explosion effect
+                        createExplosion(
+                            asteroid.position.clone(),
+                            asteroid.material.color,
+                            Math.floor(asteroid.geometry.parameters.radius * 10),
+                            0.3
+                        );
+                        
+                        // Update score and check for party invite trigger
+                        const oldScore = score;
+                        score += Math.floor(100 / asteroid.geometry.parameters.radius);
+                        scoreElement.textContent = `Score: ${score}`;
+                        
+                        // Check if score just passed 200
+                        if (oldScore < 200 && score >= 200) {
+                            // Use setTimeout to avoid blocking the game
+                            setTimeout(showPartyInvite, 100);
+                        }
+                        
+                        // Split asteroid if large enough
+                        if (asteroid.geometry.parameters.radius > 1) {
+                            for (let k = 0; k < 2; k++) {
+                                createAsteroid(asteroid.geometry.parameters.radius / 2);
+                            }
+                        }
+                        
+                        // Create new asteroid to keep game going
+                        setTimeout(() => {
+                            if (asteroids.length < 8 && gameStarted && !gameOver) {
+                                createAsteroid();
+                            }
+                        }, 1000);
+                        
+                        break;
+                    }
+                }
+            }
+            
+            // Check ship-asteroid collisions
+            if (!gameOver) {
+                for (let i = 0; i < asteroids.length; i++) {
+                    const asteroid = asteroids[i];
+                    const dx = ship.position.x - asteroid.position.x;
+                    const dy = ship.position.y - asteroid.position.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < asteroid.geometry.parameters.radius + 1) {
+                        // Game over
+                        gameOver = true;
+                        infoElement.textContent = 'GAME OVER - PRESS SPACE TO RESTART';
+                        
+                        // Create explosion effect
+                        createExplosion(
+                            ship.position.clone(),
+                            0xffffff, // White explosion
+                            30,       // More particles
+                            0.4       // Larger particles
+                        );
+                        
+                        // Hide ship
+                        ship.visible = false;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            updateShip();
+            updateBullets();
+            updateAsteroids();
+            updateParticles();
+            checkCollisions();
+            
+            // Backup check for party invite
+            if (score >= 1000 && !partyInviteShown && gameStarted && !gameOver) {
+                // Use setTimeout to avoid blocking the game
+                setTimeout(showPartyInvite, 100);
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Start the game when page loads
+        window.onload = init;
+    </script>
+</body>
+</html>
