@@ -687,8 +687,8 @@
                         score += Math.floor(100 / asteroid.geometry.parameters.radius);
                         scoreElement.textContent = `Score: ${score}`;
                         
-                        // Check if score just passed 200
-                        if (oldScore < 200 && score >= 200) {
+                        // Check if score just passed 1000
+                        if (oldScore < 1000 && score >= 1000) {
                             // Use setTimeout to avoid blocking the game
                             setTimeout(showPartyInvite, 100);
                         }
