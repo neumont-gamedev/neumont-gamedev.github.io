@@ -142,7 +142,7 @@ This guide provides you with:
 
 One of the largest gaming-focused job boards with listings from major AAA studios, mid-sized developers, and publishers. Features roles across all disciplines including programming, design, art, and production. Strong presence of UK and European game studios.
 
-**Website:** [https://gamejobsdirect.com/](https://gamejobsdirect.com/)
+**Website:** [https://www.gamesjobsdirect.com/](https://www.gamesjobsdirect.com/)
 
 ### Hitmarker (for esports and gaming)
 <p align="left">
