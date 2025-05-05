@@ -63,6 +63,29 @@ To convert between degrees and radians:
 
 Radians are especially important in programming and math libraries, where many functions like `sin()`, `cos()`, and `tan()` expect angles in radians.
 
+## Rotating a 2D Point
+
+To rotate a point in 2D space, we use trigonometry to transform its position into a new **coordinate system** that has been rotated by a certain angle.
+
+Let’s say we have a point **(x, y)** that we want to rotate by an angle **θ** (in radians) around the origin (0, 0). The formulas to compute the new coordinates are:
+
+$$
+x' = x \cdot \cos(θ) - y \cdot \sin(θ)
+$$
+
+$$
+y' = x \cdot \sin(θ) + y \cdot \cos(θ)
+$$
+
+What this is doing is **changing the coordinate system**—rotating the entire space by angle **θ**—so that the point's position is expressed in this new, rotated frame.
+
+#### Interpreting the Formula
+
+- The **cos(θ)** and **sin(θ)** parts come from the unit circle.
+- You're projecting the original x and y values onto the new x and y axes that have been rotated.
+- This transformation keeps the distance (length of the vector) the same—just rotates its direction.
+
+
 ## Vector
 
 ### Vector Length and Normalization
@@ -89,7 +112,9 @@ This unit vector is useful in controlling speed, aiming, and physics-based movem
 </iframe>
 </div>
 
-### Trigonometric Functions Reference Table
+## Reference
+
+### Trigonometric Functions
 
 | Function     | Name           | Description                                                                 |
 |--------------|----------------|--------------------------------------------------------------------------------------|
@@ -102,3 +127,23 @@ This unit vector is useful in controlling speed, aiming, and physics-based movem
 | `sec(θ)`     | Secant         | 1 / cos(θ) — Reciprocal of cosine                                                   |
 | `csc(θ)`     | Cosecant       | 1 / sin(θ) — Reciprocal of sine                                                     |
 | `cot(θ)`     | Cotangent      | cos(θ) / sin(θ) — Adjacent / Opposite                                               |
+
+### Mathematical Symbols and Notations
+
+| Symbol / Notation       | Name / Spoken As                  | Description                                               |
+|--------------------------|----------------------------------|---------------------------------------------------------------|
+| $\vec{v}$                | "vector v"                       | A vector — has both direction and magnitude                   |
+| $\hat{v}$                | "v hat"                          | A **normalized** vector — unit length (magnitude = 1)         |
+| $\| \vec{v} \|$          | "norm of v" or "magnitude of v"  | Length (magnitude) of vector **v**                           |
+| $\theta$                | "theta"                          | Represents an **angle**, usually in radians                   |
+| $\cdot$                 | "dot"                            | **Dot product** of two vectors                                |
+| $\times$               | "cross"                          | **Cross product** (in 3D) — gives a vector perpendicular      |
+| $(x, y)$                | "x comma y"                      | A 2D point or vector                                          |
+| $\sin(\theta)$          | "sine of theta"                  | Trigonometric function — opposite / hypotenuse                |
+| $\cos(\theta)$          | "cosine of theta"                | Trigonometric function — adjacent / hypotenuse                |
+| $\tan(\theta)$          | "tangent of theta"               | Trigonometric function — sine / cosine                        |
+| $\pi$                  | "pi"                             | Ratio of a circle’s circumference to diameter (≈ 3.14159)     |
+| $\Delta$                | "delta"                          | Change or difference (e.g., $\Delta t$ = change in time)      |
+| $\approx$              | "approximately equal"            | Used when values are close but not exact                      |
+
+
