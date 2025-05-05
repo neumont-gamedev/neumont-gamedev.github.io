@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Trigonometry Circle</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f9fafb;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+        }
+        .slider-container {
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+        .slider-label {
+            display: block;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 1.5rem;
+            justify-content: space-between;
+        }
+        .circle-container {
+            flex: 0 1 400px;
+            display: flex;
+            justify-content: center;
+        }
+        .values-container {
+            flex: 0 1 350px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+        }
+        .value-bar {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            height: 1rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+        .sine-bar {
+            background-color: #10b981;
+        }
+        .cosine-bar {
+            background-color: #3b82f6;
+        }
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .value-name {
+            font-weight: 600;
+        }
+        .sine-value {
+            color: #10b981;
+        }
+        .cosine-value {
+            color: #3b82f6;
+        }
+        .tangent-value {
+            color: #8b5cf6;
+        }
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        .concepts {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            margin-top: 1.5rem;
+        }
+        ul {
+            margin-top: 0.5rem;
+            padding-left: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .red {
+            color: #ef4444;
+        }
+        .blue {
+            color: #3b82f6;
+        }
+        .green {
+            color: #10b981;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Unit Circle</h1>
+        
+        <div class="slider-container">
+            <label class="slider-label" id="angle-label">Angle: 45° (0.25π radians)</label>
+            <input type="range" id="angle-slider" min="0" max="360" value="45">
+        </div>
+        
+        <div class="main-content">
+            <div class="circle-container">
+                <svg width="400" height="400" id="trig-circle" viewBox="0 0 400 400" style="overflow: visible;"></svg>
+            </div>
+            
+            <div class="values-container">
+                <h2>Trigonometric Values</h2>
+                
+                <div>
+                    <div class="value-display">
+                        <span class="value-name">Sine:</span>
+                        <span class="sine-value" id="sine-value">0.7071</span>
+                    </div>
+                    <div class="value-bar">
+                        <div class="bar-fill sine-bar" id="sine-bar" style="width: 85%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="value-display">
+                        <span class="value-name">Cosine:</span>
+                        <span class="cosine-value" id="cosine-value">0.7071</span>
+                    </div>
+                    <div class="value-bar">
+                        <div class="bar-fill cosine-bar" id="cosine-bar" style="width: 85%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="value-display">
+                        <span class="value-name">Tangent:</span>
+                        <span class="tangent-value" id="tangent-value">1.0000</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="font-weight: 600; margin-bottom: 0.5rem;">Right Triangle Values:</h3>
+                    <ul>
+                        <li><span class="red">Hypotenuse</span> (radius) = 1</li>
+                        <li><span class="blue">Adjacent side</span> (x-axis) = cos(θ) = <span id="cos-triangle" class="blue">0.7071</span></li>
+                        <li><span class="green">Opposite side</span> (y-axis) = sin(θ) = <span id="sin-triangle" class="green">0.7071</span></li>
+                        <li>Pythagorean identity: sin²(θ) + cos²(θ) = <span id="pythag-value">1.0000</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Key Concepts section removed as requested -->
+    </div>
+
+    <script>
+        // Constants
+        const centerX = 200;
+        const centerY = 200;
+        const radius = 150;
+        
+        // DOM elements
+        const angleSlider = document.getElementById('angle-slider');
+        const angleLabel = document.getElementById('angle-label');
+        const sineValue = document.getElementById('sine-value');
+        const cosineValue = document.getElementById('cosine-value');
+        const tangentValue = document.getElementById('tangent-value');
+        const sineBar = document.getElementById('sine-bar');
+        const cosineBar = document.getElementById('cosine-bar');
+        const sinTriangle = document.getElementById('sin-triangle');
+        const cosTriangle = document.getElementById('cos-triangle');
+        const pythagValue = document.getElementById('pythag-value');
+        const trigCircle = document.getElementById('trig-circle');
+        
+        // Initialize SVG
+        function initializeSVG() {
+            // Coordinate system
+            addElement('line', {
+                x1: 0,
+                y1: centerY,
+                x2: centerX * 2,
+                y2: centerY,
+                stroke: '#888',
+                'stroke-width': 1
+            });
+            
+            addElement('line', {
+                x1: centerX,
+                y1: 0,
+                x2: centerX,
+                y2: centerY * 2,
+                stroke: '#888',
+                'stroke-width': 1
+            });
+            
+            // Coordinate labels
+            addElement('text', {
+                x: centerX * 2 - 20,
+                y: centerY + 20,
+                fill: '#666'
+            }).textContent = 'x';
+            
+            addElement('text', {
+                x: centerX - 20,
+                y: 20,
+                fill: '#666'
+            }).textContent = 'y';
+            
+            // Unit circle
+            addElement('circle', {
+                cx: centerX,
+                cy: centerY,
+                r: radius,
+                stroke: '#444',
+                'stroke-width': 1,
+                fill: 'none'
+            });
+        }
+        
+        // Helper function to create SVG elements
+        function addElement(type, attributes) {
+            const element = document.createElementNS('http://www.w3.org/2000/svg', type);
+            for (const [attr, value] of Object.entries(attributes)) {
+                element.setAttribute(attr, value);
+            }
+            trigCircle.appendChild(element);
+            return element;
+        }
+        
+        // Update the visualization based on angle
+        function updateVisualization() {
+            // Clear previous dynamic elements
+            const dynamicElements = document.querySelectorAll('.dynamic-element');
+            dynamicElements.forEach(el => el.remove());
+            
+            // Get angle in degrees and convert to radians
+            const angleDeg = parseInt(angleSlider.value);
+            const angleRad = (angleDeg * Math.PI) / 180;
+            
+            // Update angle label
+            angleLabel.textContent = `Angle: ${angleDeg}° (${(angleRad / Math.PI).toFixed(2)}π radians)`;
+            
+            // Calculate sine and cosine
+            const sine = Math.sin(angleRad);
+            const cosine = Math.cos(angleRad);
+            
+            // Update values
+            sineValue.textContent = sine.toFixed(4);
+            cosineValue.textContent = cosine.toFixed(4);
+            
+            // Update tangent
+            if (cosine === 0) {
+                tangentValue.textContent = sine > 0 ? '∞' : '-∞';
+            } else {
+                tangentValue.textContent = (sine / cosine).toFixed(4);
+            }
+            
+            // Update bars
+            sineBar.style.width = `${(sine + 1) * 50}%`;
+            cosineBar.style.width = `${(cosine + 1) * 50}%`;
+            
+            // Update triangle values
+            sinTriangle.textContent = sine.toFixed(4);
+            cosTriangle.textContent = cosine.toFixed(4);
+            pythagValue.textContent = (sine * sine + cosine * cosine).toFixed(4);
+            
+            // Calculate point on circle
+            const pointX = centerX + radius * cosine;
+            const pointY = centerY - radius * sine;
+            
+            // Draw angle arc
+            const arcEndX = centerX + 40 * Math.cos(angleRad);
+            const arcEndY = centerY - 40 * Math.sin(angleRad);
+            const largeArcFlag = angleDeg > 180 ? 1 : 0;
+            
+            addElement('path', {
+                d: `M ${centerX} ${centerY} L ${centerX + 40} ${centerY} A 40 40 0 ${largeArcFlag} 1 ${arcEndX} ${arcEndY}`,
+                stroke: '#ff9900',
+                'stroke-width': 2,
+                fill: 'none',
+                class: 'dynamic-element'
+            });
+            
+            // Radius line
+            addElement('line', {
+                x1: centerX,
+                y1: centerY,
+                x2: pointX,
+                y2: pointY,
+                stroke: '#ff0000',
+                'stroke-width': 2,
+                class: 'dynamic-element'
+            });
+            
+            // Right triangle
+            addElement('line', {
+                x1: centerX,
+                y1: centerY,
+                x2: pointX,
+                y2: centerY,
+                stroke: '#0000ff',
+                'stroke-width': 2,
+                'stroke-dasharray': '5,5',
+                class: 'dynamic-element'
+            });
+            
+            addElement('line', {
+                x1: pointX,
+                y1: centerY,
+                x2: pointX,
+                y2: pointY,
+                stroke: '#00aa00',
+                'stroke-width': 2,
+                'stroke-dasharray': '5,5',
+                class: 'dynamic-element'
+            });
+            
+            // Point on circle
+            addElement('circle', {
+                cx: pointX,
+                cy: pointY,
+                r: 4,
+                fill: '#ff0000',
+                class: 'dynamic-element'
+            });
+            
+            // Labels
+            const angleText = addElement('text', {
+                x: centerX + 45,
+                y: centerY - 5,
+                fill: '#ff9900',
+                'font-weight': 'bold',
+                class: 'dynamic-element'
+            });
+            angleText.textContent = `θ = ${angleDeg}°`;
+            
+            const cosText = addElement('text', {
+                x: (centerX + pointX) / 2 - 20,
+                y: centerY + 20,
+                fill: '#0000ff',
+                'font-weight': 'bold',
+                class: 'dynamic-element'
+            });
+            cosText.textContent = `cos(θ) ${cosine.toFixed(2)}`;
+            
+            const sinText = addElement('text', {
+                x: pointX + 5,
+                y: (centerY + pointY) / 2,
+                fill: '#00aa00',
+                'font-weight': 'bold',
+                class: 'dynamic-element'
+            });
+            sinText.textContent = `sin(θ) ${sine.toFixed(2)}`;
+            
+            const pointText = addElement('text', {
+                x: pointX + 5,
+                y: pointY - 5,
+                fill: '#ff0000',
+                class: 'dynamic-element'
+            });
+            pointText.textContent = `(cos θ, sin θ)`;
+        }
+        
+        // Initialize
+        initializeSVG();
+        updateVisualization();
+        
+        // Event listener
+        angleSlider.addEventListener('input', updateVisualization);
+    </script>
+</body>
+</html>

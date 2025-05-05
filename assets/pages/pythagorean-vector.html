@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pythagorean Theorem & Vector Normalization</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: #f9fafb;
+            color: #1f2937;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        
+        h2 {
+            color: #4b5563;
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .canvas-container {
+            position: relative;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin: 1rem 0;
+            padding: 1rem;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        
+        canvas {
+            background-color: white;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .instructions {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: #4b5563;
+            font-style: italic;
+        }
+        
+        .formula-container {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .formula {
+            font-family: math, serif;
+            font-size: 1.1rem;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+        
+        .formula-result {
+            font-family: monospace;
+            font-size: 1rem;
+            text-align: center;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background-color: #f3f4f6;
+            border-radius: 4px;
+        }
+        
+        .explanation {
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+        
+        .vector-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 1rem 0;
+            gap: 20px;
+        }
+        
+        .vector-card {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            flex: 1 1 200px;
+            max-width: 300px;
+        }
+        
+        .vector-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        .vector-details {
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        .highlight {
+            font-weight: 600;
+            color: #2563eb;
+        }
+        
+        .red {
+            color: #dc2626;
+        }
+        
+        .blue {
+            color: #2563eb;
+        }
+        
+        .green {
+            color: #059669;
+        }
+        
+        .toggle-button-group {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        
+        .toggle-button {
+            background-color: #e5e7eb;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .toggle-button:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .toggle-button:last-child {
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .toggle-button.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 640px) {
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .control-group {
+                width: 80%;
+            }
+        }
+        
+        .coordinates-display {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            gap: 2rem;
+        }
+        
+        .coordinate {
+            font-family: monospace;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #f3f4f6;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pythagorean Theorem & Vector Normalization</h1>
+        
+        <div class="toggle-button-group">
+            <button class="toggle-button active" data-tab="vector-length">Vector Length</button>
+            <button class="toggle-button" data-tab="vector-normalization">Vector Normalization</button>
+        </div>
+        
+        <div id="vector-length" class="tab-content active">
+            <h2>Calculate Vector Length Using Pythagorean Theorem</h2>
+            
+            <div class="instructions">Click anywhere on the grid to set the endpoint of the vector</div>
+            
+            <div class="coordinates-display">
+                <div class="coordinate">X: <span id="x-display">3.0</span></div>
+                <div class="coordinate">Y: <span id="y-display">4.0</span></div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="vector-canvas" width="400" height="400"></canvas>
+            </div>
+            
+            <div class="formula-container">
+                <div class="formula">|v| = √(x² + y²)</div>
+                <div class="formula-result" id="length-result">|v| = √(3² + 4²) = √(9 + 16) = √25 = 5</div>
+            </div>
+            
+            <div class="explanation">
+                <p>The <span class="highlight">Pythagorean theorem</span> states that in a right triangle, the square of the length of the hypotenuse equals the sum of squares of the other two sides.</p>
+                <p>For a vector v = (x, y), we can create a right triangle where:</p>
+                <ul>
+                    <li>The <span class="red">horizontal side</span> has length |x|</li>
+                    <li>The <span class="green">vertical side</span> has length |y|</li>
+                    <li>The <span class="blue">hypotenuse</span> represents the vector's length |v|</li>
+                </ul>
+                <p>Therefore, the vector's length (magnitude) is calculated as: |v| = √(x² + y²)</p>
+                <p>This extends to 3D vectors as well: |v| = √(x² + y² + z²)</p>
+            </div>
+        </div>
+        
+        <div id="vector-normalization" class="tab-content">
+            <h2>Vector Normalization</h2>
+            
+            <div class="instructions">Click anywhere on the grid to set the endpoint of the vector</div>
+            
+            <div class="coordinates-display">
+                <div class="coordinate">X: <span id="norm-x-display">3.0</span></div>
+                <div class="coordinate">Y: <span id="norm-y-display">4.0</span></div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="normalization-canvas" width="400" height="400"></canvas>
+            </div>
+            
+            <div class="vector-info">
+                <div class="vector-card">
+                    <div class="vector-title">Original Vector</div>
+                    <div class="vector-details" id="original-vector-details">
+                        v = (3.0, 4.0)<br>
+                        |v| = 5.0
+                    </div>
+                </div>
+                
+                <div class="vector-card">
+                    <div class="vector-title">Normalized Vector</div>
+                    <div class="vector-details" id="normalized-vector-details">
+                        v̂ = (0.6, 0.8)<br>
+                        |v̂| = 1.0
+                    </div>
+                </div>
+            </div>
+            
+            <div class="formula-container">
+                <div class="formula">v̂ = v / |v| = (x/|v|, y/|v|)</div>
+                <div class="formula-result" id="normalization-result">v̂ = (3, 4) / 5 = (0.6, 0.8)</div>
+            </div>
+            
+            <div class="explanation">
+                <p><span class="highlight">Vector normalization</span> is the process of converting a vector to a unit vector (a vector with length 1) while preserving its direction.</p>
+                <p>To normalize a vector:</p>
+                <ol>
+                    <li>Calculate the vector's length using the Pythagorean theorem: |v| = √(x² + y²)</li>
+                    <li>Divide each component by the length: v̂ = v / |v| = (x/|v|, y/|v|)</li>
+                </ol>
+                <p>The resulting normalized vector v̂ has the same direction as the original vector v, but has a length of exactly 1.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const xDisplay = document.getElementById('x-display');
+        const yDisplay = document.getElementById('y-display');
+        const lengthResult = document.getElementById('length-result');
+        const vectorCanvas = document.getElementById('vector-canvas');
+        
+        const normXDisplay = document.getElementById('norm-x-display');
+        const normYDisplay = document.getElementById('norm-y-display');
+        const normalizationCanvas = document.getElementById('normalization-canvas');
+        const originalVectorDetails = document.getElementById('original-vector-details');
+        const normalizedVectorDetails = document.getElementById('normalized-vector-details');
+        const normalizationResult = document.getElementById('normalization-result');
+        
+        const toggleButtons = document.querySelectorAll('.toggle-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Canvas context
+        const ctx = vectorCanvas.getContext('2d');
+        const normCtx = normalizationCanvas.getContext('2d');
+        
+        // Constants
+        const CANVAS_WIDTH = vectorCanvas.width;
+        const CANVAS_HEIGHT = vectorCanvas.height;
+        const GRID_SIZE = 40;
+        const ORIGIN_X = CANVAS_WIDTH / 2;
+        const ORIGIN_Y = CANVAS_HEIGHT / 2;
+        
+        // Current vector values
+        let vectorX = 3.0;
+        let vectorY = 4.0;
+        let normVectorX = 3.0;
+        let normVectorY = 4.0;
+        
+        // Initialize the application
+        function init() {
+            // Set initial values
+            updateVectorLength();
+            updateVectorNormalization();
+            
+            // Add event listeners for mouse interaction
+            vectorCanvas.addEventListener('mousemove', handleVectorCanvasMouseMove);
+            vectorCanvas.addEventListener('click', handleVectorCanvasClick);
+            
+            normalizationCanvas.addEventListener('mousemove', handleNormalizationCanvasMouseMove);
+            normalizationCanvas.addEventListener('click', handleNormalizationCanvasClick);
+            
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    
+                    toggleButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    tabContents.forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    
+                    button.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Re-render active canvas
+                    if (tabId === 'vector-length') {
+                        updateVectorLength();
+                    } else {
+                        updateVectorNormalization();
+                    }
+                });
+            });
+        }
+        
+        // Convert canvas coordinates to grid coordinates
+        function canvasToGrid(canvasX, canvasY) {
+            const gridX = (canvasX - ORIGIN_X) / GRID_SIZE;
+            const gridY = (ORIGIN_Y - canvasY) / GRID_SIZE; // Flip Y to match Cartesian coordinates
+            
+            return { x: gridX, y: gridY };
+        }
+        
+        // Handle mouse movement on vector length canvas
+        function handleVectorCanvasMouseMove(event) {
+            const rect = vectorCanvas.getBoundingClientRect();
+            const canvasX = event.clientX - rect.left;
+            const canvasY = event.clientY - rect.top;
+            
+            // Draw temporary preview on mouse move
+            if (event.buttons !== 1) { // Not clicking
+                const gridCoords = canvasToGrid(canvasX, canvasY);
+                const previewLength = Math.sqrt(gridCoords.x * gridCoords.x + gridCoords.y * gridCoords.y);
+                
+                // Redraw with temporary vector
+                drawGrid(ctx);
+                drawRightTriangle(gridCoords.x, gridCoords.y);
+                drawVector(ctx, gridCoords.x, gridCoords.y, '#3b82f6', `|v| = ${previewLength.toFixed(1)}`, 0.8, true);
+                drawVector(ctx, vectorX, vectorY, '#3b82f6', `|v| = ${Math.sqrt(vectorX * vectorX + vectorY * vectorY).toFixed(1)}`);
+            }
+        }
+        
+        // Handle click on vector length canvas
+        function handleVectorCanvasClick(event) {
+            const rect = vectorCanvas.getBoundingClientRect();
+            const canvasX = event.clientX - rect.left;
+            const canvasY = event.clientY - rect.top;
+            
+            const gridCoords = canvasToGrid(canvasX, canvasY);
+            
+            // Update the vector
+            vectorX = parseFloat(gridCoords.x.toFixed(1));
+            vectorY = parseFloat(gridCoords.y.toFixed(1));
+            
+            // Update the display
+            updateVectorLength();
+        }
+        
+        // Handle mouse movement on normalization canvas
+        function handleNormalizationCanvasMouseMove(event) {
+            const rect = normalizationCanvas.getBoundingClientRect();
+            const canvasX = event.clientX - rect.left;
+            const canvasY = event.clientY - rect.top;
+            
+            // Draw temporary preview on mouse move
+            if (event.buttons !== 1) { // Not clicking
+                const gridCoords = canvasToGrid(canvasX, canvasY);
+                
+                // Calculate normalized preview vector
+                const previewLength = Math.sqrt(gridCoords.x * gridCoords.x + gridCoords.y * gridCoords.y);
+                let normalizedPreviewX = 0;
+                let normalizedPreviewY = 0;
+                
+                if (previewLength > 0) {
+                    normalizedPreviewX = gridCoords.x / previewLength;
+                    normalizedPreviewY = gridCoords.y / previewLength;
+                }
+                
+                // Redraw with temporary vectors
+                drawGrid(normCtx);
+                drawVector(normCtx, gridCoords.x, gridCoords.y, 'rgba(220, 38, 38, 0.5)', '', 0.8); // Semi-transparent
+                
+                if (previewLength > 0) {
+                    drawVector(normCtx, normalizedPreviewX, normalizedPreviewY, 'rgba(5, 150, 105, 0.5)', '', 1.0); // Semi-transparent
+                }
+                
+                // Draw the actual vectors
+                drawVector(normCtx, normVectorX, normVectorY, '#dc2626', 'v');
+                
+                // Calculate and draw the normalized actual vector (if length > 0)
+                const actualLength = Math.sqrt(normVectorX * normVectorX + normVectorY * normVectorY);
+                if (actualLength > 0) {
+                    const normalizedX = normVectorX / actualLength;
+                    const normalizedY = normVectorY / actualLength;
+                    drawVector(normCtx, normalizedX, normalizedY, '#059669', 'v̂', 1.5);
+                }
+            }
+        }
+        
+        // Handle click on normalization canvas
+        function handleNormalizationCanvasClick(event) {
+            const rect = normalizationCanvas.getBoundingClientRect();
+            const canvasX = event.clientX - rect.left;
+            const canvasY = event.clientY - rect.top;
+            
+            const gridCoords = canvasToGrid(canvasX, canvasY);
+            
+            // Update the vector
+            normVectorX = parseFloat(gridCoords.x.toFixed(1));
+            normVectorY = parseFloat(gridCoords.y.toFixed(1));
+            
+            // Update the display
+            updateVectorNormalization();
+        }
+        
+        // Draw grid on canvas
+        function drawGrid(context) {
+            const width = context.canvas.width;
+            const height = context.canvas.height;
+            
+            context.clearRect(0, 0, width, height);
+            
+            // Draw grid
+            context.strokeStyle = '#e5e7eb';
+            context.lineWidth = 1;
+            
+            // Vertical lines
+            for (let x = ORIGIN_X; x < width; x += GRID_SIZE) {
+                context.beginPath();
+                context.moveTo(x, 0);
+                context.lineTo(x, height);
+                context.stroke();
+            }
+            
+            for (let x = ORIGIN_X; x > 0; x -= GRID_SIZE) {
+                context.beginPath();
+                context.moveTo(x, 0);
+                context.lineTo(x, height);
+                context.stroke();
+            }
+            
+            // Horizontal lines
+            for (let y = ORIGIN_Y; y < height; y += GRID_SIZE) {
+                context.beginPath();
+                context.moveTo(0, y);
+                context.lineTo(width, y);
+                context.stroke();
+            }
+            
+            for (let y = ORIGIN_Y; y > 0; y -= GRID_SIZE) {
+                context.beginPath();
+                context.moveTo(0, y);
+                context.lineTo(width, y);
+                context.stroke();
+            }
+            
+            // Draw axes
+            context.strokeStyle = '#9ca3af';
+            context.lineWidth = 2;
+            
+            // X-axis
+            context.beginPath();
+            context.moveTo(0, ORIGIN_Y);
+            context.lineTo(width, ORIGIN_Y);
+            context.stroke();
+            
+            // Y-axis
+            context.beginPath();
+            context.moveTo(ORIGIN_X, 0);
+            context.lineTo(ORIGIN_X, height);
+            context.stroke();
+            
+            // Draw axis labels
+            context.fillStyle = '#4b5563';
+            context.font = '12px sans-serif';
+            
+            // X-axis labels
+            for (let x = GRID_SIZE; x < width / 2; x += GRID_SIZE) {
+                const value = x / GRID_SIZE;
+                context.fillText(value.toString(), ORIGIN_X + x - 3, ORIGIN_Y + 20);
+                context.fillText((-value).toString(), ORIGIN_X - x - 5, ORIGIN_Y + 20);
+            }
+            
+            // Y-axis labels
+            for (let y = GRID_SIZE; y < height / 2; y += GRID_SIZE) {
+                const value = y / GRID_SIZE;
+                context.fillText((-value).toString(), ORIGIN_X + 10, ORIGIN_Y + y + 4);
+                context.fillText(value.toString(), ORIGIN_X + 10, ORIGIN_Y - y + 4);
+            }
+            
+            // Origin label
+            context.fillText('0', ORIGIN_X + 5, ORIGIN_Y + 15);
+        }
+        
+        // Draw vector on canvas
+        function drawVector(context, x, y, color = '#3b82f6', label = '', scale = 1, isDashed = false) {
+            const scaledX = x * GRID_SIZE;
+            const scaledY = -y * GRID_SIZE; // Flip Y to match Cartesian coordinates
+            
+            const endX = ORIGIN_X + scaledX;
+            const endY = ORIGIN_Y + scaledY;
+            
+            // Draw the vector
+            context.strokeStyle = color;
+            context.lineWidth = 2;
+            if (isDashed) {
+                context.setLineDash([5, 3]);
+            } else {
+                context.setLineDash([]);
+            }
+            
+            context.beginPath();
+            context.moveTo(ORIGIN_X, ORIGIN_Y);
+            context.lineTo(endX, endY);
+            context.stroke();
+            
+            // Reset line dash
+            context.setLineDash([]);
+            
+            // Draw arrowhead
+            const headLength = 10 * scale;
+            const angle = Math.atan2(scaledY, scaledX);
+            
+            context.fillStyle = color;
+            context.beginPath();
+            context.moveTo(endX, endY);
+            context.lineTo(
+                endX - headLength * Math.cos(angle - Math.PI / 6),
+                endY - headLength * Math.sin(angle - Math.PI / 6)
+            );
+            context.lineTo(
+                endX - headLength * Math.cos(angle + Math.PI / 6),
+                endY - headLength * Math.sin(angle + Math.PI / 6)
+            );
+            context.closePath();
+            context.fill();
+            
+            // Draw label if provided
+            if (label) {
+                context.fillStyle = color;
+                context.font = '14px sans-serif';
+                context.fillText(label, endX + 5, endY - 5);
+            }
+        }
+        
+        // Draw the right triangle components
+        function drawRightTriangle(x, y) {
+            const scaledX = x * GRID_SIZE;
+            const scaledY = -y * GRID_SIZE;
+            
+            const endX = ORIGIN_X + scaledX;
+            const endY = ORIGIN_Y + scaledY;
+            
+            // Draw the horizontal component
+            ctx.strokeStyle = '#dc2626'; // Red
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 3]);
+            ctx.beginPath();
+            ctx.moveTo(ORIGIN_X, ORIGIN_Y);
+            ctx.lineTo(endX, ORIGIN_Y);
+            ctx.stroke();
+            
+            // Draw the vertical component
+            ctx.strokeStyle = '#059669'; // Green
+            ctx.beginPath();
+            ctx.moveTo(endX, ORIGIN_Y);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+            
+            // Reset line dash
+            ctx.setLineDash([]);
+            
+            // Add component labels
+            ctx.font = '14px sans-serif';
+            
+            // X component
+            ctx.fillStyle = '#dc2626';
+            ctx.fillText(`x = ${x.toFixed(1)}`, ORIGIN_X + scaledX / 2 - 15, ORIGIN_Y + 20);
+            
+            // Y component
+            ctx.fillStyle = '#059669';
+            ctx.fillText(`y = ${y.toFixed(1)}`, endX + 10, ORIGIN_Y + scaledY / 2);
+        }
+        
+        // Update the vector length visualization
+        function updateVectorLength() {
+            // Update displays
+            xDisplay.textContent = vectorX.toFixed(1);
+            yDisplay.textContent = vectorY.toFixed(1);
+            
+            // Calculate the vector length
+            const length = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+            
+            // Update the formula result
+            lengthResult.innerHTML = `|v| = √(${vectorX.toFixed(1)}² + ${vectorY.toFixed(1)}²) = √(${(vectorX * vectorX).toFixed(1)} + ${(vectorY * vectorY).toFixed(1)}) = √${(vectorX * vectorX + vectorY * vectorY).toFixed(1)} = ${length.toFixed(1)}`;
+            
+            // Draw the visualization
+            drawGrid(ctx);
+            drawRightTriangle(vectorX, vectorY);
+            drawVector(ctx, vectorX, vectorY, '#3b82f6', `|v| = ${length.toFixed(1)}`);
+        }
+        
+        // Update the vector normalization visualization
+        function updateVectorNormalization() {
+            // Update displays
+            normXDisplay.textContent = normVectorX.toFixed(1);
+            normYDisplay.textContent = normVectorY.toFixed(1);
+            
+            // Calculate the vector length
+            const length = Math.sqrt(normVectorX * normVectorX + normVectorY * normVectorY);
+            
+            // Calculate the normalized vector
+            let normalizedX = 0;
+            let normalizedY = 0;
+            
+            if (length > 0) {
+                normalizedX = normVectorX / length;
+                normalizedY = normVectorY / length;
+            }
+            
+            // Update vector details displays
+            originalVectorDetails.innerHTML = `v = (${normVectorX.toFixed(1)}, ${normVectorY.toFixed(1)})<br>|v| = ${length.toFixed(1)}`;
+            normalizedVectorDetails.innerHTML = `v̂ = (${normalizedX.toFixed(1)}, ${normalizedY.toFixed(1)})<br>|v̂| = ${Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY).toFixed(1)}`;
+            
+            // Update the formula result
+            normalizationResult.innerHTML = `v̂ = (${normVectorX.toFixed(1)}, ${normVectorY.toFixed(1)}) / ${length.toFixed(1)} = (${normalizedX.toFixed(1)}, ${normalizedY.toFixed(1)})`;
+            
+            // Draw the visualization
+            drawGrid(normCtx);
+            
+            // Draw the original vector
+            drawVector(normCtx, normVectorX, normVectorY, '#dc2626', 'v');
+            
+            // Draw the normalized vector (if length > 0)
+            if (length > 0) {
+                drawVector(normCtx, normalizedX, normalizedY, '#059669', 'v̂', 1.5);
+            }
+        }
+        
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>
