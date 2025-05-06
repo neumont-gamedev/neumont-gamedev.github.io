@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Point Rotation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            background-color: #fff;
+            cursor: crosshair;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        label {
+            font-weight: bold;
+            width: 120px;
+        }
+        input[type="range"] {
+            flex-grow: 1;
+        }
+        .value-display {
+            width: 60px;
+            text-align: right;
+        }
+        .formula {
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+            border-left: 4px solid #4a90e2;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        .points-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .point-list {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            flex-basis: 48%;
+        }
+        .instructions {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #fffaf0;
+            border-radius: 5px;
+            border: 1px solid #ffeeba;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>2D Point Rotation</h1>
+
+        <div class="instructions">
+            <p><strong>Click anywhere on the graph</strong> to place a point. Use the slider to rotate the coordinate system.</p>
+        </div>
+
+        <div class="controls">
+            <div class="slider-container">
+                <label for="angle-slider">Rotation Angle:</label>
+                <input type="range" id="angle-slider" min="0" max="360" value="0" step="1">
+                <span class="value-display" id="angle-value">0°</span>
+            </div>
+            <button id="reset-btn">Reset</button>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="rotationCanvas" width="500" height="500"></canvas>
+        </div>
+        
+        <div class="points-display">
+            <div class="point-list">
+                <h3>Original Point</h3>
+                <div id="original-points"></div>
+            </div>
+            <div class="point-list">
+                <h3>Rotated Point</h3>
+                <div id="rotated-points"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const canvas = document.getElementById('rotationCanvas');
+        const ctx = canvas.getContext('2d');
+        const angleSlider = document.getElementById('angle-slider');
+        const angleValue = document.getElementById('angle-value');
+        const resetBtn = document.getElementById('reset-btn');
+        const originalPointsDiv = document.getElementById('original-points');
+        const rotatedPointsDiv = document.getElementById('rotated-points');
+
+        // Constants
+        const CANVAS_WIDTH = canvas.width;
+        const CANVAS_HEIGHT = canvas.height;
+        const CENTER_X = CANVAS_WIDTH / 2;
+        const CENTER_Y = CANVAS_HEIGHT / 2;
+        const GRID_SIZE = 40;
+        const POINT_RADIUS = 6;
+        const SCALE_FACTOR = 40; // Each grid unit represents 1 in coordinate space
+        
+        // Colors
+        const COLORS = {
+            grid: '#e0e0e0',
+            axes: '#999999',
+            original: '#3498db',  // Blue
+            rotated: '#e74c3c',   // Red
+            text: '#333333'
+        };
+
+        // State
+        let points = [
+            { x: 3, y: 0 }
+        ];
+        let angle = 0; // in degrees
+
+        // Helper functions
+        function degreesToRadians(degrees) {
+            return degrees * Math.PI / 180;
+        }
+
+        function rotatePoint(x, y, angleRad) {
+            return {
+                x: x * Math.cos(angleRad) - y * Math.sin(angleRad),
+                y: x * Math.sin(angleRad) + y * Math.cos(angleRad)
+            };
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = COLORS.grid;
+            ctx.lineWidth = 1;
+            
+            // Vertical lines
+            for (let x = CENTER_X; x < CANVAS_WIDTH; x += GRID_SIZE) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, CANVAS_HEIGHT);
+                ctx.stroke();
+            }
+            for (let x = CENTER_X - GRID_SIZE; x >= 0; x -= GRID_SIZE) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, CANVAS_HEIGHT);
+                ctx.stroke();
+            }
+            
+            // Horizontal lines
+            for (let y = CENTER_Y; y < CANVAS_HEIGHT; y += GRID_SIZE) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(CANVAS_WIDTH, y);
+                ctx.stroke();
+            }
+            for (let y = CENTER_Y - GRID_SIZE; y >= 0; y -= GRID_SIZE) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(CANVAS_WIDTH, y);
+                ctx.stroke();
+            }
+        }
+
+        function drawAxes() {
+            ctx.strokeStyle = COLORS.axes;
+            ctx.lineWidth = 2;
+            
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(0, CENTER_Y);
+            ctx.lineTo(CANVAS_WIDTH, CENTER_Y);
+            ctx.stroke();
+            
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(CENTER_X, 0);
+            ctx.lineTo(CENTER_X, CANVAS_HEIGHT);
+            ctx.stroke();
+            
+            // Axis labels
+            ctx.fillStyle = COLORS.text;
+            ctx.font = '14px Arial';
+            ctx.fillText('X', CANVAS_WIDTH - 15, CENTER_Y - 10);
+            ctx.fillText('Y', CENTER_X + 10, 15);
+
+            // Draw ticks
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            
+            // X-axis ticks
+            for (let x = CENTER_X + GRID_SIZE; x < CANVAS_WIDTH; x += GRID_SIZE) {
+                const value = (x - CENTER_X) / GRID_SIZE;
+                ctx.beginPath();
+                ctx.moveTo(x, CENTER_Y - 5);
+                ctx.lineTo(x, CENTER_Y + 5);
+                ctx.stroke();
+                if (value % 2 === 0) {
+                    ctx.fillText(value.toString(), x, CENTER_Y + 20);
+                }
+            }
+            
+            for (let x = CENTER_X - GRID_SIZE; x >= 0; x -= GRID_SIZE) {
+                const value = (x - CENTER_X) / GRID_SIZE;
+                ctx.beginPath();
+                ctx.moveTo(x, CENTER_Y - 5);
+                ctx.lineTo(x, CENTER_Y + 5);
+                ctx.stroke();
+                if (value % 2 === 0) {
+                    ctx.fillText(value.toString(), x, CENTER_Y + 20);
+                }
+            }
+            
+            // Y-axis ticks
+            ctx.textAlign = 'right';
+            for (let y = CENTER_Y + GRID_SIZE; y < CANVAS_HEIGHT; y += GRID_SIZE) {
+                const value = -1 * (y - CENTER_Y) / GRID_SIZE;
+                ctx.beginPath();
+                ctx.moveTo(CENTER_X - 5, y);
+                ctx.lineTo(CENTER_X + 5, y);
+                ctx.stroke();
+                if (value % 2 === 0) {
+                    ctx.fillText(value.toString(), CENTER_X - 10, y + 5);
+                }
+            }
+            
+            for (let y = CENTER_Y - GRID_SIZE; y >= 0; y -= GRID_SIZE) {
+                const value = -1 * (y - CENTER_Y) / GRID_SIZE;
+                ctx.beginPath();
+                ctx.moveTo(CENTER_X - 5, y);
+                ctx.lineTo(CENTER_X + 5, y);
+                ctx.stroke();
+                if (value % 2 === 0) {
+                    ctx.fillText(value.toString(), CENTER_X - 10, y + 5);
+                }
+            }
+        }
+
+        function drawPoint(x, y, color) {
+            const canvasX = CENTER_X + (x * SCALE_FACTOR);
+            const canvasY = CENTER_Y - (y * SCALE_FACTOR); // Flip Y-axis
+            
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(canvasX, canvasY, POINT_RADIUS, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawPointWithLine(originalX, originalY, rotatedX, rotatedY) {
+            // Draw coordinate axes for original point (blue)
+            ctx.strokeStyle = COLORS.original;
+            ctx.lineWidth = 2;
+            
+            // X-axis for original coordinate system
+            ctx.beginPath();
+            ctx.moveTo(CENTER_X, CENTER_Y);
+            ctx.lineTo(CENTER_X + (5 * SCALE_FACTOR), CENTER_Y);
+            ctx.stroke();
+            
+            // Y-axis for original coordinate system
+            ctx.beginPath();
+            ctx.moveTo(CENTER_X, CENTER_Y);
+            ctx.lineTo(CENTER_X, CENTER_Y - (5 * SCALE_FACTOR));
+            ctx.stroke();
+            
+            // Label original axes
+            ctx.fillStyle = COLORS.original;
+            ctx.font = '14px Arial';
+            ctx.fillText('X', CENTER_X + (5 * SCALE_FACTOR) + 5, CENTER_Y);
+            ctx.fillText('Y', CENTER_X, CENTER_Y - (5 * SCALE_FACTOR) - 5);
+            
+            // Draw rotated coordinate system (red)
+            ctx.strokeStyle = COLORS.rotated;
+            
+            // Calculate rotated axes
+            const angleRad = degreesToRadians(angle);
+            const rotatedAxisX = {
+                x: 3 * Math.cos(angleRad),
+                y: 3 * Math.sin(angleRad)
+            };
+            
+            const rotatedAxisY = {
+                x: -3 * Math.sin(angleRad),
+                y: 3 * Math.cos(angleRad)
+            };
+            
+            // X-axis for rotated coordinate system
+            ctx.beginPath();
+            ctx.moveTo(CENTER_X, CENTER_Y);
+            ctx.lineTo(CENTER_X + (rotatedAxisX.x * SCALE_FACTOR), CENTER_Y - (rotatedAxisX.y * SCALE_FACTOR));
+            ctx.stroke();
+            
+            // Y-axis for rotated coordinate system
+            ctx.beginPath();
+            ctx.moveTo(CENTER_X, CENTER_Y);
+            ctx.lineTo(CENTER_X + (rotatedAxisY.x * SCALE_FACTOR), CENTER_Y - (rotatedAxisY.y * SCALE_FACTOR));
+            ctx.stroke();
+            
+            // Label rotated axes
+            ctx.fillStyle = COLORS.rotated;
+            ctx.fillText('X\'', CENTER_X + (rotatedAxisX.x * SCALE_FACTOR) + 5, CENTER_Y - (rotatedAxisX.y * SCALE_FACTOR));
+            ctx.fillText('Y\'', CENTER_X + (rotatedAxisY.x * SCALE_FACTOR), CENTER_Y - (rotatedAxisY.y * SCALE_FACTOR) - 5);
+            
+            // Calculate coordinates in the rotated system
+            // FIXED: Use positive angle for counter-clockwise rotation
+            const coordInRotatedSystem = {
+                x: originalX * Math.cos(angleRad) - originalY * Math.sin(angleRad),
+                y: originalX * Math.sin(angleRad) + originalY * Math.cos(angleRad)
+            };
+            
+            // Draw the original point (blue)
+            drawPoint(originalX, originalY, COLORS.original);
+            
+            // Draw the same point in rotated coordinate system (red)
+            drawPoint(rotatedX, rotatedY, COLORS.rotated);
+            
+            // Update point displays
+            originalPointsDiv.innerHTML = `(${originalX.toFixed(1)}, ${originalY.toFixed(1)})`;
+            rotatedPointsDiv.innerHTML = `(${rotatedX.toFixed(1)}, ${rotatedY.toFixed(1)})`;
+            
+            // Draw line from origin to original point (blue)
+            ctx.strokeStyle = COLORS.original;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(CENTER_X, CENTER_Y);
+            ctx.lineTo(CENTER_X + (originalX * SCALE_FACTOR), CENTER_Y - (originalY * SCALE_FACTOR));
+            ctx.stroke();
+            
+            // Draw dashed line connecting original and rotated points
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(CENTER_X + (originalX * SCALE_FACTOR), CENTER_Y - (originalY * SCALE_FACTOR));
+            ctx.lineTo(CENTER_X + (rotatedX * SCALE_FACTOR), CENTER_Y - (rotatedY * SCALE_FACTOR));
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function drawRotationArc() {
+            if (angle === 0) return;
+            
+            const radius = 30;
+            const startAngle = 0;
+            const endAngle = degreesToRadians(-angle); // Positive for counter-clockwise in the canvas
+            
+            ctx.strokeStyle = COLORS.rotated;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(CENTER_X, CENTER_Y, radius, startAngle, endAngle, true); // true for counter-clockwise in canvas coordinates
+            ctx.stroke();
+            
+            // Draw angle label
+            const midAngle = endAngle / 2;
+            const labelRadius = radius + 15;
+            const labelX = CENTER_X + labelRadius * Math.cos(midAngle);
+            const labelY = CENTER_Y + labelRadius * Math.sin(midAngle);
+            
+            ctx.fillStyle = COLORS.rotated;
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${angle}°`, labelX, labelY);
+            
+            // Draw a small arrow at the end of the arc
+            const arrowX = CENTER_X + radius * Math.cos(endAngle);
+            const arrowY = CENTER_Y + radius * Math.sin(endAngle);
+            const arrowSize = 8;
+            const arrowAngle = endAngle - Math.PI / 2; // Perpendicular to radius
+            
+            ctx.beginPath();
+            ctx.moveTo(arrowX, arrowY);
+            ctx.lineTo(
+                arrowX + arrowSize * Math.cos(arrowAngle - Math.PI / 6),
+                arrowY + arrowSize * Math.sin(arrowAngle - Math.PI / 6)
+            );
+            ctx.lineTo(
+                arrowX + arrowSize * Math.cos(arrowAngle + Math.PI / 6),
+                arrowY + arrowSize * Math.sin(arrowAngle + Math.PI / 6)
+            );
+            ctx.closePath();
+            ctx.fillStyle = COLORS.rotated;
+            ctx.fill();
+        }
+
+        function drawScene() {
+            // Clear canvas
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            
+            // Draw grid and axes
+            drawGrid();
+            drawAxes();
+            
+            // Draw rotation arc
+            drawRotationArc();
+            
+            // Convert angle to radians (counter-clockwise rotation)
+            const angleRad = degreesToRadians(angle);
+            
+            // Clear point displays
+            originalPointsDiv.innerHTML = '';
+            rotatedPointsDiv.innerHTML = '';
+            
+            // Draw all points and their rotated positions
+            points.forEach(point => {
+                // For the rotated coordinate system, the coordinates are calculated
+                // with the standard counter-clockwise rotation matrix
+                
+                // Using the standard rotation formulas for counter-clockwise rotation
+                const rotatedCoords = {
+                    x: point.x * Math.cos(angleRad) - point.y * Math.sin(angleRad),
+                    y: point.x * Math.sin(angleRad) + point.y * Math.cos(angleRad)
+                };
+                
+                drawPointWithLine(point.x, point.y, rotatedCoords.x, rotatedCoords.y);
+            });
+        }
+
+        function updateAngle() {
+            angle = parseInt(angleSlider.value);
+            angleValue.textContent = angle + '°';
+            drawScene();
+        }
+
+        function addRandomPoint() {
+            const x = Math.floor(Math.random() * 5 - 2.5); // Random value between -2.5 and 2.5
+            const y = Math.floor(Math.random() * 5 - 2.5); // Random value between -2.5 and 2.5
+            points.push({ x, y });
+            drawScene();
+        }
+
+        function resetDemo() {
+            angle = 0;
+            angleSlider.value = 0;
+            angleValue.textContent = '0°';
+            points = [
+                { x: 3, y: 0 }
+            ];
+            drawScene();
+        }
+
+        function clearPoints() {
+            points = [];
+            drawScene();
+        }
+
+        // Event listeners
+        angleSlider.addEventListener('input', updateAngle);
+        resetBtn.addEventListener('click', resetDemo);
+        canvas.addEventListener('click', handleCanvasClick);
+
+        // Canvas click handler
+        function handleCanvasClick(event) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            
+            // Convert to coordinate system
+            const x = (mouseX - CENTER_X) / SCALE_FACTOR;
+            const y = (CENTER_Y - mouseY) / SCALE_FACTOR;
+            
+            // Replace all points with this new point
+            points = [{ x, y }];
+            drawScene();
+        }
+
+        // Initialize
+        angle = 0; // Set default angle to 115 degrees to match the example
+        drawScene();
+    </script>
+</body>
+</html>

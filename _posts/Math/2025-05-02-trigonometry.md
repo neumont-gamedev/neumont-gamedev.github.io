@@ -29,17 +29,11 @@ _The unit circle is a circle centered at the origin with a radius of 1. It’s u
 
 For any angle θ (measured in radians) from the positive x-axis:
 
-- **Sine** (`sin θ`) is the y-coordinate of the point on the unit circle.
-- **Cosine** (`cos θ`) is the x-coordinate.
-
-<!-- Example: Display the applet at 70% of its original size -->
-<iframe src="{{ site.baseurl }}/assets/pages/trig-circle.html?scale=0.4" width="900" height="675" style="border:none;"></iframe>
-
-### Key Concepts
-
 - The <span style="color:red"><strong>hypotenuse</strong></span> is always 1 in a unit circle.
 - The <span style="color:blue"><strong>x-coordinate</strong></span> of the point on the circle equals <strong>cos(θ)</strong>.
 - The <span style="color:green"><strong>y-coordinate</strong></span> of the point on the circle equals <strong>sin(θ)</strong>.
+
+<iframe src="{{ site.baseurl }}/assets/pages/trig-circle.html?scale=0.4" width="900" height="675" style="border:none;"></iframe>
 
 ## Degrees and Radians
 
@@ -79,12 +73,11 @@ $$
 
 What this is doing is **changing the coordinate system**—rotating the entire space by angle **θ**—so that the point's position is expressed in this new, rotated frame.
 
-#### Interpreting the Formula
+<iframe src="{{ site.baseurl }}/assets/pages/2d-rotation.html?scale=0.4" width="900" height="1000" style="border:none;"></iframe>
 
 - The **cos(θ)** and **sin(θ)** parts come from the unit circle.
 - You're projecting the original x and y values onto the new x and y axes that have been rotated.
 - This transformation keeps the distance (length of the vector) the same—just rotates its direction.
-
 
 ## Vector
 
@@ -111,6 +104,43 @@ This unit vector is useful in controlling speed, aiming, and physics-based movem
     Your browser does not support iframes.
 </iframe>
 </div>
+
+## Game Trigonometry Essentials
+
+Game development often involves working with directions, angles, and movement. Below are the most common trigonometric operations you'll use.
+
+To **get the angle of a 2D vector**, use `atan2(y, x)`. This gives you the angle in **radians** from the positive x-axis to the vector. It's perfect for aiming or rotating objects toward a target.
+```
+dx = targetX - originX;
+dy = targetY - originY;
+angle = Math.atan2(dy, dx);
+```
+To **get the length (magnitude) of a vector**, use the **Pythagorean Theorem**. This tells you how far a point is from the origin.
+
+`length = Math.sqrt(x * x + y * y);`
+
+To **normalize a vector** (make its length = 1), divide each component by its length. This is useful when you only care about direction, such as setting a movement direction without affecting speed.
+```
+length = Math.sqrt(x * x + y * y);
+nx = x / length;
+ny = y / length;
+```
+To **generate a vector from an angle**, use **cos** and **sin**. This creates a direction vector of length 1 pointing in the specified angle, commonly used for movement based on an object rotation.
+```
+x = Math.cos(angle);
+y = Math.sin(angle);
+```
+To **rotate a point around the origin**, use this formula with cos and sin. This is helpful for rotating sprites and objects.
+```
+xr = x * Math.cos(angle) - y * Math.sin(angle);
+yr = x * Math.sin(angle) + y * Math.cos(angle);
+```
+Trigonometric functions like sin() and cos() expect angles in **radians**, not **degrees**. Many developers and designers like to think about rotations in degrees. It is common to convert from one form to another.
+
+- To **convert radians to degrees**:
+`degrees = radians * (180 / Math.PI);`
+- To **convert degrees to radians**:
+`radians = degrees * (Math.PI / 180);`
 
 ## Reference
 
