@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Degree Finder - Find Your Perfect Technology Path</title>
+    <style>
+        /* Base styles */
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --primary-light: #EEF2FF;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            color: var(--gray-800);
+            background-color: #F9FAFB;
+        }
+        
+        .container {
+            max-width: 768px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Card styles */
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Typography */
+        h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--gray-800);
+        }
+        
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            color: var(--gray-700);
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .text-sm {
+            font-size: 0.875rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 150ms ease-in-out;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn-secondary {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+            border: none;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--gray-300);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        /* Option buttons */
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            text-align: left;
+            background-color: white;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .progress-bar {
+            height: 0.5rem;
+            width: 100%;
+            background-color: var(--gray-200);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 9999px;
+            transition: width 300ms ease;
+        }
+        
+        /* Results */
+        .result-item {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.375rem;
+            background-color: var(--primary-light);
+        }
+        
+        .result-description {
+            margin-top: 0.5rem;
+            font-size: 0.9375rem;
+            color: var(--gray-600);
+        }
+        
+        .result-match {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background-color: rgba(79, 70, 229, 0.2);
+            color: var(--primary);
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        /* Layout utilities */
+        .mt-4 {
+            margin-top: 1rem;
+        }
+        
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+        
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        
+        .space-between {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Introduction styles */
+        .intro-content {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .intro-lead {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 1.5rem;
+        }
+        
+        .intro-description {
+            margin-bottom: 1.5rem;
+        }
+        
+        .degree-list {
+            margin: 1rem 0 1.5rem 1.5rem;
+        }
+        
+        .degree-list li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .intro-cta {
+            font-weight: 500;
+            color: var(--gray-800);
+            margin-top: 1.5rem;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-image {
+            width: 180px;
+            height: auto;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Intro Section -->
+        <div id="intro-section" class="card">
+            <div class="intro-content">               
+                <h1 class="text-center">Find Your Neumont Degree Path</h1>
+
+            </div>
+            <div class="text-center mt-4">
+                <button id="start-btn" class="btn btn-primary">Start Assessment</button>
+            </div>
+        </div>
+        
+        <!-- Questions Section -->
+        <div id="questions-section" class="hidden">
+            <div id="progress-container" class="progress-container">
+                <div class="progress-header">
+                    <span id="category-label">Interests</span>
+                    <span id="section-progress">1 of 3 sections</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+            
+            <div id="question-card" class="card">
+                <h2 id="question-text">Which activities do you find most engaging?</h2>
+                <p id="question-counter" class="text-sm" style="color: var(--gray-600);">Question 1 of 2 in Interests</p>
+                
+                <div id="options-container" class="mb-4">
+                    <!-- Options will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div id="results-section" class="hidden">
+            <div class="card">
+                <h2>Your Tech Degree Recommendations</h2>
+                <p>Based on your responses, we've identified the following degree programs that align with your interests, learning style, and career goals:</p>
+                
+                <div id="recommendations-container" class="mb-6">
+                    <!-- Recommendations will be populated by JavaScript -->
+                </div>
+                
+                <div class="space-between">
+                    <button id="reset-btn" class="btn btn-secondary">Start Over</button>
+                    <button id="explore-btn" class="btn btn-primary">Explore These Programs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Question data structure
+        const questions = {
+            interests: [
+                {
+                    id: 'q1',
+                    text: 'Which types of activities do you find most engaging?',
+                    options: [
+                        { id: 'a', text: 'Solving complex mathematical or logical problems', traits: ['theoretical', 'analytical'] },
+                        { id: 'b', text: 'Building systems and seeing how different components work together', traits: ['systems', 'architecture'] },
+                        { id: 'c', text: 'Creating interactive experiences and visual designs', traits: ['creative', 'interactive'] },
+                        { id: 'd', text: 'Analyzing data patterns and making predictions', traits: ['ai', 'data'] }
+                    ]
+                },
+                {
+                    id: 'q2',
+                    text: 'When working on a technology project, what role do you naturally take?',
+                    options: [
+                        { id: 'a', text: 'The theorist who develops the underlying concepts and algorithms', traits: ['theoretical', 'foundations'] },
+                        { id: 'b', text: 'The architect who designs the overall structure and implementation', traits: ['systems', 'architecture'] },
+                        { id: 'c', text: 'The experience designer who focuses on user interaction and feel', traits: ['creative', 'design'] },
+                        { id: 'd', text: 'The security specialist who ensures the system is protected', traits: ['security', 'analysis'] }
+                    ]
+                }
+            ],
+            technical: [
+                {
+                    id: 'q3',
+                    text: 'Which technical area interests you the most?',
+                    options: [
+                        { id: 'a', text: 'Algorithms, data structures, and computational theory', traits: ['theoretical', 'foundations'] },
+                        { id: 'b', text: 'Distributed systems, cloud computing, and scalable architecture', traits: ['systems', 'cloud'] },
+                        { id: 'c', text: 'Interactive media, graphics processing, and game engines', traits: ['game', 'interactive'] },
+                        { id: 'd', text: 'Machine learning models, neural networks, and data analysis', traits: ['ai', 'models'] }
+                    ]
+                },
+                {
+                    id: 'q4',
+                    text: 'Which of these programming tasks would you enjoy most?',
+                    options: [
+                        { id: 'a', text: 'Optimizing an algorithm to solve a complex problem efficiently', traits: ['theoretical', 'optimization'] },
+                        { id: 'b', text: 'Designing microservices that work together in a distributed system', traits: ['systems', 'architecture'] },
+                        { id: 'c', text: 'Creating interactive 3D environments with realistic physics', traits: ['game', 'interactive'] },
+                        { id: 'd', text: 'Building and testing a security system to protect sensitive data', traits: ['security', 'protection'] }
+                    ]
+                }
+            ],
+            career: [
+                {
+                    id: 'q5',
+                    text: 'Which potential career outcome appeals to you most?',
+                    options: [
+                        { id: 'a', text: 'Research scientist developing new computing methodologies', traits: ['theoretical', 'research'] },
+                        { id: 'b', text: 'Cloud architect designing scalable enterprise solutions', traits: ['systems', 'cloud'] },
+                        { id: 'c', text: 'Game developer creating engaging interactive experiences', traits: ['game', 'creative'] },
+                        { id: 'd', text: 'AI specialist implementing machine learning in real-world applications', traits: ['ai', 'applied'] }
+                    ]
+                },
+                {
+                    id: 'q6',
+                    text: 'What type of work environment do you prefer?',
+                    options: [
+                        { id: 'a', text: 'Research-oriented with focus on innovation and discovery', traits: ['theoretical', 'research'] },
+                        { id: 'b', text: 'Fast-paced development team building production-ready systems', traits: ['systems', 'practical'] },
+                        { id: 'c', text: 'Creative studio collaborating on engaging digital experiences', traits: ['game', 'creative'] },
+                        { id: 'd', text: 'Security operations center monitoring and responding to threats', traits: ['security', 'protection'] }
+                    ]
+                }
+            ]
+        };
+
+        // Degree programs with traits that match each
+        const degreePrograms = {
+            "BSCS": {
+                name: "BSCS: Computer Science",
+                description: "Focused on theoretical foundations and concepts in computing",
+                traits: ['theoretical', 'foundations', 'analytical', 'research', 'optimization'],
+                matchDescription: "Your interest in theoretical concepts and problem-solving suggests Computer Science would be a strong fit."
+            },
+            "BSSE": {
+                name: "BSSE: Software Engineering",
+                description: "Emphasizes cloud computing and architecture using distributed systems",
+                traits: ['systems', 'architecture', 'cloud', 'practical'],
+                matchDescription: "Your preference for building systems and working with architecture indicates Software Engineering would align well with your interests."
+            },
+            "BSGD": {
+                name: "BSGD: Software and Game Development",
+                description: "Combines programming skills with interactive entertainment design",
+                traits: ['game', 'creative', 'interactive', 'design'],
+                matchDescription: "Your creative interests and focus on interactive experiences make Game Development an excellent match."
+            },
+            "BSAAI": {
+                name: "BSAAI: Applied Artificial Intelligence",
+                description: "Focuses on practical applications of AI in various industries",
+                traits: ['ai', 'applied', 'data', 'practical'],
+                matchDescription: "Your interest in practical AI applications suggests the Applied AI program would be ideal for your goals."
+            },
+            "BSAIE": {
+                name: "BSAIE: AI Engineering",
+                description: "Dives deep into building and optimizing AI models and systems",
+                traits: ['ai', 'models', 'optimization', 'systems'],
+                matchDescription: "Your technical interests in AI systems and model development align perfectly with AI Engineering."
+            },
+            "BSIS": {
+                name: "BSIS: Information Systems and Cybersecurity",
+                description: "Information Technology with CyberSecurity expertise",
+                traits: ['security', 'protection', 'analysis', 'systems'],
+                matchDescription: "Your focus on security and system protection suggests Information Systems and Cybersecurity would be a great fit."
+            }
+        };
+
+        // Application state
+        let state = {
+            currentSection: 'intro', // intro, questions, results
+            currentQuestionIndex: 0,
+            currentCategory: 'interests',
+            answers: {},
+            traits: {},
+            recommendations: []
+        };
+
+        // DOM Elements
+        const introSection = document.getElementById('intro-section');
+        const questionsSection = document.getElementById('questions-section');
+        const resultsSection = document.getElementById('results-section');
+        const startButton = document.getElementById('start-btn');
+        const resetButton = document.getElementById('reset-btn');
+        const exploreButton = document.getElementById('explore-btn');
+        const questionText = document.getElementById('question-text');
+        const questionCounter = document.getElementById('question-counter');
+        const optionsContainer = document.getElementById('options-container');
+        const categoryLabel = document.getElementById('category-label');
+        const sectionProgress = document.getElementById('section-progress');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        const recommendationsContainer = document.getElementById('recommendations-container');
+
+        // Event Listeners
+        startButton.addEventListener('click', startAssessment);
+        resetButton.addEventListener('click', resetAssessment);
+        exploreButton.addEventListener('click', function() {
+            alert('This would connect to more detailed program information.');
+        });
+
+        // Initialize the application
+        function init() {
+            showSection('intro');
+        }
+
+        // Section visibility management
+        function showSection(sectionName) {
+            state.currentSection = sectionName;
+            
+            introSection.classList.add('hidden');
+            questionsSection.classList.add('hidden');
+            resultsSection.classList.add('hidden');
+            
+            if (sectionName === 'intro') {
+                introSection.classList.remove('hidden');
+            } else if (sectionName === 'questions') {
+                questionsSection.classList.remove('hidden');
+                displayCurrentQuestion();
+                updateProgressBar();
+            } else if (sectionName === 'results') {
+                resultsSection.classList.remove('hidden');
+                displayResults();
+            }
+        }
+
+        // Start the assessment
+        function startAssessment() {
+            state.currentQuestionIndex = 0;
+            state.currentCategory = 'interests';
+            state.answers = {};
+            state.traits = {};
+            showSection('questions');
+        }
+
+        // Reset the assessment
+        function resetAssessment() {
+            state = {
+                currentSection: 'intro',
+                currentQuestionIndex: 0,
+                currentCategory: 'interests',
+                answers: {},
+                traits: {},
+                recommendations: []
+            };
+            showSection('intro');
+        }
+
+        // Display the current question
+        function displayCurrentQuestion() {
+            const currentQuestion = questions[state.currentCategory][state.currentQuestionIndex];
+            
+            // Update question text and counter
+            questionText.textContent = currentQuestion.text;
+            questionCounter.textContent = `Question ${state.currentQuestionIndex + 1} of ${questions[state.currentCategory].length} in ${formatCategoryName(state.currentCategory)}`;
+            
+            // Update category label and section progress
+            categoryLabel.textContent = formatCategoryName(state.currentCategory);
+            sectionProgress.textContent = `${Object.keys(questions).indexOf(state.currentCategory) + 1} of ${Object.keys(questions).length} sections`;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Add option buttons
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option.text;
+                button.addEventListener('click', () => handleAnswer(currentQuestion.id, option.id, option.traits));
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // Format category name for display
+        function formatCategoryName(category) {
+            return category.charAt(0).toUpperCase() + category.slice(1);
+        }
+
+        // Handle answer selection
+        function handleAnswer(questionId, optionId, selectedTraits) {
+            // Save the answer
+            state.answers[questionId] = optionId;
+            
+            // Track traits
+            selectedTraits.forEach(trait => {
+                state.traits[trait] = (state.traits[trait] || 0) + 1;
+            });
+            
+            // Move to next question or category
+            const categories = Object.keys(questions);
+            const currentCategoryIndex = categories.indexOf(state.currentCategory);
+            const currentCategoryQuestions = questions[state.currentCategory];
+            
+            if (state.currentQuestionIndex < currentCategoryQuestions.length - 1) {
+                // Next question in same category
+                state.currentQuestionIndex++;
+                displayCurrentQuestion();
+            } else if (currentCategoryIndex < categories.length - 1) {
+                // First question in next category
+                state.currentCategory = categories[currentCategoryIndex + 1];
+                state.currentQuestionIndex = 0;
+                displayCurrentQuestion();
+            } else {
+                // All questions answered, show results
+                generateRecommendations();
+                showSection('results');
+            }
+            
+            updateProgressBar();
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const categories = Object.keys(questions);
+            const currentCategoryIndex = categories.indexOf(state.currentCategory);
+            const currentCategoryQuestions = questions[state.currentCategory];
+            const totalCategories = categories.length;
+            
+            // Calculate progress as percentage
+            const categoriesCompleted = currentCategoryIndex;
+            const questionProgress = state.currentQuestionIndex / currentCategoryQuestions.length;
+            const overallProgress = ((categoriesCompleted + questionProgress) / totalCategories) * 100;
+            
+            progressBarFill.style.width = `${overallProgress}%`;
+        }
+
+        // Generate degree recommendations
+        function generateRecommendations() {
+            // Calculate scores for each degree program
+            const degreeScores = {};
+            
+            // Initialize scores
+            Object.keys(degreePrograms).forEach(degreeKey => {
+                degreeScores[degreeKey] = 0;
+            });
+            
+            // Calculate match scores based on trait overlap
+            Object.keys(degreePrograms).forEach(degreeKey => {
+                const program = degreePrograms[degreeKey];
+                
+                // Calculate how many of the user's traits match this program
+                program.traits.forEach(trait => {
+                    if (state.traits[trait]) {
+                        degreeScores[degreeKey] += state.traits[trait]; 
+                    }
+                });
+            });
+            
+            // Sort programs by score (descending)
+            const rankedPrograms = Object.keys(degreeScores)
+                .sort((a, b) => degreeScores[b] - degreeScores[a])
+                .map(key => ({
+                    key: key,
+                    ...degreePrograms[key],
+                    score: degreeScores[key]
+                }));
+            
+            // Take top 3 programs as recommendations
+            state.recommendations = rankedPrograms.slice(0, 3);
+            
+            // Calculate match percentages
+            const maxScore = Math.max(...state.recommendations.map(rec => rec.score));
+            
+            state.recommendations.forEach(rec => {
+                rec.matchPercentage = Math.round((rec.score / maxScore) * 100);
+            });
+        }
+
+        // Display results
+        function displayResults() {
+            recommendationsContainer.innerHTML = '';
+            
+            state.recommendations.forEach((program, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                
+                // Main program info
+                const degreeName = document.createElement('h3');
+                degreeName.textContent = program.name;
+                
+                const degreeDescription = document.createElement('p');
+                degreeDescription.className = 'result-description';
+                degreeDescription.textContent = program.description;
+                
+                // Match info
+                const matchInfo = document.createElement('p');
+                matchInfo.className = 'result-description';
+                matchInfo.textContent = program.matchDescription;
+                
+                const matchPercentage = document.createElement('div');
+                matchPercentage.className = 'result-match';
+                matchPercentage.textContent = `${program.matchPercentage}% Match`;
+                
+                // Add all elements to the result item
+                resultItem.appendChild(degreeName);
+                resultItem.appendChild(degreeDescription);
+                resultItem.appendChild(matchInfo);
+                resultItem.appendChild(matchPercentage);
+                
+                // Add to container
+                recommendationsContainer.appendChild(resultItem);
+            });
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
