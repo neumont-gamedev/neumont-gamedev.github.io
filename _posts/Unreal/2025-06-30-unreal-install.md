@@ -52,7 +52,7 @@ img_path: /assets/img/gamedev/unreal/install
 - In the **Epic Games Launcher**, click on the **Unreal Engine** tab on
   the left sidebar.
 
-<div align="left"><img src="image3.png" alt="" width="100%"/></div>
+<div align="left"><img src="image3.png" alt="" width="80%"/></div>
 
 - Click on **"Library"** at the top.
 
@@ -78,7 +78,7 @@ img_path: /assets/img/gamedev/unreal/install
 - Click **Launch** next to the Unreal Engine version you installed.
 
 <div align="left"><img src="image6.png" alt="" width="100%"/></div>
-<div align="left"><img src="image7.png" alt="" width="50%"/></div>
+<div align="left"><img src="image7.png" alt="" width="40%"/></div>
 
 - The **Unreal Project Browser** will open where you can:
 
