@@ -19,9 +19,6 @@ it is up to date.
 <div align="left">
   <img src="image1.png" width="100%" alt="image">
 </div>
-<div align="left">
-  <img src="image2.png" width="100%" alt="image">
-</div>
 
 - If there are any updates, the **bell** icon on the bottom right will
   be red.
@@ -30,10 +27,10 @@ it is up to date.
     clicking **Update on close**.
 
 <div align="left">
-  <img src="image3.png" width="100%" alt="image">
+  <img src="image3.png" width="200%" alt="image">
 </div>
 <div align="left">
-  <img src="image4.png" width="100%" alt="image">
+  <img src="image4.png" width="120%" alt="image">
 </div>
 
 ### Create Visual Studio Solution
@@ -41,7 +38,7 @@ it is up to date.
 - Open **Visual Studio** and **Create a new project**.
 
 <div align="left">
-  <img src="image5.png" width="100%" alt="image">
+  <img src="image5.png" width="93%" alt="image">
 </div>
 
 - Create an **Empty Project**.
@@ -50,7 +47,7 @@ it is up to date.
     **Language** to **C++** and **Project type** to **Console**.
 
 <div align="left">
-  <img src="image6.png" width="100%" alt="image">
+  <img src="image6.png" width="70%" alt="image">
 </div>
 
 - Name your **Project** and **Solution**.
@@ -66,14 +63,14 @@ it is up to date.
   - Click **Create** to create the project.
 
 <div align="left">
-  <img src="image7.png" width="100%" alt="image">
+  <img src="image7.png" width="70%" alt="image">
 </div>
 
 - The **Solution** and **Project** will be created at the specified
   location.
 
 <div align="left">
-  <img src="image8.png" width="100%" alt="image">
+  <img src="image8.png" width="70%" alt="image">
 </div>
 
 ### Create Project Directory Structure
@@ -109,7 +106,7 @@ project will grow in size and complexity.*
   - **Source** - contains source code and projects.
 
 <div align="left">
-  <img src="image11.png" width="100%" alt="image">
+  <img src="image11.png" width="70%" alt="image">
 </div>
 
 - The **Game** project will be moved into the Source folder.
@@ -120,36 +117,36 @@ project will grow in size and complexity.*
   - Save the project if prompted.
 
 <div align="left">
-  <img src="image12.png" width="100%" alt="image">
+  <img src="image12.png" width="70%" alt="image">
 </div>
 <div align="left">
-  <img src="image13.png" width="100%" alt="image">
+  <img src="image13.png" width="70%" alt="image">
 </div>
 
 - In **Windows Explorer**, move the **Game** folder into the **Source**
   folder.
 
 <div align="left">
-  <img src="image14.png" width="100%" alt="image">
+  <img src="image14.png" width="80%" alt="image">
 </div>
 
 - In **Visual Studio**, right-click the Solution in the **Solution
   Explorer** and select **Add\>Existing Project...**
 
 <div align="left">
-  <img src="image15.png" width="100%" alt="image">
+  <img src="image15.png" width="80%" alt="image">
 </div>
 
 - Find the project file (Game.vcxproj) and click **Open**.
 
 <div align="left">
-  <img src="image16.png" width="100%" alt="image">
+  <img src="image16.png" width="80%" alt="image">
 </div>
 
 - The **Project** will now be included in the **Solution**.
 
 <div align="left">
-  <img src="image17.png" width="100%" alt="image">
+  <img src="image17.png" width="80%" alt="image">
 </div>
 
 ### Update the Game Project
@@ -172,7 +169,7 @@ and creates an executable (.exe) that can be run.*
   <img src="image18.png" width="100%" alt="image">
 </div>
 <div align="left">
-  <img src="image19.png" width="100%" alt="image">
+  <img src="image19.png" width="68%" alt="image">
 </div>
 
 - Add a **Main.cpp** to the **Source** filter.
@@ -180,13 +177,13 @@ and creates an executable (.exe) that can be run.*
   - Right click on the **Source** filter and select **Add\>New Item...**
 
 <div align="left">
-  <img src="image20.png" width="100%" alt="image">
+  <img src="image20.png" width="96%" alt="image">
 </div>
 
 - Name the file Main.cpp and click **Add**.
 
 <div align="left">
-  <img src="image21.png" width="100%" alt="image">
+  <img src="image21.png" width="90%" alt="image">
 </div>
 
 - Typically the source file that contains the **main()** function is
@@ -196,7 +193,7 @@ and creates an executable (.exe) that can be run.*
   the program will start.
 
 <div align="left">
-  <img src="image22.png" width="100%" alt="image">
+  <img src="image22.png" width="80%" alt="image">
 </div>
 
 - Add the following code to display the classic "Hello World!"
@@ -212,7 +209,7 @@ int main()
 - Run (F5) the project to ensure it is working
 
 <div align="left">
-  <img src="image23.png" width="100%" alt="image">
+  <img src="image23.png" width="120%" alt="image">
 </div>
 
 ### Add an Engine Static Library
@@ -221,13 +218,13 @@ int main()
   Explorer** and select **Add\>New Project...**
 
 <div align="left">
-  <img src="image24.png" width="100%" alt="image">
+  <img src="image24.png" width="80%" alt="image">
 </div>
 
 - Find and select the **Windows Desktop Wizard**, click **Next**.
 
 <div align="left">
-  <img src="image25.png" width="100%" alt="image">
+  <img src="image25.png" width="80%" alt="image">
 </div>
 
 - Set the **Project name** to "Engine"
@@ -238,36 +235,36 @@ int main()
   - Navigate to the **Source** folder.
 
 <div align="left">
-  <img src="image26.png" width="100%" alt="image">
+  <img src="image26.png" width="80%" alt="image">
 </div>
 <div align="left">
-  <img src="image27.png" width="100%" alt="image">
+  <img src="image27.png" width="80%" alt="image">
 </div>
 
 - Click **Select Folder**.
 
 <div align="left">
-  <img src="image28.png" width="100%" alt="image">
+  <img src="image28.png" width="80%" alt="image">
 </div>
 
 - Click **Create**.
 
 <div align="left">
-  <img src="image29.png" width="100%" alt="image">
+  <img src="image29.png" width="80%" alt="image">
 </div>
 
 - Set the **Application type** to **Static Library (.lib)** and check
   the **Empty Project**
 
 <div align="left">
-  <img src="image30.png" width="100%" alt="image">
+  <img src="image30.png" width="80%" alt="image">
 </div>
 
 - There will now be an **Engine Project** and **Game Project** in the
   **Solution**.
 
 <div align="left">
-  <img src="image31.png" width="100%" alt="image">
+  <img src="image31.png" width="70%" alt="image">
 </div>
 
 - Remove and Rename the Filters as follows:
@@ -354,7 +351,7 @@ Engine library project.*
   current project onto **GitHub**.
 
 <div align="left">
-  <img src="image39.png" width="100%" alt="image">
+  <img src="image39.png" width="90%" alt="image">
 </div>
 
 - Navigate to your **GitHub** repository page to ensure it has been
@@ -363,7 +360,7 @@ Engine library project.*
   - It may take a couple of minutes to appear when created.
 
 <div align="left">
-  <img src="image40.png" width="100%" alt="image">
+  <img src="image40.png" width="80%" alt="image">
 </div>
 
 ### Save changes to GitHub
@@ -377,14 +374,14 @@ Studio.*
     Explorer**.
 
 <div align="left">
-  <img src="image41.png" width="100%" alt="image">
+  <img src="image41.png" width="200%" alt="image">
 </div>
 
 - If the **Git Changes** tab isn't visible, open it with **View\>Git
   Changes** (Ctrl+0, Ctrl+G).
 
 <div align="left">
-  <img src="image42.png" width="100%" alt="image">
+  <img src="image42.png" width="130%" alt="image">
 </div>
 
 - Enter a message (description of what was done) for the commit.
@@ -392,20 +389,20 @@ Studio.*
 - Click **Commit All***.*
 
 <div align="left">
-  <img src="image43.png" width="100%" alt="image">
+  <img src="image43.png" width="83%" alt="image">
 </div>
 
 - Press the **Push** button to push the changes to the remote repository
   (**GitHub**)
 
 <div align="left">
-  <img src="image44.png" width="100%" alt="image">
+  <img src="image44.png" width="80%" alt="image">
 </div>
 
 - A status message will be displayed
 
 <div align="left">
-  <img src="image45.png" width="100%" alt="image">
+  <img src="image45.png" width="80%" alt="image">
 </div>
 
 
