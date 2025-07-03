@@ -70,10 +70,10 @@ $(SolutionDir)Source\ThirdParty\SDL3\include
 _The SDL library setup only applies to the **Engine** project._
 
 + Add the SDL library directory in **Project Properties** (**Librarian > General** or **Linker > Input**):
-  + ```$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)```
+  + ```$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)```
 
 ```
-$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)
+$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)
 ```
 <div align="left">
 <img src="sdl-library.jpg" alt="Library" width="70%"/>
