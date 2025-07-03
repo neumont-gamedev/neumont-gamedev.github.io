@@ -10,122 +10,102 @@ img_path: /assets/img/gamedev/cpp/sdl
 <div align="center">
 <img src="sdl-logo.svg" alt="Logo" width="65%"/>
 </div>
-_This guide will provide step-by-step instructions on how to add the Simple DirectMedia Layer (SDL) library to a Visual Studio C++ project. You will learn how to download and set up SDL, configure Visual Studio to recognize the library, and integrate SDL into your project for enhanced multimedia capabilities. By the end of this guide, you will be ready to utilize SDL in your Visual Studio C++ projects._
+_This guide provides step-by-step instructions to add the Simple DirectMedia Layer (SDL) library to a Visual Studio C++ project. You'll learn how to download and set up SDL, configure Visual Studio, and integrate SDL into your project. By the end, you'll be ready to use SDL in your Visual Studio C++ projects._
 
 ### About SDL ###
-**Simple DirectMedia Layer (SDL)** is a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D.
+**Simple DirectMedia Layer (SDL)** is a cross-platform development library that provides low-level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D. SDL is distributed as a Dynamic Link Library (DLL); the .dll file must be included to run your application.
 
 ### Download SDL ###
-+ Go to the SDL website [https://www.libsdl.org/](https://www.libsdl.org/)
-  + Go to the **Download SDL Releases**
-  + Download ```SDL2-devel-####-VC.zip```
++ Go to the SDL website: [https://www.libsdl.org/](https://www.libsdl.org/)
+  + Navigate to **Download SDL Releases**
+  + Download the latest ```SDL3-devel-####-VC.zip```
 <div align="left">
 <img src="sdl-zip.jpg" alt="Version" width="65%"/>
 </div>
 
-+ Create a folder in the Solution directory called "ThirdParty"
-  + **ThirdParty** will contain libraries from external developers to be used in the project
++ Create a folder named **ThirdParty** in your **Source** directory. This folder will store external libraries used in your project.
 <div align="left">
 <img src="sdl-thirdparty-folder.jpg" alt="ThirdParty Folder" width="65%"/>
 </div>
 
-+ Move the downloaded .zip file into the **ThirdParty** folder and extract it
-  + Rename the extracted folder to "SDL2" to make is easier to reference the folder
-  + Once extracted, the .zip file can be deleted
++ Move the downloaded .zip file into the **ThirdParty** folder and extract it.
+  + Rename the extracted folder to "SDL3" for easier reference.
+  + After extraction, delete the .zip file.
 <div align="left">
 <img src="sdl-unzip-dir.jpg" alt="Unzip" width="75%"/>
 </div>
 
 ### Add SDL to the Solution Project(s) ###
-> If the **Solution** contains multiple **Projects**, the following steps will need to be done for each project. This is because each project needs the path to the SDL includes and libraries.
-> <div align="left">
-> <img src="sdl-projects.jpg" alt="Projects" width="75%"/>
-> </div>
-{: .prompt-warning }
 
 #### Add SDL Include ####
-+ Open the **Project Properties** that SDL will be used in
-  + Right-click the **Project** and select **Properties**
++ Open the **Project Properties** for the project that will use SDL (e.g., **Engine**).
+  + Right-click the project and select **Properties**.
  <div align="left">
-<img src="sdl-project.jpg" alt="Project" width="75%"/>
+<img src="sdl-projects.jpg" alt="Project" width="100%"/>
 <img src="sdl-properties.jpg" alt="Properties" width="75%"/>
 </div>
 
-> In the **Project Properties**, make sure that the **Configuration** is set to **All Configurations** and **Platform** is set to **All Platforms**.
+> In **Project Properties**, ensure **Configuration** is set to **All Configurations** and **Platform** is set to **All Platforms**.
 > <div align="left">
 > <img src="sdl-configuration.jpg" alt="Configurations" width="75%"/>
 > </div>
 {: .prompt-warning }
 
  
-+ Add the directory of the SDL include folder to the **Additional Include Directories**.
-  + **Additional Include Directories** is located in **C/C++>General**.
-  + Add ```$(SolutionDir)ThirdParty\SDL2\include```
++ Add the SDL include directory to **Additional Include Directories** (**C/C++ > General**):
+  + ```$(SolutionDir)Source\ThirdParty\SDL3\include```
 
 ```
-$(SolutionDir)ThirdParty\SDL2\include
+$(SolutionDir)Source\ThirdParty\SDL3\include
 ```
 <div align="left">
-<img src="sdl-include.jpg" alt="Include" width="75%"/>
+<img src="sdl-include.jpg" alt="Include" width="80%"/>
 </div>
  
-+ Once the directory is added to the list of included directories, the SDL header can be add to the files.
-  + Add the following to a file ```#include <SDL.h>```
-
-> If the SDL include directory was properly added, building the project (CTRL+B) will result in no errors.
-{: .prompt-info }
+> If your solution contains multiple projects, repeat the **Additional Include Directories** step for each project that uses SDL.
+> _This steps needs to be done on the **Game** project also._
+{: .prompt-warning }
 
 #### Add SDL Library ####
-+ Open the **Project Properties** that SDL will be used in
-  + Right-click the **Project** and select **Properties**
- <div align="left">
-<img src="sdl-project.jpg" alt="Project" width="75%"/>
-<img src="sdl-properties.jpg" alt="Properties" width="75%"/>
-</div>
+_The SDL library setup only applies to the **Engine** project._
 
-+ Add the directory of the SDL library folder in **Project Properties**.
-  + **Additional Library Directories** is located in **Librarian>General** or **Linker>Input**
-  + Add ```$(SolutionDir)ThirdParty\SDL2\lib\$(PlatformTarget)```
++ Add the SDL library directory in **Project Properties** (**Librarian > General** or **Linker > Input**):
+  + ```$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)```
 
 ```
-$(SolutionDir)ThirdParty\SDL2\lib\$(PlatformTarget)
+$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)
 ```
 <div align="left">
 <img src="sdl-library.jpg" alt="Library" width="70%"/>
 </div>
  
-+ Add the SDL .lib files that the project needs to function.
-  + **Additional Dependencies** is located in **Librarian>General** or **Linker>General**
-  + Add ```sdl2.lib``` and ```sdl2main.lib```
++ Add the required SDL .lib files to **Additional Dependencies** (**Librarian > General** or **Linker > General**):
+  + ```sdl3.lib```
 
 ```
-sdl2.lib
-sdl2main.lib
+sdl3.lib
 ```
 <div align="left">
 <img src="sdl-lib.jpg" alt="Library" width="70%"/>
 </div>
 
-> If the SDL library was properly added, building the project (CTRL+B) will result in no errors.
+> If the SDL library is set up correctly, building the project (CTRL+B) should result in no errors.
 {: .prompt-info }
 
 #### Add SDL Dynamic Link Library (dll) ####
-+ Create a folder in the **Solution** directory called "Build".
-  + The **Build** folder will contain the SDL dll (dynamic link library) files.
++ Create a folder named **Build** in your solution directory if it doesn't exist. This folder will store the SDL DLL files.
 <div align="left">
-<img src="sdl-build.jpg" alt="Build" width="70%"/>
+<img src="sdl-build.jpg" alt="Build" width="80%"/>
 </div>
 
-+ Copy the **sdl2.dll** file from the **ThirdParty\sdl\lib\x64** directory to the **Build** folder.
-  + The project is a x64 project (64-bit application).
++ Copy **sdl3.dll** from **ThirdParty\SDL3\lib\x64** to the **Build** folder. For 64-bit projects, use the x64 version of the DLL.
 <div align="left">
-<img src="sdl-dll.jpg" alt="DLL" width="70%"/>
-<img src="sdl-dll-build.jpg" alt="DLL" width="70%"/>
+<img src="sdl-dll.jpg" alt="DLL" width="100%"/>
+<img src="sdl-dll-build.jpg" alt="DLL" width="100%"/>
 </div>
 
-+ Set the **Working Directory** that the project will be run from in **Project Properties**.
-  + **Working Directory** is located in **Debugging**.
-  + Add ```$(SolutionDir)Build```
++ In the **Game** project properties, set the **Working Directory** (**Debugging**) to the **Build** folder:
+  + ```$(SolutionDir)Build```
 
 ```
 $(SolutionDir)Build
@@ -139,48 +119,53 @@ $(SolutionDir)Build
 + In main() add the following code:
 
 ```
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <iostream>
 
-int main(int argc, char* argv[])
-{
-	// initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
-		std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
-		return 1;
-	}
+int main(int argc, char* argv[]) {
+    SDL_Init(SDL_INIT_VIDEO);
 
-	// create window
-	// returns pointer to window if successful or nullptr if failed
-	SDL_Window* window = SDL_CreateWindow("Game Engine",
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		800, 600,
-		SDL_WINDOW_SHOWN);
-	if (window == nullptr)
-	{
-		std::cerr << "Error creating SDL window: " << SDL_GetError() << std::endl;
-		SDL_Quit();
-		return 1;
-	}
+    SDL_Window* window = SDL_CreateWindow("SDL3 Project", 1280, 1024, 0);
+    if (window == nullptr) {
+        std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        SDL_Quit();
+        return 1;
+    }
 
-	// create renderer
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+    if (renderer == nullptr) {
+        std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
 
-	while (true)
-	{
-		// clear screen
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-		SDL_RenderClear(renderer);
+    SDL_Event e;
+    bool quit = false;
 
-		// draw line
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-		SDL_RenderDrawLine(renderer, 0, 0, 800, 600);
+    // Define a rectangle
+    SDL_FRect greenSquare{ 270, 190, 200, 200 };
 
-		// show screen
-		SDL_RenderPresent(renderer);
-	}
+    while (!quit) {
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_EVENT_QUIT) {
+                quit = true;
+            }
+        }
 
-	return 0;
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set render draw color to black
+        SDL_RenderClear(renderer); // Clear the renderer
+
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // Set render draw color to green
+        SDL_RenderFillRect(renderer, &greenSquare); // Render the rectangle
+
+        SDL_RenderPresent(renderer); // Render the screen
+    }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
 }
 ```
