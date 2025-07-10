@@ -33,7 +33,7 @@ _This guide will provide step-by-step instructions on how to add the FMOD librar
 <img src="fmod-installer.jpg" alt="Installer" width="75%"/>
 </div>
 
-+ Create a folder in the Solution directory called "ThirdParty", if one doesn't exist
++ Create a folder in the **Source** directory called "ThirdParty", if one doesn't exist
   + **ThirdParty** will contain libraries from external developers to be used in the project
 + Create a folder in the **ThirdParty** folder called "fmod"
 <div align="left">
@@ -53,13 +53,19 @@ C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows
 
 ### Add FMOD to the Solution Project(s) ###
 
+> In the **Project Properties**, make sure that the **Configuration** is set to **All Configurations** and **Platform** is set to **All Platforms**.
+> <div align="left">
+> <img src="fmod-configuration.jpg" alt="Configurations" width="75%"/>
+> </div>
+{: .prompt-warning }
+
 #### Add FMOD Include Directories ####
 + Add the directory of the FMOD include folder to the **Additional Include Directories**.
   + **Additional Include Directories** is located in **C/C++>General**.
-  + Add ```$(SolutionDir)ThirdParty\fmod\core\inc```
+  + Add ```$(SolutionDir)Source\ThirdParty\fmod\core\inc```
 
 ```
-$(SolutionDir)ThirdParty\fmod\core\inc
+$(SolutionDir)Source\ThirdParty\fmod\core\inc
 ```
 <div align="left">
 <img src="fmod-include.jpg" alt="Include" width="75%"/>
@@ -69,7 +75,7 @@ $(SolutionDir)ThirdParty\fmod\core\inc
 {: .prompt-warning }
 
 + Once the directory is added to the list of included directories, the **FMOD** header can be add to the files.
-  + Add the following to a file 
+  + Add the following to a file, for example Main.cpp.
 ```
 #include <fmod.hpp>
 ```
@@ -79,34 +85,26 @@ $(SolutionDir)ThirdParty\fmod\core\inc
 
 #### Add FMOD Library Directories and Library (.lib)
 
-> If the **Solution** contains multiple **Projects**, the following steps will need to be done for each project. This is because each project needs the path to the FMOD includes and libraries.
+> The following steps will only need to be done for the **Engine** project.
 > <div align="left">
 > <img src="fmod-projects.jpg" alt="Projects" width="75%"/>
 > </div>
 {: .prompt-warning }
 
-> In the **Project Properties**, make sure that the **Configuration** is set to **All Configurations** and **Platform** is set to **All Platforms**.
-> <div align="left">
-> <img src="fmod-configuration.jpg" alt="Configurations" width="75%"/>
-> </div>
-{: .prompt-warning }
-
 + Add the directory of the FMOD library folder in **Project Properties**
   + **Additional Library Directories** is located in **Librarian>General** or **Linker>Input**
-  + Add ```$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget)```
+  + Add ```$(SolutionDir)Source\ThirdParty\fmod\core\lib\$(PlatformTarget)```
 
 ```
-$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget)
+$(SolutionDir)Source\ThirdParty\fmod\core\lib\$(PlatformTarget)
 ```
 <div align="left">
 <img src="fmod-library.jpg" alt="Library" width="70%"/>
 </div>
  <br> 
-> The **fmod_vc.lib** only needs to be added on the project that is the application (Game). Do not add it to the library project (Engine). If it is added to both, there will be a warning reported when built.
-{: .prompt-warning }
 
 + Add the **FMOD** .lib files that the project needs to function
-  + **Additional Dependencies** is located in **Librarian>General** or **Linker>General**
+  + **Additional Dependencies** is located in **Librarian>General**
   + Add ```fmod_vc.lib```
 
 ```
