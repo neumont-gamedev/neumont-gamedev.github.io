@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Line Model Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            display: flex;
+            gap: 20px;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .left-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .right-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 250px;
+            flex: 1;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        body.dark-mode .left-panel,
+        body.dark-mode .right-panel {
+            background: #2d2d2d;
+            color: #ffffff;
+        }
+
+        body.dark-mode .canvas-container {
+            border-color: #555;
+        }
+
+        body.dark-mode #canvas {
+            background: #1a1a1a;
+        }
+
+        body.dark-mode #output {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border-color: #555;
+        }
+
+        body.dark-mode h2,
+        body.dark-mode h3 {
+            color: #ffffff;
+        }
+
+        body.dark-mode label {
+            color: #cccccc;
+        }
+
+        body.dark-mode .grid-info {
+            color: #aaaaaa;
+        }
+
+        .theme-toggle {
+            /* Removed margin-left: auto; */
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .canvas-container {
+            position: relative;
+            display: inline-block;
+            border: 2px solid #333;
+            background: white;
+        }
+
+        #canvas {
+            display: block;
+            cursor: crosshair;
+        }
+
+        .bottom-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .color-input {
+            width: 50px;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+        }
+
+        .output-area {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #output {
+            flex: 1;
+            width: 100%;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            resize: vertical;
+            min-height: 300px;
+        }
+
+        .button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .button.danger {
+            background-color: #dc3545;
+        }
+
+        .button.danger:hover {
+            background-color: #c82333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        h2 {
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+            color: #666;
+            font-size: 16px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .grid-info {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="left-panel">
+            <h2>2D Line Model Editor</h2>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="colorPicker">Line Color:</label>
+                    <input type="color" id="colorPicker" class="color-input" value="#ff0000">
+                </div>
+                
+                <div class="control-group">
+                    <input type="checkbox" id="snapToGrid" class="checkbox" checked>
+                    <label for="snapToGrid">Snap to Grid</label>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="canvas" width="400" height="400"></canvas>
+            </div>
+
+            <div class="bottom-controls">
+                <div class="control-group">
+                    <input type="checkbox" id="segmentedLines" class="checkbox">
+                    <label for="segmentedLines">Segmented Lines</label>
+                </div>
+                
+                <div class="control-group">
+                    <input type="checkbox" id="darkMode" class="checkbox">
+                    <label for="darkMode">Dark Mode</label>
+                </div>
+            </div>
+            
+            <div class="grid-info">
+                20x20 grid • Origin at center • Click to add points • Right-click to remove points (hold to remove multiple)
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="output-area">
+                <h3>Model Code Output</h3>
+                <textarea id="output" readonly placeholder="Your 2D line model will appear here..."></textarea>
+                
+                <div class="button-group">
+                    <button class="button" onclick="copyToClipboard()">Copy to Clipboard</button>
+                    <button class="button danger" onclick="clearModel()">Clear Model</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const snapToGrid = document.getElementById('snapToGrid');
+        const segmentedLines = document.getElementById('segmentedLines');
+        const darkMode = document.getElementById('darkMode');
+        const output = document.getElementById('output');
+
+        let points = [];
+        let currentColor = '#ff0000';
+        let segments = []; // Array of arrays, each containing connected points
+        let isRightClickHeld = false;
+        let removeInterval = null;
+        let mousePos = { x: -1, y: -1 }; // Track mouse position for preview line
+
+        // Grid settings
+        const gridSize = 20;
+        const cellSize = canvas.width / gridSize;
+
+        // Initialize
+        drawGrid();
+        updateOutput();
+
+        // Event listeners
+        canvas.addEventListener('mousedown', handleMouseDown);
+        canvas.addEventListener('mouseup', handleMouseUp);
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseleave', handleMouseLeave);
+        canvas.addEventListener('contextmenu', handleRightClick);
+        colorPicker.addEventListener('change', handleColorChange);
+        snapToGrid.addEventListener('change', redraw);
+        segmentedLines.addEventListener('change', handleSegmentedChange);
+        darkMode.addEventListener('change', handleDarkModeToggle);
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const gridColor = isDarkMode ? '#404040' : '#e0e0e0';
+            const originColor = isDarkMode ? '#808080' : '#999999';
+            
+            // Draw regular grid lines
+            ctx.strokeStyle = gridColor;
+            ctx.lineWidth = 1;
+            
+            for (let i = 0; i <= gridSize; i++) {
+                const pos = i * cellSize;
+                
+                // Skip origin lines (center lines) - we'll draw them separately
+                if (i !== gridSize / 2) {
+                    // Vertical lines
+                    ctx.beginPath();
+                    ctx.moveTo(pos, 0);
+                    ctx.lineTo(pos, canvas.height);
+                    ctx.stroke();
+                    
+                    // Horizontal lines
+                    ctx.beginPath();
+                    ctx.moveTo(0, pos);
+                    ctx.lineTo(canvas.width, pos);
+                    ctx.stroke();
+                }
+            }
+            
+            // Draw origin lines (center) with darker color
+            ctx.strokeStyle = originColor;
+            ctx.lineWidth = 2;
+            
+            const centerPos = (gridSize / 2) * cellSize;
+            
+            // Vertical origin line
+            ctx.beginPath();
+            ctx.moveTo(centerPos, 0);
+            ctx.lineTo(centerPos, canvas.height);
+            ctx.stroke();
+            
+            // Horizontal origin line
+            ctx.beginPath();
+            ctx.moveTo(0, centerPos);
+            ctx.lineTo(canvas.width, centerPos);
+            ctx.stroke();
+        }
+
+        function handleMouseDown(e) {
+            if (e.button === 0) { // Left click
+                handleLeftClick(e);
+            } else if (e.button === 2) { // Right click
+                isRightClickHeld = true;
+                removeLastPoint();
+                
+                // Start removing points repeatedly while held
+                removeInterval = setInterval(() => {
+                    if (isRightClickHeld) {
+                        removeLastPoint();
+                    }
+                }, 200); // Remove a point every 200ms
+            }
+        }
+
+        function handleMouseUp(e) {
+            if (e.button === 2) { // Right click release
+                isRightClickHeld = false;
+                if (removeInterval) {
+                    clearInterval(removeInterval);
+                    removeInterval = null;
+                }
+            }
+        }
+
+        function handleMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            if (snapToGrid.checked) {
+                // Snap mouse position to grid
+                x = Math.round(x / cellSize) * cellSize;
+                y = Math.round(y / cellSize) * cellSize;
+            }
+
+            mousePos.x = x;
+            mousePos.y = y;
+            
+            // Redraw to show preview line
+            redraw();
+        }
+
+        function handleMouseLeave(e) {
+            // Stop removing points if mouse leaves canvas
+            isRightClickHeld = false;
+            if (removeInterval) {
+                clearInterval(removeInterval);
+                removeInterval = null;
+            }
+            
+            // Hide preview line
+            mousePos.x = -1;
+            mousePos.y = -1;
+            redraw();
+        }
+
+        function handleLeftClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            if (snapToGrid.checked) {
+                // Snap to grid
+                x = Math.round(x / cellSize) * cellSize;
+                y = Math.round(y / cellSize) * cellSize;
+            }
+
+            // Convert to grid coordinates with origin at center (-10 to +10 range)
+            // X: left of center is negative, right of center is positive
+            // Y: above center is negative, below center is positive (flipped for screen coordinates)
+            let gridX, gridY;
+            
+            if (snapToGrid.checked) {
+                gridX = Math.round((x / cellSize) - (gridSize / 2));
+                gridY = Math.round((y / cellSize) - (gridSize / 2)); // Flipped Y coordinate
+            } else {
+                gridX = parseFloat(((x / cellSize) - (gridSize / 2)).toFixed(2));
+                gridY = parseFloat(((y / cellSize) - (gridSize / 2)).toFixed(2)); // Flipped Y coordinate
+            }
+
+            // Add point
+            const point = {
+                x: gridX,
+                y: gridY,
+                canvasX: x,
+                canvasY: y
+            };
+
+            if (segmentedLines.checked) {
+                // Each click starts a new segment
+                segments.push([point]);
+            } else {
+                // Add to current segment or create first segment
+                if (segments.length === 0) {
+                    segments.push([point]);
+                } else {
+                    segments[segments.length - 1].push(point);
+                }
+            }
+
+            redraw();
+            updateOutput();
+        }
+
+        function removeLastPoint() {
+            if (segments.length > 0) {
+                const currentSegment = segments[segments.length - 1];
+                if (currentSegment.length > 0) {
+                    currentSegment.pop();
+                    if (currentSegment.length === 0) {
+                        segments.pop();
+                    }
+                    redraw();
+                    updateOutput();
+                }
+            }
+        }
+
+        function handleRightClick(e) {
+            e.preventDefault();
+            // Right-click handling is now done in handleMouseDown/Up
+        }
+
+        function handleColorChange(e) {
+            currentColor = e.target.value;
+            updateOutput();
+        }
+
+        function handleSegmentedChange() {
+            redraw();
+            updateOutput();
+        }
+
+        function redraw() {
+            drawGrid();
+            
+            // Draw all segments
+            segments.forEach(segment => {
+                if (segment.length === 0) return;
+
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = 2;
+                ctx.fillStyle = currentColor;
+
+                if (segmentedLines.checked) {
+                    // Draw individual line segments
+                    for (let i = 0; i < segment.length - 1; i += 2) {
+                        if (i + 1 < segment.length) {
+                            ctx.beginPath();
+                            ctx.moveTo(segment[i].canvasX, segment[i].canvasY);
+                            ctx.lineTo(segment[i + 1].canvasX, segment[i + 1].canvasY);
+                            ctx.stroke();
+                        }
+                    }
+                } else {
+                    // Draw connected lines
+                    if (segment.length > 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(segment[0].canvasX, segment[0].canvasY);
+                        for (let i = 1; i < segment.length; i++) {
+                            ctx.lineTo(segment[i].canvasX, segment[i].canvasY);
+                        }
+                        ctx.stroke();
+                    }
+                }
+
+                // Draw points
+                segment.forEach(point => {
+                    ctx.beginPath();
+                    ctx.arc(point.canvasX, point.canvasY, 4, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+            });
+
+            // Draw preview line from last point to mouse position
+            if (mousePos.x >= 0 && mousePos.y >= 0) {
+                let showPreview = false;
+                let lastPoint = null;
+
+                if (segmentedLines.checked) {
+                    // In segmented mode, show preview if we have any points and even number of points in current segment
+                    if (segments.length > 0) {
+                        const currentSegment = segments[segments.length - 1];
+                        if (currentSegment.length % 2 === 1) {
+                            // Odd number of points, show preview to complete the pair
+                            lastPoint = currentSegment[currentSegment.length - 1];
+                            showPreview = true;
+                        }
+                    }
+                } else {
+                    // In connected mode, show preview if we have any points
+                    if (segments.length > 0) {
+                        const currentSegment = segments[segments.length - 1];
+                        if (currentSegment.length > 0) {
+                            lastPoint = currentSegment[currentSegment.length - 1];
+                            showPreview = true;
+                        }
+                    }
+                }
+
+                if (showPreview && lastPoint) {
+                    ctx.strokeStyle = currentColor;
+                    ctx.lineWidth = 1;
+                    ctx.globalAlpha = 0.5; // Make it semi-transparent
+                    ctx.setLineDash([5, 5]); // Dashed line for preview
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(lastPoint.canvasX, lastPoint.canvasY);
+                    ctx.lineTo(mousePos.x, mousePos.y);
+                    ctx.stroke();
+                    
+                    ctx.setLineDash([]); // Reset to solid line
+                    ctx.globalAlpha = 1.0; // Reset transparency
+                    
+                    // Draw red dot at the end position
+                    ctx.fillStyle = '#ff0000'; // Red color
+                    ctx.beginPath();
+                    ctx.arc(mousePos.x, mousePos.y, 3, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+        }
+
+        function updateOutput() {
+            let outputText = '';
+
+            if (segments.length === 0 || segments.every(seg => seg.length === 0)) {
+                output.value = '';
+                return;
+            }
+
+            // Convert hex color to RGB vector
+            const hex = currentColor.replace('#', '');
+            const r = (parseInt(hex.substr(0, 2), 16) / 255).toFixed(1);
+            const g = (parseInt(hex.substr(2, 2), 16) / 255).toFixed(1);
+            const b = (parseInt(hex.substr(4, 2), 16) / 255).toFixed(1);
+
+            outputText += `// Color Vector (R, G, B)\n{ ${r}, ${g}, ${b} },\n\n`;
+
+            if (segmentedLines.checked) {
+                outputText += '// Segmented Lines\n';
+                segments.forEach((segment, segIndex) => {
+                    if (segment.length === 0) return;
+                    
+                    outputText += `// Segment ${segIndex + 1}\n`;
+                    for (let i = 0; i < segment.length - 1; i += 2) {
+                        if (i + 1 < segment.length) {
+                            const p1 = segment[i];
+                            const p2 = segment[i + 1];
+                            outputText += `{ ${p1.x}, ${p1.y} }, { ${p2.x}, ${p2.y} },\n`;
+                        }
+                    }
+                    outputText += '\n';
+                });
+            } else {
+                outputText += '// Connected Lines\n';
+                segments.forEach((segment, segIndex) => {
+                    if (segment.length === 0) return;
+                    
+                    if (segments.length > 1) {
+                        outputText += `// Line Group ${segIndex + 1}\n`;
+                    }
+                    
+                    segment.forEach(point => {
+                        outputText += `{ ${point.x}, ${point.y} },\n`;
+                    });
+                    
+                    if (segments.length > 1) {
+                        outputText += '\n';
+                    }
+                });
+            }
+
+            output.value = outputText.trim();
+        }
+
+        function handleDarkModeToggle() {
+            document.body.classList.toggle('dark-mode');
+            redraw();
+        }
+
+        function copyToClipboard() {
+            output.select();
+            output.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                document.execCommand('copy');
+                // Visual feedback
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.backgroundColor = '#28a745';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.backgroundColor = '#007bff';
+                }, 1500);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+        }
+
+        function clearModel() {
+            segments = [];
+            redraw();
+            updateOutput();
+        }
+    </script>
+</body>
+</html>
