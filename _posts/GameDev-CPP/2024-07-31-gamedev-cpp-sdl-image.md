@@ -186,7 +186,7 @@ Vector2 Texture::GetSize()
 
 ```
 friend class Texture;
-void DrawTexture(...forward declaration... Texture* texture, float x, float y, float angle...use default value 0.0f...);
+void DrawTexture(...forward declaration... Texture* texture, float x, float y);
 ```
 
 + In the **Renderer.cpp**
@@ -195,7 +195,7 @@ void DrawTexture(...forward declaration... Texture* texture, float x, float y, f
   + Add **DrawTexture()** function
 
 ```
-void Renderer::DrawTexture(Texture* texture, float x, float y, float angle)
+void Renderer::DrawTexture(Texture* texture, float x, float y)
 {
 	vec2 size = ...get texture size...
 
