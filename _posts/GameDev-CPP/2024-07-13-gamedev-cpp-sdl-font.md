@@ -51,7 +51,7 @@ Type 1 fonts used in PostScript. It has become the most common format for fonts 
 {: .prompt-warning }
 
 + Open the **Project Properties** that SDL libray will be added to (Game).
-  + Right-click the **Project** and select **Properties**.
+  + Right-click the **Game Project** and select **Properties**.
  <div align="left">
 <img src="sdl-game-projects.jpg" alt="Project" width="75%"/>
 <img src="sdl-properties.jpg" alt="Properties" width="75%"/>
