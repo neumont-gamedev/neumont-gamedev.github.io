@@ -170,11 +170,12 @@ bool Texture::Load(const std::string& filename, Renderer& renderer)
     return true;
 }
 
-Vector2 Texture::GetSize()
+vec2 Texture::GetSize()
 {
+    float w, h;
     // https://wiki.libsdl.org/SDL3/SDL_GetTextureSize
 
-    return ...vec2 with size.x and size.y...;
+    return ...vec2 with w and h...;
 }
 ```
 
