@@ -220,7 +220,7 @@ std::shared_ptr<Texture> texture = std::make_shared<Texture>();
 texture->Load(...texture filename... , ...renderer from engine...);
 ```
 
-+ Draw the texture between the renderer **BeginFrame()** and **EndFrame()**
++ Draw the texture between the renderer **Clear** and **Present**.
 
 ```
 GetEngine().GetRenderer().DrawTexture(...get() texture pointer..., 30, 30);
