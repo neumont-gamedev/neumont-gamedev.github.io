@@ -203,7 +203,7 @@ std::cout << age << std::endl;
 
 + After running the program, the console will display the contents of the **JSON** file and the **age** data.
 <div align="left">
-<img src="json-output.jpg" alt="Output" width="75%"/>
+<img src="json-output.jpg" alt="Output" width="80%"/>
 </div>
 
 ### Add Addition JSON Functions ###
@@ -306,7 +306,7 @@ std::cout << color.r << " " << color.g << " " << color.b << " " << std::endl;
 
 + The output should look like the image below
 <div align="left">
-<img src="json-output-all.jpg" alt="Output All" width="75%"/>
+<img src="json-output-all.jpg" alt="Output All" width="80%"/>
 </div>
 
 ### Create JSON Read Macro ###
@@ -347,5 +347,5 @@ JSON_READ(document, color);
 
 + **Build** and **Run** the program again to ensure it is working correctly. It should display as before.
 <div align="left">
-<img src="json-output-all.jpg" alt="Output All" width="75%"/>
+<img src="json-output-all.jpg" alt="Output All" width="80%"/>
 </div>
