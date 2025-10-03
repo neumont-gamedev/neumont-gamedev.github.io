@@ -2,7 +2,7 @@
 title: 6502 Assembly Guide
 date: 2025-06-25 12:00:00 +/-TTTT
 categories: [GameDev,Retro]
-tags: [gamedev,assembly,retro]     # TAG names should always be lowercase
+tags: [gamedev,retro]     # TAG names should always be lowercase
 toc: true
 comments: true
 img_path: /assets/img/gamedev/retro/6502
