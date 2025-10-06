@@ -345,7 +345,6 @@
                         <p>• Click cells to toggle alive/dead</p>
                         <p>• Add rules to determine cell state</p>
                         <p>• Comparison value determined by alive neighbors</p>
-                        <p>• Default rules implement Conway's Game of Life</p>
                     </div>
                 </div>
             </div>
@@ -360,10 +359,6 @@
         let speed = 5;
         let intervalId = null;
         let rules = [
-            { id: '1', condition: 'alive < 2', action: 'dead', display: 'ALIVE: < 2 = DEAD' },
-            { id: '2', condition: 'alive === 2 || alive === 3', action: 'alive', display: 'ALIVE: == 2|3 = ALIVE' },
-            { id: '3', condition: 'alive > 3', action: 'dead', display: 'ALIVE: > 3 = DEAD' },
-            { id: '4', condition: 'dead === 3', action: 'alive', display: 'DEAD: == 3 = ALIVE' }
         ];
 
         const gridContainer = document.getElementById('grid-container');

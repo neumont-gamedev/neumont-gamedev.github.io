@@ -54,7 +54,7 @@ From these basic rules, an amazing variety of patterns can emerge. These pattern
 
 <div style="width:100%; overflow:hidden;">
   <iframe src="{{ site.baseurl }}/assets/pages/ai-cellular-automata.html"
-          style="width:170%; height:1050px; border:none; transform:scale(0.55); transform-origin:0 0;">
+          style="width:180%; height:1050px; border:none; transform:scale(0.55); transform-origin:0 0;">
   </iframe>
 </div>
 
