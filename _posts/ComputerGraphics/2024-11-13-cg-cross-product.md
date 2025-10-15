@@ -2,7 +2,7 @@
 title: Computer Graphics - Cross Product
 date: 2024-11-18 12:45:00 +/-TTTT
 categories: [Computer Graphics]
-tags: [computergraphics,gamedev]     # TAG names should always be lowercase
+tags: [computergraphics]     # TAG names should always be lowercase
 toc: true
 comments: true
 math: true

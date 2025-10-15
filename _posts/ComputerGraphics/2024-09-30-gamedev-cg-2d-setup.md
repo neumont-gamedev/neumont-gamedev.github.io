@@ -2,7 +2,7 @@
 title: Computer Graphics 2D Rasterization Setup
 date: 2024-09-30 12:45:00 +/-TTTT
 categories: [GameDev,ComputerGraphics]
-tags: [gamedev,c++,computergraphics]     # TAG names should always be lowercase
+tags: [gamedev,c++]     # TAG names should always be lowercase
 toc: true
 comments: true
 img_path: /assets/img/gamedev/cg/project
