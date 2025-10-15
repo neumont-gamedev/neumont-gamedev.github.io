@@ -603,11 +603,17 @@
             const display = document.getElementById('matrixDisplay');
             display.innerHTML = '';
             
-            for (let i = 0; i < 16; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'matrix-cell';
-                cell.textContent = matrix[i].toFixed(3);
-                display.appendChild(cell);
+            // Transpose the matrix for display to show translation in right column
+            // OpenGL stores in column-major, but textbooks show row-major notation
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'matrix-cell';
+                    // Access as matrix[col][row] due to column-major storage
+                    const index = col * 4 + row;
+                    cell.textContent = matrix[index].toFixed(3);
+                    display.appendChild(cell);
+                }
             }
         }
         
