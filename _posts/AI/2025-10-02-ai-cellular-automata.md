@@ -50,7 +50,7 @@ From these basic rules, an amazing variety of patterns can emerge. These pattern
 * **Oscillators**: These patterns repeat themselves over a fixed number of generations. The "blinker" (which flips back and forth over two generations) and the "toad" are simple oscillators.
 * **Spaceships**: These are patterns that move across the grid over time. The most famous spaceship is the "glider," a five-cell pattern that travels diagonally.
 
-### Cellular Automata Demostration ###
+### Cellular Automata Demonstration ###
 
 <div style="width:100%; overflow:hidden;">
   <iframe src="{{ site.baseurl }}/assets/pages/ai-cellular-automata.html"
