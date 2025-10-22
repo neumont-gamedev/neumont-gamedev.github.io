@@ -47,7 +47,7 @@ A common way to find an appropriate number of clusters is the **Elbow Method**:
 - Plot the total within-cluster sum of squares (WCSS) vs. $K$.
 - The "elbow" point (where improvement slows) suggests a good choice of $K$.
 
-### K-Means Clustering Demostration ###
+### K-Means Clustering Demonstration ###
 
 <div style="width:100%; overflow:hidden;">
   <iframe src="{{ site.baseurl }}/assets/pages/ai-kmeans-clustering.html"
