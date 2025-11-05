@@ -17,7 +17,7 @@ Not sure which degree program is right for you? This interactive questionnaire w
 
 - **BSCS** - Computer Science
 - **BSSE** - Software Engineering  
-- **BSGD** - Game Design & Development
+- **BSGD** - Software & Game Development
 - **BSAAI** - Applied AI & Data Engineering
 - **BSAIE** - AI Engineering
 - **BSIS** - Information Systems
@@ -53,7 +53,7 @@ Focused on the art of designing and creating enterprise-grade software and cloud
 
 ---
 
-### BSGD: Game Design & Development
+### BSGD: Software & Game Development
 **Bachelor of Science in Software & Game Development**
 
 For game enthusiasts who combine creativity with technical skills to master all aspects of game development while also preparing for broader software development careers.
@@ -70,7 +70,7 @@ For game enthusiasts who combine creativity with technical skills to master all 
 ---
 
 ### BSAAI: Applied AI & Data Engineering
-**Bachelor of Science in Applied AI & Data Engineering** (Low-Code Focus)
+**Bachelor of Science in Applied AI & Data Engineering** 
 
 For AI tinkerers and tech enthusiasts who want to implement artificial intelligence technologies and data science in real-world scenarios.
 
@@ -101,7 +101,7 @@ For passionate problem solvers ready to tackle complex real-world issues by comb
 ---
 
 ### BSIS: Information Systems
-**Bachelor of Science in Information Systems** (Low-Code Focus)
+**Bachelor of Science in Information Systems**
 
 For technology enthusiasts interested in managing and integrating complex networks, devices, and technologies—critical skills for modern cloud computing environments.
 
