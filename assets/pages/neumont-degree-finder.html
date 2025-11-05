@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumont University Degree Finder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .question-container {
+            margin-bottom: 35px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #5a6268;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .results-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .chart-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .bar-name {
+            font-size: 1.1em;
+        }
+
+        .bar-score {
+            font-size: 1em;
+            color: #667eea;
+        }
+
+        .bar-background {
+            width: 100%;
+            height: 40px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .degree-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .recommendation h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .recommendation p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .degree-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 25px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .degree-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Neumont Degree Finder</h1>
+            <p>Discover which degree program matches your interests and skills</p>
+        </div>
+
+        <div class="content">
+            <div id="questionSection">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+
+                <div id="questionContainer"></div>
+
+                <div class="button-container">
+                    <button class="btn-back" id="backBtn" onclick="previousQuestion()">← Back</button>
+                    <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>Next →</button>
+                </div>
+            </div>
+
+            <div class="results-container" id="resultsSection">
+                <h2 style="text-align: center; color: #333; margin-bottom: 20px; font-size: 2em;">Your Results</h2>
+                
+                <div class="recommendation" id="topRecommendation"></div>
+
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 20px; color: #333;">Degree Compatibility Scores</h3>
+                    <div class="bar-chart" id="barChart"></div>
+                </div>
+
+                <button class="btn-restart" onclick="restartQuiz()">Start Over</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const degrees = {
+            BSCS: {
+                name: "Computer Science",
+                fullName: "Bachelor of Science in Computer Science",
+                description: "Balance skills with theory, design algorithms, and develop software",
+                link: "https://www.neumont.edu/bscs",
+                lowCode: false
+            },
+            BSGD: {
+                name: "Game Design & Development",
+                fullName: "Bachelor of Science in Game Design & Development",
+                description: "Master game development for PCs and handhelds with creative and technical skills",
+                link: "https://www.neumont.edu/bsgd",
+                lowCode: false
+            },
+            BSAAI: {
+                name: "Applied AI & Data Engineering",
+                fullName: "Bachelor of Science in Applied AI & Data Engineering",
+                description: "Implement AI technologies in real-world scenarios (Low-Code Focus)",
+                link: "https://www.neumont.edu/bsaai",
+                lowCode: true
+            },
+            BSSE: {
+                name: "Software Engineering",
+                fullName: "Bachelor of Science in Software Engineering",
+                description: "Design enterprise-grade software and cloud services",
+                link: "https://www.neumont.edu/bsse",
+                lowCode: false
+            },
+            BSAIE: {
+                name: "AI Engineering",
+                fullName: "Bachelor of Science in Artificial Intelligence Engineering",
+                description: "Combine machine learning with software engineering for AI-powered applications",
+                link: "https://www.neumont.edu/bsaie",
+                lowCode: false
+            },
+            BSIS: {
+                name: "Information Systems",
+                fullName: "Bachelor of Science in Information Systems",
+                description: "Manage networks, integrate systems, and handle cloud technologies (Low-Code Focus)",
+                link: "https://www.neumont.edu/bsis",
+                lowCode: true
+            }
+        };
+
+        const questions = [
+            {
+                question: "What type of projects excite you the most?",
+                options: [
+                    { text: "Building algorithms and solving complex computational problems", scores: { BSCS: 3, BSSE: 2, BSAIE: 2 } },
+                    { text: "Creating interactive games and immersive experiences", scores: { BSGD: 3, BSCS: 1 } },
+                    { text: "Working with data and implementing AI solutions", scores: { BSAAI: 3, BSAIE: 2 } },
+                    { text: "Managing networks, servers, and IT infrastructure", scores: { BSIS: 3, BSSE: 1 } }
+                ]
+            },
+            {
+                question: "How do you feel about intensive coding?",
+                options: [
+                    { text: "Love it! I want to write code all day", scores: { BSCS: 3, BSSE: 3, BSAIE: 2, BSGD: 2 } },
+                    { text: "I enjoy coding but prefer a balanced approach", scores: { BSGD: 2, BSCS: 2, BSAIE: 2 } },
+                    { text: "I prefer using existing tools and low-code solutions", scores: { BSAAI: 3, BSIS: 3 } },
+                    { text: "I'm interested in code but also hardware and systems", scores: { BSIS: 2, BSSE: 1 } }
+                ]
+            },
+            {
+                question: "Which skill set appeals to you most?",
+                options: [
+                    { text: "Data structures, algorithms, and software architecture", scores: { BSCS: 3, BSSE: 2 } },
+                    { text: "Game engines, physics, graphics, and storytelling", scores: { BSGD: 3 } },
+                    { text: "Machine learning, AI models, and data analysis", scores: { BSAIE: 3, BSAAI: 2 } },
+                    { text: "Network administration, virtualization, and security", scores: { BSIS: 3 } }
+                ]
+            },
+            {
+                question: "What work environment interests you?",
+                options: [
+                    { text: "Software development companies building applications", scores: { BSCS: 2, BSSE: 3 } },
+                    { text: "Game studios creating entertainment experiences", scores: { BSGD: 3, BSCS: 1 } },
+                    { text: "AI companies or data science teams", scores: { BSAIE: 3, BSAAI: 3 } },
+                    { text: "IT departments managing infrastructure and systems", scores: { BSIS: 3, BSSE: 1 } }
+                ]
+            },
+            {
+                question: "How important is cloud computing and enterprise systems to you?",
+                options: [
+                    { text: "Very important! I want to build scalable cloud services", scores: { BSSE: 3, BSCS: 2 } },
+                    { text: "Somewhat important for game servers and multiplayer", scores: { BSGD: 1, BSSE: 1 } },
+                    { text: "Important for deploying AI models and data pipelines", scores: { BSAIE: 2, BSAAI: 2 } },
+                    { text: "Critical! I want to manage cloud infrastructure", scores: { BSIS: 3 } }
+                ]
+            },
+            {
+                question: "What aspect of AI interests you most?",
+                options: [
+                    { text: "Engineering AI systems from scratch with deep coding", scores: { BSAIE: 3, BSCS: 1 } },
+                    { text: "Applying AI solutions to solve practical problems", scores: { BSAAI: 3, BSAIE: 1 } },
+                    { text: "Using AI in game development (NPCs, procedural generation)", scores: { BSGD: 2, BSAIE: 1 } },
+                    { text: "I'm more interested in other areas than AI", scores: { BSCS: 1, BSIS: 1, BSSE: 1 } }
+                ]
+            },
+            {
+                question: "How do you approach problem-solving?",
+                options: [
+                    { text: "Through mathematical algorithms and logical reasoning", scores: { BSCS: 3, BSAIE: 2 } },
+                    { text: "Through creative design and user experience", scores: { BSGD: 3 } },
+                    { text: "Through data analysis and pattern recognition", scores: { BSAAI: 3, BSAIE: 2 } },
+                    { text: "Through system integration and practical solutions", scores: { BSIS: 3, BSSE: 2 } }
+                ]
+            },
+            {
+                question: "What's your ideal role in a tech team?",
+                options: [
+                    { text: "Software developer writing core application code", scores: { BSCS: 3, BSSE: 2 } },
+                    { text: "Game developer creating interactive experiences", scores: { BSGD: 3 } },
+                    { text: "AI/ML engineer or data scientist", scores: { BSAIE: 3, BSAAI: 2 } },
+                    { text: "Systems administrator or network engineer", scores: { BSIS: 3 } }
+                ]
+            },
+            {
+                question: "How do you feel about hardware and physical systems?",
+                options: [
+                    { text: "Not very interested, I prefer pure software", scores: { BSCS: 2, BSGD: 2, BSAIE: 1 } },
+                    { text: "Interested in hardware for game performance", scores: { BSGD: 1, BSIS: 1 } },
+                    { text: "Interested for AI hardware acceleration (GPUs, TPUs)", scores: { BSAIE: 2, BSAAI: 1 } },
+                    { text: "Very interested! I love working with servers and devices", scores: { BSIS: 3 } }
+                ]
+            },
+            {
+                question: "What's your creative vs. technical preference?",
+                options: [
+                    { text: "Highly technical with emphasis on engineering principles", scores: { BSSE: 3, BSCS: 2, BSAIE: 2 } },
+                    { text: "Balance of creativity and technical skills", scores: { BSGD: 3, BSCS: 1 } },
+                    { text: "Technical focus on data and AI implementation", scores: { BSAAI: 3, BSAIE: 2 } },
+                    { text: "Practical technical focus on systems and integration", scores: { BSIS: 3, BSSE: 1 } }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = {};
+        let scores = { BSCS: 0, BSGD: 0, BSAAI: 0, BSSE: 0, BSAIE: 0, BSIS: 0 };
+
+        function initQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            scores = { BSCS: 0, BSGD: 0, BSAAI: 0, BSSE: 0, BSAIE: 0, BSIS: 0 };
+            showQuestion();
+            updateProgress();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            container.innerHTML = `
+                <div class="question-container">
+                    <div class="question-text">Question ${currentQuestion + 1} of ${questions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options"></div>
+                </div>
+            `;
+
+            const optionsContainer = document.getElementById('options');
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option.text;
+                optionDiv.onclick = () => selectOption(index);
+                
+                if (answers[currentQuestion] === index) {
+                    optionDiv.classList.add('selected');
+                }
+                
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            document.getElementById('backBtn').style.display = currentQuestion === 0 ? 'none' : 'block';
+            updateNextButton();
+        }
+
+        function selectOption(index) {
+            answers[currentQuestion] = index;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.toggle('selected', i === index);
+            });
+            
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = answers[currentQuestion] === undefined;
+            nextBtn.textContent = currentQuestion === questions.length - 1 ? 'See Results →' : 'Next →';
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function nextQuestion() {
+            if (answers[currentQuestion] === undefined) return;
+
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+                updateProgress();
+            } else {
+                calculateResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                updateProgress();
+            }
+        }
+
+        function calculateResults() {
+            // Calculate scores based on answers
+            questions.forEach((question, qIndex) => {
+                const answerIndex = answers[qIndex];
+                if (answerIndex !== undefined) {
+                    const selectedOption = question.options[answerIndex];
+                    Object.keys(selectedOption.scores).forEach(degree => {
+                        scores[degree] += selectedOption.scores[degree];
+                    });
+                }
+            });
+
+            // Find max score for normalization
+            const maxScore = Math.max(...Object.values(scores));
+            
+            // Normalize scores to percentage
+            Object.keys(scores).forEach(degree => {
+                scores[degree] = Math.round((scores[degree] / maxScore) * 100);
+            });
+
+            showResults();
+        }
+
+        function showResults() {
+            document.getElementById('questionSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.add('active');
+
+            // Sort degrees by score
+            const sortedDegrees = Object.entries(scores)
+                .sort((a, b) => b[1] - a[1])
+                .map(([code, score]) => ({ code, score }));
+
+            // Show top recommendation
+            const topDegree = sortedDegrees[0];
+            const degreeInfo = degrees[topDegree.code];
+            
+            document.getElementById('topRecommendation').innerHTML = `
+                <h2>🎯 Your Top Match</h2>
+                <h3 style="font-size: 1.5em; margin: 10px 0;">${degreeInfo.fullName}</h3>
+                <p>${degreeInfo.description}</p>
+                <a href="${degreeInfo.link}" target="_blank" class="degree-link">Learn More About This Degree</a>
+            `;
+
+            // Create bar chart
+            const chartContainer = document.getElementById('barChart');
+            chartContainer.innerHTML = '';
+
+            sortedDegrees.forEach(({ code, score }) => {
+                const degreeInfo = degrees[code];
+                const barItem = document.createElement('div');
+                barItem.className = 'bar-item';
+                
+                barItem.innerHTML = `
+                    <div class="bar-label">
+                        <span class="bar-name">${degreeInfo.fullName}${degreeInfo.lowCode ? ' 🔧' : ''}</span>
+                        <span class="bar-score">${score}%</span>
+                    </div>
+                    <div class="bar-background">
+                        <div class="bar-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="degree-description">${degreeInfo.description}</div>
+                `;
+                
+                chartContainer.appendChild(barItem);
+
+                // Animate bar after a short delay
+                setTimeout(() => {
+                    barItem.querySelector('.bar-fill').style.width = score + '%';
+                }, 100);
+            });
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultsSection').classList.remove('active');
+            document.getElementById('questionSection').classList.remove('hidden');
+            initQuiz();
+        }
+
+        // Initialize the quiz when page loads
+        initQuiz();
+    </script>
+</body>
+</html>

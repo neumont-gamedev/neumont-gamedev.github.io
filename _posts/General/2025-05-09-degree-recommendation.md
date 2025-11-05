@@ -1,5 +1,5 @@
 ---
-title: Degree Recommendation
+title: Degree Degree Finder
 date: 2025-05-09 00:00:00 -0500
 categories: [Neumont]
 tags: [student, neumont]     # adjust categories and tags as needed
@@ -35,4 +35,8 @@ img_path: /assets/img/nc
   </div>
 </div>
 
-<iframe src="{{ site.baseurl }}/assets/pages/degree-recommendation.html?scale=0.4" width="900" height="675" style="border:none;"></iframe>
+<div style="width:100%; overflow:hidden;">
+  <iframe src="{{ site.baseurl }}/assets/pages/neumont-degree-finder.html"
+          style="width:100%; height:1250px; border:none; transform:scale(1.0); transform-origin:0 0;">
+  </iframe>
+</div>
