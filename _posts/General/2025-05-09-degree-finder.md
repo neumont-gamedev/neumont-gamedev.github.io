@@ -1,17 +1,15 @@
 ---
 title: Neumont Degree Finder
-date: 2025-05-09 00:00:00 -0500
+date: 2025-11-04 00:00:00 -0500
 categories: [Neumont]
 tags: [student, neumont]     # adjust categories and tags as needed
 toc: true
 comments: true
 img_path: /assets/img/nc
 ---
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="nu-logo-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="nu-logo-light.png">
-  <img src="nu-logo-light.png" alt="Logo" width="60%" style="display: block; margin: 0 auto;">
-</picture>
+<div>
+  <img src="nu-logo-light.png" alt="Logo" width="60%" style="display: block; margin: 0 auto;"/>
+</div>
 
 ## Welcome to the Neumont Degree Finder
 
