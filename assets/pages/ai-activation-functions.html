@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Activation Functions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .function-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .function-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .function-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .formula {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .graph-container {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+
+        canvas {
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider-label {
+            font-weight: 600;
+            color: #333;
+            min-width: 80px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 5px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #764ba2;
+            transform: scale(1.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            background: #764ba2;
+            transform: scale(1.2);
+        }
+
+        .input-value {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .output-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+        }
+
+        .output-label {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .output-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .description {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 30px;
+        }
+
+        .info-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info-section p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Neural Network Activation Functions</h1>
+            <p>Interactive visualizations of common activation functions used in deep learning</p>
+        </div>
+
+        <div class="grid" id="functionsGrid"></div>
+
+        <div class="info-section">
+            <h2>About Activation Functions</h2>
+            <p>
+                Activation functions are mathematical equations that determine the output of a neural network node. 
+                They introduce non-linearity into the network, allowing it to learn complex patterns and relationships in data.
+            </p>
+            <p>
+                Use the sliders above to input different values (x) and see how each activation function transforms that input into an output.
+                The graphs show the full range of the function, while the output display shows the exact result for your selected input.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const activationFunctions = [
+            {
+                name: "Sigmoid",
+                formula: "σ(x) = 1 / (1 + e^(-x))",
+                function: (x) => 1 / (1 + Math.exp(-x)),
+                description: "Squashes values between 0 and 1. Common in binary classification output layers.",
+                range: { min: -5, max: 5 }
+            },
+            {
+                name: "Tanh",
+                formula: "tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))",
+                function: (x) => Math.tanh(x),
+                description: "Squashes values between -1 and 1. Often preferred over sigmoid in hidden layers.",
+                range: { min: -5, max: 5 }
+            },
+            {
+                name: "ReLU",
+                formula: "ReLU(x) = max(0, x)",
+                function: (x) => Math.max(0, x),
+                description: "Most popular activation function. Simple and efficient. Returns 0 for negative inputs.",
+                range: { min: -5, max: 5 }
+            },
+            {
+                name: "Leaky ReLU",
+                formula: "LeakyReLU(x) = max(0.01x, x)",
+                function: (x) => x > 0 ? x : 0.01 * x,
+                description: "Variant of ReLU that allows small negative values. Helps prevent 'dying ReLU' problem.",
+                range: { min: -5, max: 5 }
+            },
+            {
+                name: "ELU",
+                formula: "ELU(x) = x if x > 0, else α(e^x - 1)",
+                function: (x) => x > 0 ? x : 1.0 * (Math.exp(x) - 1),
+                description: "Exponential Linear Unit. Smooth curve for negative values, helps with gradient flow.",
+                range: { min: -5, max: 5 }
+            },
+            {
+                name: "Softplus",
+                formula: "Softplus(x) = ln(1 + e^x)",
+                function: (x) => Math.log(1 + Math.exp(x)),
+                description: "Smooth approximation of ReLU. Always positive and differentiable everywhere.",
+                range: { min: -5, max: 5 }
+            },
+            {
+                name: "Swish",
+                formula: "Swish(x) = x / (1 + e^(-x))",
+                function: (x) => x / (1 + Math.exp(-x)),
+                description: "Self-gated activation function. Often outperforms ReLU in deep networks.",
+                range: { min: -5, max: 5 }
+            },
+            {
+                name: "Linear",
+                formula: "f(x) = x",
+                function: (x) => x,
+                description: "Identity function. No transformation. Used in regression output layers.",
+                range: { min: -5, max: 5 }
+            },
+            {
+                name: "Step",
+                formula: "Step(x) = 0 if x < 0, else 1",
+                function: (x) => x < 0 ? 0 : 1,
+                description: "Binary step function. Used in simple perceptrons. Not differentiable at x=0.",
+                range: { min: -5, max: 5 }
+            }
+        ];
+
+        function drawGraph(canvas, activationFunc, range) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 30;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Calculate graph bounds
+            const xMin = range.min;
+            const xMax = range.max;
+            const xRange = xMax - xMin;
+
+            // Calculate y range based on function output
+            let yMin = Infinity;
+            let yMax = -Infinity;
+            for (let x = xMin; x <= xMax; x += 0.1) {
+                const y = activationFunc(x);
+                if (isFinite(y)) {
+                    yMin = Math.min(yMin, y);
+                    yMax = Math.max(yMax, y);
+                }
+            }
+            const yRange = yMax - yMin;
+            const yPadding = yRange * 0.1;
+            yMin -= yPadding;
+            yMax += yPadding;
+            const adjustedYRange = yMax - yMin;
+
+            // Helper functions
+            const xToCanvas = (x) => padding + ((x - xMin) / xRange) * (width - 2 * padding);
+            const yToCanvas = (y) => height - padding - ((y - yMin) / adjustedYRange) * (height - 2 * padding);
+
+            // Draw axes
+            ctx.strokeStyle = '#999';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            // X-axis
+            const yZero = yToCanvas(0);
+            ctx.moveTo(padding, yZero);
+            ctx.lineTo(width - padding, yZero);
+            // Y-axis
+            const xZero = xToCanvas(0);
+            ctx.moveTo(xZero, padding);
+            ctx.lineTo(xZero, height - padding);
+            ctx.stroke();
+
+            // Draw grid
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 0.5;
+            for (let x = Math.ceil(xMin); x <= Math.floor(xMax); x++) {
+                ctx.beginPath();
+                ctx.moveTo(xToCanvas(x), padding);
+                ctx.lineTo(xToCanvas(x), height - padding);
+                ctx.stroke();
+            }
+
+            // Draw function
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            let firstPoint = true;
+            for (let x = xMin; x <= xMax; x += 0.05) {
+                const y = activationFunc(x);
+                if (isFinite(y)) {
+                    const canvasX = xToCanvas(x);
+                    const canvasY = yToCanvas(y);
+                    if (firstPoint) {
+                        ctx.moveTo(canvasX, canvasY);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
+                }
+            }
+            ctx.stroke();
+
+            // Draw labels
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('0', xZero, height - 10);
+            ctx.fillText(xMin.toFixed(0), padding, height - 10);
+            ctx.fillText(xMax.toFixed(0), width - padding, height - 10);
+        }
+
+        function createFunctionCard(funcData, index) {
+            const card = document.createElement('div');
+            card.className = 'function-card';
+            card.innerHTML = `
+                <div class="function-name">${funcData.name}</div>
+                <div class="formula">${funcData.formula}</div>
+                <div class="graph-container">
+                    <canvas id="canvas-${index}" width="300" height="200"></canvas>
+                </div>
+                <div class="controls">
+                    <div class="slider-container">
+                        <span class="slider-label">Input (x):</span>
+                        <input type="range" id="slider-${index}" 
+                               min="${funcData.range.min}" 
+                               max="${funcData.range.max}" 
+                               step="0.1" 
+                               value="0">
+                        <span class="input-value" id="input-${index}">0.0</span>
+                    </div>
+                    <div class="output-container">
+                        <div class="output-label">Output: f(x)</div>
+                        <div class="output-value" id="output-${index}">0.0000</div>
+                    </div>
+                </div>
+                <div class="description">${funcData.description}</div>
+            `;
+            return card;
+        }
+
+        function initializeFunction(funcData, index) {
+            const canvas = document.getElementById(`canvas-${index}`);
+            const slider = document.getElementById(`slider-${index}`);
+            const inputDisplay = document.getElementById(`input-${index}`);
+            const outputDisplay = document.getElementById(`output-${index}`);
+
+            // Set canvas size to match container
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = 200;
+
+            // Draw initial graph
+            drawGraph(canvas, funcData.function, funcData.range);
+
+            // Update function
+            const updateOutput = () => {
+                const x = parseFloat(slider.value);
+                const y = funcData.function(x);
+                inputDisplay.textContent = x.toFixed(1);
+                outputDisplay.textContent = y.toFixed(4);
+            };
+
+            // Event listener
+            slider.addEventListener('input', updateOutput);
+
+            // Initial update
+            updateOutput();
+
+            // Redraw on window resize
+            window.addEventListener('resize', () => {
+                canvas.width = container.clientWidth;
+                drawGraph(canvas, funcData.function, funcData.range);
+            });
+        }
+
+        // Initialize all functions
+        const grid = document.getElementById('functionsGrid');
+        activationFunctions.forEach((funcData, index) => {
+            const card = createFunctionCard(funcData, index);
+            grid.appendChild(card);
+            // Initialize after a brief delay to ensure DOM is ready
+            setTimeout(() => initializeFunction(funcData, index), 50);
+        });
+    </script>
+</body>
+</html>
