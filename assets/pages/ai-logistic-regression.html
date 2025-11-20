@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Logistic Regression</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .canvas-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .canvas-wrapper {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: crosshair;
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        
+        .canvas-label {
+            text-align: center;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+        }
+        
+        .class-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: 2px solid;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .class-0 {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .class-0:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+        
+        .class-1 {
+            background: #e67e22;
+            color: white;
+            border-color: #d35400;
+        }
+        
+        .class-1:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
+        }
+        
+        .active {
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5), 0 0 0 6px currentColor;
+        }
+        
+        .info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info p {
+            margin: 8px 0;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .equation {
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Logistic Regression</h1>
+        <p class="subtitle">Click on the scatter plot to add points • Watch the sigmoid curve and decision boundary update in real-time</p>
+        
+        <div class="controls">
+            <button class="class-btn class-0 active" id="class0Btn">Class 0 (Blue)</button>
+            <button class="class-btn class-1" id="class1Btn">Class 1 (Orange)</button>
+            <button class="clear-btn" id="clearBtn">Clear All Points</button>
+        </div>
+        
+        <div class="canvas-container">
+            <div class="canvas-wrapper">
+                <div class="canvas-label">Scatter Plot (Click to Add Points)</div>
+                <canvas id="scatterCanvas" width="500" height="400"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+                <div class="canvas-label">Sigmoid Function</div>
+                <canvas id="sigmoidCanvas" width="500" height="400"></canvas>
+            </div>
+        </div>
+        
+        <div class="equation" id="equation">
+            Add points to see the logistic regression equation
+        </div>
+        
+        <div class="info">
+            <p><strong>How to use:</strong></p>
+            <p>• Select a class (Blue for 0, Orange for 1) using the buttons above</p>
+            <p>• Click on the scatter plot to place points at different x positions</p>
+            <p>• The sigmoid curve shows the probability P(y=1|x) ranging from 0 to 1</p>
+            <p>• The decision boundary (vertical line) appears at x where P(y=1|x) = 0.5</p>
+            <p>• The model is trained using gradient descent with 1000 iterations</p>
+        </div>
+    </div>
+
+    <script>
+        const scatterCanvas = document.getElementById('scatterCanvas');
+        const sigmoidCanvas = document.getElementById('sigmoidCanvas');
+        const scatterCtx = scatterCanvas.getContext('2d');
+        const sigmoidCtx = sigmoidCanvas.getContext('2d');
+        
+        let points = [];
+        let currentClass = 0;
+        let weights = { w: 0, b: 0 };
+        
+        const PADDING = 50;
+        const POINT_RADIUS = 6;
+        
+        // Button handlers
+        document.getElementById('class0Btn').addEventListener('click', () => {
+            currentClass = 0;
+            updateClassButtons();
+        });
+        
+        document.getElementById('class1Btn').addEventListener('click', () => {
+            currentClass = 1;
+            updateClassButtons();
+        });
+        
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            points = [];
+            weights = { w: 0, b: 0 };
+            draw();
+        });
+        
+        function updateClassButtons() {
+            document.getElementById('class0Btn').classList.toggle('active', currentClass === 0);
+            document.getElementById('class1Btn').classList.toggle('active', currentClass === 1);
+        }
+        
+        // Canvas click handler
+        scatterCanvas.addEventListener('click', (e) => {
+            const rect = scatterCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Convert canvas coordinates to data coordinates
+            const dataX = (x - PADDING) / (scatterCanvas.width - 2 * PADDING) * 10 - 5;
+            
+            // Only add point if within bounds
+            if (dataX >= -5 && dataX <= 5) {
+                points.push({ x: dataX, y: currentClass });
+                trainModel();
+                draw();
+            }
+        });
+        
+        function sigmoid(z) {
+            return 1 / (1 + Math.exp(-z));
+        }
+        
+        function predict(x, w, b) {
+            return sigmoid(w * x + b);
+        }
+        
+        function trainModel() {
+            if (points.length < 2) {
+                weights = { w: 0, b: 0 };
+                return;
+            }
+            
+            // Initialize weights
+            let w = 0;
+            let b = 0;
+            const learningRate = 0.1;
+            const iterations = 1000;
+            
+            // Gradient descent
+            for (let iter = 0; iter < iterations; iter++) {
+                let dw = 0;
+                let db = 0;
+                
+                for (let point of points) {
+                    const pred = predict(point.x, w, b);
+                    const error = pred - point.y;
+                    dw += error * point.x;
+                    db += error;
+                }
+                
+                dw /= points.length;
+                db /= points.length;
+                
+                w -= learningRate * dw;
+                b -= learningRate * db;
+            }
+            
+            weights = { w, b };
+        }
+        
+        function drawScatterPlot() {
+            const canvas = scatterCanvas;
+            const ctx = scatterCtx;
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Draw axes
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(PADDING, height - PADDING);
+            ctx.lineTo(width - PADDING, height - PADDING);
+            ctx.moveTo(PADDING, PADDING);
+            ctx.lineTo(PADDING, height - PADDING);
+            ctx.stroke();
+            
+            // Draw axis labels
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('X', width / 2, height - 15);
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Y (Class)', 0, 0);
+            ctx.restore();
+            
+            // Draw x-axis ticks and labels
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            for (let i = -5; i <= 5; i++) {
+                const x = PADDING + ((i + 5) / 10) * (width - 2 * PADDING);
+                ctx.fillText(i.toString(), x, height - PADDING + 5);
+                ctx.beginPath();
+                ctx.moveTo(x, height - PADDING);
+                ctx.lineTo(x, height - PADDING + 5);
+                ctx.stroke();
+            }
+            
+            // Draw y-axis ticks and labels
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            for (let i = 0; i <= 1; i++) {
+                const y = height - PADDING - i * (height - 2 * PADDING);
+                ctx.fillText(i.toString(), PADDING - 10, y);
+                ctx.beginPath();
+                ctx.moveTo(PADDING - 5, y);
+                ctx.lineTo(PADDING, y);
+                ctx.stroke();
+            }
+            
+            // Draw decision boundary if we have a model
+            if (points.length >= 2 && weights.w !== 0) {
+                const decisionX = -weights.b / weights.w;
+                if (decisionX >= -5 && decisionX <= 5) {
+                    const canvasX = PADDING + ((decisionX + 5) / 10) * (width - 2 * PADDING);
+                    ctx.strokeStyle = '#9b59b6';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(canvasX, PADDING);
+                    ctx.lineTo(canvasX, height - PADDING);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    // Label the decision boundary
+                    ctx.fillStyle = '#9b59b6';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Decision Boundary', canvasX, PADDING - 15);
+                }
+            }
+            
+            // Draw points
+            for (let point of points) {
+                const canvasX = PADDING + ((point.x + 5) / 10) * (width - 2 * PADDING);
+                const canvasY = height - PADDING - point.y * (height - 2 * PADDING);
+                
+                ctx.fillStyle = point.y === 0 ? '#3498db' : '#e67e22';
+                ctx.beginPath();
+                ctx.arc(canvasX, canvasY, POINT_RADIUS, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+        
+        function drawSigmoidCurve() {
+            const canvas = sigmoidCanvas;
+            const ctx = sigmoidCtx;
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Draw axes
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(PADDING, height - PADDING);
+            ctx.lineTo(width - PADDING, height - PADDING);
+            ctx.moveTo(PADDING, PADDING);
+            ctx.lineTo(PADDING, height - PADDING);
+            ctx.stroke();
+            
+            // Draw axis labels
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('X', width / 2, height - 15);
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('P(Y=1|X)', 0, 0);
+            ctx.restore();
+            
+            // Draw x-axis ticks and labels
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            for (let i = -5; i <= 5; i++) {
+                const x = PADDING + ((i + 5) / 10) * (width - 2 * PADDING);
+                ctx.fillText(i.toString(), x, height - PADDING + 5);
+                ctx.beginPath();
+                ctx.moveTo(x, height - PADDING);
+                ctx.lineTo(x, height - PADDING + 5);
+                ctx.stroke();
+            }
+            
+            // Draw y-axis ticks and labels
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            for (let i = 0; i <= 10; i++) {
+                const prob = i / 10;
+                const y = height - PADDING - prob * (height - 2 * PADDING);
+                ctx.fillText(prob.toFixed(1), PADDING - 10, y);
+                if (i % 2 === 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(PADDING - 5, y);
+                    ctx.lineTo(PADDING, y);
+                    ctx.stroke();
+                }
+            }
+            
+            // Draw 0.5 probability line
+            const midY = height - PADDING - 0.5 * (height - 2 * PADDING);
+            ctx.strokeStyle = '#95a5a6';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(PADDING, midY);
+            ctx.lineTo(width - PADDING, midY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Draw sigmoid curve if we have a model
+            if (points.length >= 2) {
+                ctx.strokeStyle = '#2ecc71';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                
+                let firstPoint = true;
+                for (let i = 0; i <= 200; i++) {
+                    const dataX = (i / 200) * 10 - 5;
+                    const prob = predict(dataX, weights.w, weights.b);
+                    const canvasX = PADDING + ((dataX + 5) / 10) * (width - 2 * PADDING);
+                    const canvasY = height - PADDING - prob * (height - 2 * PADDING);
+                    
+                    if (firstPoint) {
+                        ctx.moveTo(canvasX, canvasY);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
+                }
+                ctx.stroke();
+                
+                // Draw decision boundary
+                if (weights.w !== 0) {
+                    const decisionX = -weights.b / weights.w;
+                    if (decisionX >= -5 && decisionX <= 5) {
+                        const canvasX = PADDING + ((decisionX + 5) / 10) * (width - 2 * PADDING);
+                        ctx.strokeStyle = '#9b59b6';
+                        ctx.lineWidth = 3;
+                        ctx.setLineDash([5, 5]);
+                        ctx.beginPath();
+                        ctx.moveTo(canvasX, PADDING);
+                        ctx.lineTo(canvasX, height - PADDING);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+                }
+            }
+        }
+        
+        function updateEquation() {
+            const eqDiv = document.getElementById('equation');
+            if (points.length < 2) {
+                eqDiv.innerHTML = 'Add points to see the logistic regression equation';
+            } else {
+                const w = weights.w.toFixed(3);
+                const b = weights.b.toFixed(3);
+                const bSign = weights.b >= 0 ? '+' : '';
+                eqDiv.innerHTML = `P(Y=1|X) = 1 / (1 + e<sup>-(${w}·X ${bSign} ${b})</sup>)`;
+            }
+        }
+        
+        function draw() {
+            drawScatterPlot();
+            drawSigmoidCurve();
+            updateEquation();
+        }
+        
+        // Initial draw
+        draw();
+    </script>
+</body>
+</html>

@@ -47,6 +47,16 @@ Here, $(\beta_0\)$ is the intercept, and $(\beta_1, \beta_2, \ldots, \beta_n\)$ 
 
 + Gradient descent is often used to find the optimal parameters (coefficients) that minimize the cost function. The cost function in logistic regression is the log-loss or binary cross-entropy.
 
+<div style="text-align: center; max-width: 100%; margin: 0 auto;">
+    <iframe 
+        src="{{ site.baseurl }}/assets/pages/ai-logistic-regression.html" 
+        style="width: 100%; max-width: 1200px; height: 900px; border: none; overflow: hidden;"
+        scrolling="no"
+        title="Logistic Regression Interactive Graph">
+        Your browser does not support iframes.
+    </iframe>
+</div>
+
 #### Applications ####
 + Medical Diagnosis: Predicting the presence or absence of a disease.
 + Spam Detection: Classifying emails as spam or not spam.
