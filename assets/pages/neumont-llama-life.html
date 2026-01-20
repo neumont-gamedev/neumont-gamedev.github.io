@@ -1,0 +1,2250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Neumont Llama Life — Virtual Pet Demo</title>
+    <style>
+      :root {
+        --bg0: #070a16;
+        --bg1: #0b1230;
+        --card: rgba(255, 255, 255, 0.08);
+        --card2: rgba(255, 255, 255, 0.06);
+        --line: rgba(255, 255, 255, 0.14);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.72);
+        --subtle: rgba(255, 255, 255, 0.42);
+
+        /* Neumont-ish accents (not official) */
+        --n-blue: #2d6cdf;
+        --n-cyan: #18d3ff;
+
+        --good: #33d17a;
+        --warn: #ffcc66;
+        --bad: #ff5b6b;
+
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        --r: 18px;
+        --r2: 12px;
+
+        --llama: #d9b8ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
+          sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(1000px 650px at 25% 10%, rgba(45, 108, 223, 0.22), transparent 55%),
+          radial-gradient(900px 550px at 80% 25%, rgba(24, 211, 255, 0.16), transparent 60%),
+          radial-gradient(900px 700px at 60% 95%, rgba(255, 91, 107, 0.08), transparent 55%),
+          linear-gradient(180deg, var(--bg1), var(--bg0));
+        overflow-x: hidden;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 14px 40px;
+      }
+
+      header {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 10px 18px;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .brandTop {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+        user-select: none;
+      }
+
+      .badgeDot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, var(--n-cyan), var(--n-blue));
+        box-shadow: 0 0 0 4px rgba(24, 211, 255, 0.12);
+      }
+
+      .title {
+        font-weight: 860;
+        letter-spacing: 0.2px;
+        font-size: 18px;
+      }
+
+      .tagline {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+      }
+
+      .tabBtn {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 9px 12px;
+        font-weight: 650;
+        cursor: pointer;
+        transition:
+          transform 0.08s ease,
+          background 0.12s ease,
+          border-color 0.12s ease;
+      }
+
+      .tabBtn:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.085);
+        border-color: rgba(255, 255, 255, 0.22);
+      }
+
+      .tabBtn[aria-selected="true"] {
+        border-color: rgba(24, 211, 255, 0.55);
+        background: linear-gradient(180deg, rgba(24, 211, 255, 0.14), rgba(45, 108, 223, 0.08));
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 14px;
+        align-items: start;
+      }
+
+      @media (max-width: 940px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.05));
+        border-radius: var(--r);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .cardHeader {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .cardHeader h2,
+      .cardHeader h3 {
+        margin: 0;
+        font-size: 14px;
+        letter-spacing: 0.2px;
+      }
+
+      .cardBody {
+        padding: 14px;
+      }
+
+      .row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: var(--muted);
+        font-size: 12px;
+        user-select: none;
+      }
+
+      .k {
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 520px) {
+        .split {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Llama */
+      .llamaStage {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .llamaArea {
+        border-radius: var(--r);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background:
+          radial-gradient(420px 280px at 55% 20%, rgba(24, 211, 255, 0.12), transparent 60%),
+          radial-gradient(500px 320px at 30% 80%, rgba(45, 108, 223, 0.12), transparent 60%),
+          rgba(255, 255, 255, 0.04);
+        position: relative;
+        overflow: hidden;
+        min-height: 280px;
+      }
+
+      .llamaArea::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -120px;
+        width: 520px;
+        height: 320px;
+        transform: translateX(-50%);
+        background: radial-gradient(closest-side, rgba(0, 0, 0, 0.38), transparent 75%);
+        filter: blur(2px);
+        pointer-events: none;
+      }
+
+      .llamaWrap {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -55%);
+        width: 192px;
+        height: 192px;
+        display: grid;
+        place-items: center;
+      }
+
+      .llama {
+        position: relative;
+        width: 152px;
+        height: 160px;
+        transform-origin: 50% 70%;
+        filter: drop-shadow(0 11px 14px rgba(0, 0, 0, 0.33));
+      }
+
+      .llama.bounce {
+        animation: bounce 450ms ease;
+      }
+
+      @keyframes bounce {
+        0% {
+          transform: translateY(0) rotate(0deg);
+        }
+        35% {
+          transform: translateY(-6px) rotate(-1deg);
+        }
+        70% {
+          transform: translateY(2px) rotate(1deg);
+        }
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+      }
+
+      .llama.sleepy {
+        opacity: 0.92;
+        filter: drop-shadow(0 8px 13px rgba(0, 0, 0, 0.26)) saturate(0.92);
+      }
+
+      .body {
+        position: absolute;
+        left: 50%;
+        top: 62%;
+        transform: translate(-50%, -50%);
+        width: 128px;
+        height: 104px;
+        border-radius: 64px 64px 56px 56px;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--llama) 92%, white 8%), color-mix(in srgb, var(--llama) 88%, black 12%));
+        border: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
+      .neck {
+        position: absolute;
+        left: 50%;
+        top: 20%;
+        transform: translateX(-50%);
+        width: 56px;
+        height: 72px;
+        border-radius: 32px;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--llama) 95%, white 5%), color-mix(in srgb, var(--llama) 86%, black 14%));
+        border: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
+      .head {
+        position: absolute;
+        left: 50%;
+        top: 6%;
+        transform: translate(-50%, 0);
+        width: 96px;
+        height: 76px;
+        border-radius: 48px;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--llama) 96%, white 4%), color-mix(in srgb, var(--llama) 84%, black 16%));
+        border: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
+      .snout {
+        position: absolute;
+        left: 50%;
+        top: 56%;
+        transform: translate(-50%, -50%);
+        width: 62px;
+        height: 38px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.22);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .eye {
+        position: absolute;
+        top: 36%;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(10, 12, 20, 0.9);
+      }
+
+      .eye.left {
+        left: 34%;
+      }
+      .eye.right {
+        right: 34%;
+      }
+
+      .eye.sleep {
+        height: 2px;
+        border-radius: 999px;
+        top: 40%;
+        background: rgba(10, 12, 20, 0.65);
+      }
+
+      .mouth {
+        position: absolute;
+        left: 50%;
+        top: 73%;
+        transform: translateX(-50%);
+        width: 21px;
+        height: 8px;
+        border-bottom: 2px solid rgba(10, 12, 20, 0.55);
+        border-radius: 0 0 14px 14px;
+      }
+
+      .ear {
+        position: absolute;
+        top: -5px;
+        width: 27px;
+        height: 38px;
+        border-radius: 14px 14px 14px 14px;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--llama) 96%, white 4%), color-mix(in srgb, var(--llama) 82%, black 18%));
+        border: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      .ear.left {
+        left: 16px;
+        transform: rotate(-14deg);
+      }
+      .ear.right {
+        right: 16px;
+        transform: rotate(14deg);
+      }
+
+      .leg {
+        position: absolute;
+        bottom: 6px;
+        width: 20px;
+        height: 62px;
+        border-radius: 16px;
+        background: linear-gradient(180deg, color-mix(in srgb, var(--llama) 92%, white 8%), color-mix(in srgb, var(--llama) 78%, black 22%));
+        border: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      .leg.l1 {
+        left: 40px;
+      }
+      .leg.l2 {
+        left: 70px;
+      }
+      .leg.r1 {
+        right: 70px;
+      }
+      .leg.r2 {
+        right: 40px;
+      }
+
+      .spark {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+      }
+
+      .spark span {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        font-size: 16px;
+        filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35));
+      }
+
+      .spark.pop span {
+        animation: pop 650ms ease forwards;
+      }
+
+      @keyframes pop {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        20% {
+          opacity: 1;
+          transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) - 20px)) scale(1);
+        }
+      }
+
+      .speech {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: flex-start;
+        pointer-events: none;
+      }
+
+      .bubble {
+        pointer-events: none;
+        flex: 1;
+        max-width: 70%;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        padding: 10px 12px;
+        border-radius: 14px;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 13px;
+        line-height: 1.3;
+        backdrop-filter: blur(6px);
+      }
+
+      .bubble strong {
+        color: #fff;
+      }
+
+      .mood {
+        pointer-events: none;
+        min-width: 140px;
+        text-align: right;
+      }
+
+      .mood .big {
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .mood .small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* Controls */
+      .actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      @media (max-width: 520px) {
+        .actions {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .btn {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border-radius: 14px;
+        padding: 10px 12px;
+        cursor: pointer;
+        text-align: left;
+        transition:
+          transform 0.08s ease,
+          background 0.12s ease,
+          border-color 0.12s ease,
+          opacity 0.12s ease;
+        box-shadow: 0 12px 22px rgba(0, 0, 0, 0.18);
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.085);
+        border-color: rgba(255, 255, 255, 0.22);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn .top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        font-weight: 800;
+      }
+
+      .btn .sub {
+        margin-top: 4px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .btn.primary {
+        border-color: rgba(24, 211, 255, 0.38);
+        background: linear-gradient(180deg, rgba(24, 211, 255, 0.12), rgba(45, 108, 223, 0.06));
+      }
+
+      .btn.danger {
+        border-color: rgba(255, 91, 107, 0.38);
+        background: linear-gradient(180deg, rgba(255, 91, 107, 0.12), rgba(255, 91, 107, 0.05));
+      }
+
+      /* Stats */
+      .stats {
+        display: grid;
+        gap: 10px;
+      }
+
+      .statRow {
+        display: grid;
+        grid-template-columns: 110px 1fr 44px;
+        gap: 10px;
+        align-items: center;
+      }
+
+      @media (max-width: 520px) {
+        .statRow {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+      }
+
+      .statName {
+        font-weight: 750;
+        color: rgba(255, 255, 255, 0.86);
+      }
+
+      .meter {
+        position: relative;
+        height: 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.22);
+        overflow: hidden;
+      }
+
+      .fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        border-radius: 999px;
+        transition: width 250ms ease;
+      }
+
+      .statVal {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      /* Customize */
+      .field {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.18);
+        color: var(--text);
+        outline: none;
+      }
+
+      input[type="text"]:focus {
+        border-color: rgba(24, 211, 255, 0.55);
+        box-shadow: 0 0 0 4px rgba(24, 211, 255, 0.12);
+      }
+
+      input[type="color"] {
+        width: 56px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.18);
+        padding: 3px;
+        cursor: pointer;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-track {
+        background: rgba(0, 0, 0, 0.3);
+        height: 4px;
+        border-radius: 2px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        background: var(--n-cyan);
+        height: 14px;
+        width: 14px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        margin-top: -6px;
+      }
+
+      input[type="range"]::-moz-range-track {
+        background: rgba(0, 0, 0, 0.3);
+        height: 4px;
+        border-radius: 2px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        background: var(--n-cyan);
+        height: 14px;
+        width: 14px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+      }
+
+      .presets {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .swatch {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        cursor: pointer;
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2);
+      }
+
+      .swatch:focus-visible {
+        outline: none;
+        box-shadow:
+          0 0 0 3px rgba(24, 211, 255, 0.16),
+          0 10px 18px rgba(0, 0, 0, 0.2);
+        border-color: rgba(24, 211, 255, 0.5);
+      }
+
+      .note {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      /* Farm */
+      .farmGrid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      @media (max-width: 980px) {
+        .farmGrid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 560px) {
+        .farmGrid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .farmCard {
+        border-radius: var(--r);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+      }
+
+      .farmTop {
+        padding: 12px 12px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(0, 0, 0, 0.16);
+      }
+
+      .mini {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .miniIcon {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: radial-gradient(16px 16px at 30% 25%, rgba(255, 255, 255, 0.25), transparent 60%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.16));
+        display: grid;
+        place-items: center;
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
+        flex: 0 0 auto;
+      }
+
+      .miniIcon .dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: var(--c);
+      }
+
+      .miniName {
+        font-weight: 850;
+        letter-spacing: 0.2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .miniSub {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .farmBody {
+        padding: 12px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .moodTag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.05);
+        width: fit-content;
+        color: rgba(255, 255, 255, 0.86);
+        font-weight: 750;
+        font-size: 12px;
+      }
+
+      .moodDot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--mood);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+      }
+
+      .farmStats {
+        display: grid;
+        gap: 7px;
+      }
+
+      .farmStat {
+        display: grid;
+        grid-template-columns: 70px 1fr 40px;
+        gap: 8px;
+        align-items: center;
+        font-size: 12px;
+      }
+
+      .farmStat .nm {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .farmStat .bar {
+        height: 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(0, 0, 0, 0.18);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .farmStat .bar > i {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 50%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(24, 211, 255, 0.45), rgba(45, 108, 223, 0.35));
+      }
+
+      .farmStat .v {
+        text-align: right;
+        color: var(--subtle);
+        font-variant-numeric: tabular-nums;
+        font-weight: 700;
+      }
+
+      /* Modals-ish adopt area */
+      .adopt {
+        display: none;
+      }
+      .adopt.show {
+        display: block;
+      }
+
+      .adoptGrid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 940px) {
+        .adoptGrid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .tinyActions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .tinyBtn {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 8px 10px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .tinyBtn:hover {
+        border-color: rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.085);
+      }
+
+      .tinyBtn.danger {
+        border-color: rgba(255, 91, 107, 0.45);
+        background: rgba(255, 91, 107, 0.08);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <div class="brandTop">
+            <div class="badge" title="Neumont University — playful demo">
+              <span class="badgeDot" aria-hidden="true"></span>
+              <span class="title">Neumont Llama Life</span>
+            </div>
+            <div class="pill" id="savePill" title="Saved locally in your browser (localStorage)">
+              <span>💾</span>
+              <span><span class="k">Local Save</span> · <span id="saveHint">ready</span></span>
+            </div>
+          </div>
+          <div class="tagline">A tiny Tamagotchi-style llama — interactive, persistent, and a little social (locally).</div>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Views">
+          <button class="tabBtn" id="tabLlama" role="tab" aria-selected="true" aria-controls="viewLlama">Llama</button>
+          <button class="tabBtn" id="tabFarm" role="tab" aria-selected="false" aria-controls="viewFarm">Farm</button>
+        </div>
+      </header>
+
+      <!-- Adopt / first-time -->
+      <section class="card adopt" id="adoptCard">
+        <div class="cardHeader">
+          <h2>Adopt your llama</h2>
+          <div class="pill">
+            <span>🦙</span>
+            <span>Runs fully in-browser · no accounts</span>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="adoptGrid">
+            <div class="card" style="box-shadow: none; background: rgba(255, 255, 255, 0.04)">
+              <div class="cardHeader">
+                <h3>Pick a name + color</h3>
+                <div class="pill">
+                  <span>✨</span>
+                  <span>Instant + saved</span>
+                </div>
+              </div>
+              <div class="cardBody">
+                <div class="field">
+                  <label for="adoptName">Llama name</label>
+                  <input id="adoptName" type="text" maxlength="20" placeholder="e.g., Nibbles" />
+                </div>
+                <div class="row" style="align-items: flex-end">
+                  <div class="field" style="margin: 0; min-width: 220px">
+                    <label for="adoptColor">Llama color</label>
+                    <div class="row" style="justify-content: flex-start">
+                      <input id="adoptColor" type="color" value="#d9b8ff" aria-label="Pick llama color" />
+                      <div class="presets" id="presetWrap" aria-label="Color presets"></div>
+                    </div>
+                    <div class="note">Tip: This is just a demo — pick something loud and fun.</div>
+                  </div>
+                  <button class="btn primary" id="adoptBtn" style="min-width: 220px">
+                    <div class="top"><span>Adopt</span><span>→</span></div>
+                    <div class="sub">Create your llama (saved locally)</div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow: none; background: rgba(255, 255, 255, 0.04)">
+              <div class="cardHeader">
+                <h3>What you’ll demo</h3>
+              </div>
+              <div class="cardBody">
+                <div class="note" style="font-size: 13px">
+                  <p style="margin-top: 0">
+                    - **Interactivity**: Feed, Play, Sleep, Study<br />
+                    - **Persistence**: stored in <span class="k">localStorage</span><br />
+                    - **Time decay**: stats change while you’re away<br />
+                    - **Farm view**: “social presence” via local + mock llamas
+                  </p>
+                  <p style="margin-bottom: 0; color: rgba(255, 255, 255, 0.82)">
+                    Nothing uploads. If you clear site data, your llama disappears — like a true 90s virtual pet tragedy.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main views -->
+      <main>
+        <section id="viewLlama" role="tabpanel" aria-labelledby="tabLlama">
+          <div class="grid">
+            <section class="card">
+              <div class="cardHeader">
+                <h2>
+                  <span id="llamaNameLabel">Your llama</span>
+                  <span style="color: var(--subtle); font-weight: 700">·</span>
+                  <span id="llamaVibeLabel" style="color: rgba(255, 255, 255, 0.84); font-weight: 800"></span>
+                </h2>
+                <div class="tinyActions">
+                  <button class="tinyBtn" id="randomEventBtn" title="Optional: little burst of flavor text (still local-only)">
+                    Random vibe
+                  </button>
+                  <button class="tinyBtn danger" id="resetBtn" title="Deletes your local save and restarts">Reset</button>
+                </div>
+              </div>
+              <div class="cardBody">
+                <div class="llamaStage">
+                  <div class="llamaArea" id="llamaArea">
+                    <div class="speech">
+                      <div class="bubble" id="bubble">
+                        <strong id="bubbleTitle">Welcome!</strong>
+                        <span id="bubbleText">Adopt a llama to get started.</span>
+                      </div>
+                      <div class="mood">
+                        <div class="big" id="moodBig">—</div>
+                        <div class="small" id="moodSmall">—</div>
+                      </div>
+                    </div>
+                    <div class="llamaWrap">
+                      <div class="llama" id="llama">
+                        <div class="ear left"></div>
+                        <div class="ear right"></div>
+                        <div class="head">
+                          <div class="eye left" id="eyeL"></div>
+                          <div class="eye right" id="eyeR"></div>
+                          <div class="snout">
+                            <div class="mouth"></div>
+                          </div>
+                        </div>
+                        <div class="neck"></div>
+                        <div class="body"></div>
+                        <div class="leg l1"></div>
+                        <div class="leg l2"></div>
+                        <div class="leg r1"></div>
+                        <div class="leg r2"></div>
+                      </div>
+                      <div class="spark" id="spark" aria-hidden="true">
+                        <span style="--dx: -38px; --dy: -10px">✨</span>
+                        <span style="--dx: 30px; --dy: -18px">💫</span>
+                        <span style="--dx: -10px; --dy: 24px">⭐</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="split">
+                    <div class="card" style="box-shadow: none; background: rgba(255, 255, 255, 0.04)">
+                      <div class="cardHeader">
+                        <h3>Actions</h3>
+                        <div class="pill" title="Buttons can cooldown a bit for game feel">
+                          <span>⏳</span>
+                          <span id="cooldownHint">ready</span>
+                        </div>
+                      </div>
+                      <div class="cardBody">
+                        <div class="actions">
+                          <button class="btn primary" id="btnFeed">
+                            <div class="top"><span>🍎 Feed</span><span id="cdFeed"> </span></div>
+                            <div class="sub">Hunger ↑ (and a little happiness)</div>
+                          </button>
+                          <button class="btn" id="btnPlay">
+                            <div class="top"><span>🪀 Play</span><span id="cdPlay"> </span></div>
+                            <div class="sub">Happiness ↑ · Energy ↓</div>
+                          </button>
+                          <button class="btn" id="btnSleep">
+                            <div class="top"><span>😴 Sleep</span><span id="cdSleep"> </span></div>
+                            <div class="sub">Energy ↑ (best when tired)</div>
+                          </button>
+                          <button class="btn" id="btnStudy">
+                            <div class="top"><span>📚 Study</span><span id="cdStudy"> </span></div>
+                            <div class="sub">Knowledge ↑ · Energy ↓ (slightly)</div>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card" style="box-shadow: none; background: rgba(255, 255, 255, 0.04)">
+                      <div class="cardHeader">
+                        <h3>Stats</h3>
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                          <div class="pill" id="awayPill" title="Stat decay while away">⏱️ <span id="awayText">—</span></div>
+                          <div class="pill" id="debugPill" title="Debug: Time scale multiplier" style="display: flex; align-items: center; gap: 8px;">
+                            <span>⚡</span>
+                            <input type="range" id="timeScaleSlider" min="0" max="60" value="1" step="0.5" style="width: 80px; cursor: pointer;" />
+                            <span id="timeScaleLabel" style="min-width: 50px; text-align: right;">1x</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="cardBody">
+                        <div class="stats">
+                          <div class="statRow">
+                            <div class="statName">Hunger</div>
+                            <div class="meter"><div class="fill" id="barHunger"></div></div>
+                            <div class="statVal" id="valHunger">0</div>
+                          </div>
+                          <div class="statRow">
+                            <div class="statName">Happiness</div>
+                            <div class="meter"><div class="fill" id="barHappiness"></div></div>
+                            <div class="statVal" id="valHappiness">0</div>
+                          </div>
+                          <div class="statRow">
+                            <div class="statName">Energy</div>
+                            <div class="meter"><div class="fill" id="barEnergy"></div></div>
+                            <div class="statVal" id="valEnergy">0</div>
+                          </div>
+                          <div class="statRow">
+                            <div class="statName">Knowledge</div>
+                            <div class="meter"><div class="fill" id="barKnowledge"></div></div>
+                            <div class="statVal" id="valKnowledge">0</div>
+                          </div>
+                        </div>
+                        <div class="note" style="margin-top: 10px">
+                          Stats drift over time (even when you’re gone). Keep your llama thriving — or at least vaguely functional.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <aside class="card">
+              <div class="cardHeader">
+                <h2>Customize</h2>
+                <div class="pill" title="Appearance updates instantly and persists">🎨 <span>instant</span></div>
+              </div>
+              <div class="cardBody">
+                <div class="field">
+                  <label for="nameInput">Name</label>
+                  <input id="nameInput" type="text" maxlength="20" placeholder="Your llama's name" />
+                </div>
+                <div class="row" style="justify-content: flex-start; gap: 10px; margin-bottom: 10px">
+                  <div class="field" style="margin: 0">
+                    <label for="colorInput">Color</label>
+                    <input id="colorInput" type="color" value="#d9b8ff" />
+                  </div>
+                  <div class="field" style="margin: 0; flex: 1">
+                    <label>Presets</label>
+                    <div class="presets" id="presetWrap2"></div>
+                  </div>
+                </div>
+                <div class="field" style="margin-bottom: 6px">
+                  <label>Vibe (for the demo)</label>
+                  <div class="presets" id="vibeOptions"></div>
+                </div>
+                <div class="note">
+                  This demo saves to your browser only. Farm view is “community flavored” via local + mock llamas (no real multiplayer).
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="viewFarm" role="tabpanel" aria-labelledby="tabFarm" class="hidden">
+          <section class="card">
+            <div class="cardHeader">
+              <h2>Neumont Farm</h2>
+              <div class="pill" title="This is simulated — no backend">
+                🧑‍🤝‍🧑 <span><span class="k" id="farmCount">0</span> llamas</span>
+              </div>
+            </div>
+            <div class="cardBody">
+              <div class="row" style="margin-bottom: 10px">
+                <div class="note" style="max-width: 720px">
+                  This “farm” is intentionally fake-social: it mixes your saved llama with a small set of mock llamas.
+                  If you want, you can also spawn extra local llamas for the vibe.
+                </div>
+                <div class="tinyActions">
+                  <button class="tinyBtn" id="spawnLocalBtn" title="Adds a locally stored extra llama (still only on this browser)">
+                    + Add local llama
+                  </button>
+                  <button class="tinyBtn danger" id="clearFarmBtn" title="Removes only the extra locally stored farm llamas (not your main llama)">
+                    Clear local extras
+                  </button>
+                </div>
+              </div>
+              <div class="farmGrid" id="farmGrid" aria-live="polite"></div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      /*
+        Neumont Llama Life (single-file demo)
+        - Vanilla JS
+        - localStorage persistence
+        - Time-based stat decay
+        - Simple “farm” social presence (mock + local extras)
+      */
+
+      (function () {
+        "use strict";
+
+        // --------- Storage keys ----------
+        var KEY_LLAMA = "nllama.save.v1";
+        var KEY_FARM_EXTRAS = "nllama.farmExtras.v1";
+
+        // --------- Tuning ----------
+        // Stats are 0..100. Higher is better for all four stats in this demo.
+        // Decay rates are per minute.
+        var DECAY_PER_MIN = {
+          hunger: 0.55,
+          happiness: 0.35,
+          energy: 0.45,
+          knowledge: 0.18, // knowledge decays slower (sticky learning)
+        };
+
+        // Action effects (immediate delta)
+        var ACTIONS = {
+          feed: { hunger: +18, happiness: +4, energy: -2, knowledge: 0 },
+          play: { hunger: -4, happiness: +16, energy: -14, knowledge: 0 },
+          sleep: { hunger: -3, happiness: +2, energy: +22, knowledge: -1 },
+          study: { hunger: -2, happiness: -2, energy: -7, knowledge: +16 },
+        };
+
+        // Cooldowns in ms (simple feel-good gating)
+        var COOLDOWN_MS = {
+          feed: 2500,
+          play: 3500,
+          sleep: 4500,
+          study: 3500,
+        };
+
+        var PRESETS = ["#d9b8ff", "#19d3ff", "#2d6cdf", "#ff5b6b", "#33d17a", "#ffcc66", "#ffffff", "#8c7aff"];
+
+        // Vibes: user-selected personality overlay (independent from stat-driven mood).
+        var VIBES = [
+          { id: "chill", label: "chill", emoji: "😌", blurb: "low-key and unbothered" },
+          { id: "silly", label: "silly", emoji: "🤪", blurb: "chaotic good energy" },
+          { id: "happy", label: "happy", emoji: "😄", blurb: "sunny by default" },
+          { id: "focused", label: "focused", emoji: "🤓", blurb: "locked-in study mode" },
+          { id: "dramatic", label: "dramatic", emoji: "😤", blurb: "main-character vibes" },
+          { id: "moody", label: "moody", emoji: "😢", blurb: "feels all the feels" },
+        ];
+
+        // --------- DOM ----------
+        var $ = function (sel) {
+          return document.querySelector(sel);
+        };
+        var $$ = function (sel) {
+          return Array.prototype.slice.call(document.querySelectorAll(sel));
+        };
+
+        var tabLlama = $("#tabLlama");
+        var tabFarm = $("#tabFarm");
+        var viewLlama = $("#viewLlama");
+        var viewFarm = $("#viewFarm");
+
+        var adoptCard = $("#adoptCard");
+        var adoptName = $("#adoptName");
+        var adoptColor = $("#adoptColor");
+        var adoptBtn = $("#adoptBtn");
+
+        var llamaEl = $("#llama");
+        var llamaArea = $("#llamaArea");
+        var spark = $("#spark");
+        var eyeL = $("#eyeL");
+        var eyeR = $("#eyeR");
+
+        var nameInput = $("#nameInput");
+        var colorInput = $("#colorInput");
+        var llamaNameLabel = $("#llamaNameLabel");
+        var llamaMoodLabel = $("#llamaMoodLabel");
+        var llamaVibeLabel = $("#llamaVibeLabel");
+        var bubbleTitle = $("#bubbleTitle");
+        var bubbleText = $("#bubbleText");
+        var moodBig = $("#moodBig");
+        var moodSmall = $("#moodSmall");
+        var awayText = $("#awayText");
+        var saveHint = $("#saveHint");
+        var cooldownHint = $("#cooldownHint");
+
+        var barHunger = $("#barHunger");
+        var barHappiness = $("#barHappiness");
+        var barEnergy = $("#barEnergy");
+        var barKnowledge = $("#barKnowledge");
+        var valHunger = $("#valHunger");
+        var valHappiness = $("#valHappiness");
+        var valEnergy = $("#valEnergy");
+        var valKnowledge = $("#valKnowledge");
+
+        var btnFeed = $("#btnFeed");
+        var btnPlay = $("#btnPlay");
+        var btnSleep = $("#btnSleep");
+        var btnStudy = $("#btnStudy");
+
+        var cdFeed = $("#cdFeed");
+        var cdPlay = $("#cdPlay");
+        var cdSleep = $("#cdSleep");
+        var cdStudy = $("#cdStudy");
+
+        var resetBtn = $("#resetBtn");
+        var randomEventBtn = $("#randomEventBtn");
+
+        var presetWrap = $("#presetWrap");
+        var presetWrap2 = $("#presetWrap2");
+        var vibeOptions = $("#vibeOptions");
+
+        var timeScaleSlider = $("#timeScaleSlider");
+        var timeScaleLabel = $("#timeScaleLabel");
+
+        var farmGrid = $("#farmGrid");
+        var farmCount = $("#farmCount");
+        var spawnLocalBtn = $("#spawnLocalBtn");
+        var clearFarmBtn = $("#clearFarmBtn");
+
+        // --------- State ----------
+        var now = Date.now();
+        var state = {
+          llama: null,
+          cooldownUntil: { feed: 0, play: 0, sleep: 0, study: 0 },
+          lastUiTick: now,
+          lastSaveBlink: 0,
+          lastActionAt: 0,
+          awayAppliedMinutes: 0,
+          timeScale: 1, // Debug: multiplier for time decay (1 = normal, higher = faster decay)
+        };
+
+        // --------- Helpers ----------
+        function clamp(n, min, max) {
+          return Math.max(min, Math.min(max, n));
+        }
+
+        function round(n) {
+          return Math.round(n);
+        }
+
+        function safeJsonParse(str, fallback) {
+          try {
+            return JSON.parse(str);
+          } catch (e) {
+            return fallback;
+          }
+        }
+
+        function fmtAgo(ms) {
+          var s = Math.max(0, Math.floor(ms / 1000));
+          if (s < 10) return "just now";
+          if (s < 60) return s + "s ago";
+          var m = Math.floor(s / 60);
+          if (m < 60) return m + "m ago";
+          var h = Math.floor(m / 60);
+          if (h < 24) return h + "h ago";
+          var d = Math.floor(h / 24);
+          return d + "d ago";
+        }
+
+        function moodFromStats(llama) {
+          // A simple “overall wellness” score.
+          var score = (llama.hunger + llama.happiness + llama.energy + llama.knowledge) / 4;
+          // Edge-case emphasis: very low energy/hunger feels worse.
+          if (llama.energy < 18 || llama.hunger < 18) score -= 10;
+          if (llama.happiness < 16) score -= 6;
+          if (llama.knowledge > 80) score += 3;
+
+          if (score >= 82) return { label: "Thriving", emoji: "🚀", color: "var(--good)", tip: "Peak llama energy. Keep it up." };
+          if (score >= 64) return { label: "Chill", emoji: "😌", color: "var(--good)", tip: "Doing fine. Maybe study or play." };
+          if (score >= 46) return { label: "Meh", emoji: "😐", color: "var(--warn)", tip: "A little attention would help." };
+          if (score >= 28) return { label: "Struggling", emoji: "🥴", color: "var(--warn)", tip: "Feed / sleep soon." };
+          return { label: "Crisis", emoji: "🆘", color: "var(--bad)", tip: "Emergency snacks + nap." };
+        }
+
+        function setSaveHint(text) {
+          saveHint.textContent = text;
+        }
+
+        function blinkSaved() {
+          state.lastSaveBlink = Date.now();
+          setSaveHint("saved");
+        }
+
+        function softVibrate() {
+          // Tiny haptic on supported devices, no harm if missing.
+          try {
+            if (navigator.vibrate) navigator.vibrate(15);
+          } catch (e) {}
+        }
+
+        function flashSpark() {
+          spark.classList.remove("pop");
+          // Force reflow so animation restarts.
+          void spark.offsetWidth;
+          spark.classList.add("pop");
+        }
+
+        function bounceLlama() {
+          llamaEl.classList.remove("bounce");
+          void llamaEl.offsetWidth;
+          llamaEl.classList.add("bounce");
+        }
+
+        function setLlamaColor(hex) {
+          document.documentElement.style.setProperty("--llama", hex);
+        }
+
+        function statColor(statName, value) {
+          // Slightly different gradients by stat.
+          var v = clamp(value, 0, 100);
+          var a = 0.9;
+          var low = "rgba(255, 91, 107, " + a + ")";
+          var mid = "rgba(255, 204, 102, " + a + ")";
+          var high = "rgba(51, 209, 122, " + a + ")";
+
+          var baseStart = low;
+          var baseEnd = high;
+          if (statName === "knowledge") {
+            baseStart = "rgba(45, 108, 223, 0.85)";
+            baseEnd = "rgba(24, 211, 255, 0.85)";
+          } else if (statName === "happiness") {
+            baseStart = "rgba(255, 91, 107, 0.8)";
+            baseEnd = "rgba(255, 204, 102, 0.9)";
+          } else if (statName === "energy") {
+            baseStart = "rgba(255, 204, 102, 0.85)";
+            baseEnd = "rgba(51, 209, 122, 0.9)";
+          } else if (statName === "hunger") {
+            baseStart = "rgba(255, 91, 107, 0.85)";
+            baseEnd = "rgba(51, 209, 122, 0.9)";
+          }
+
+          // If very low, push towards red visually.
+          if (v < 25 && statName !== "knowledge") {
+            return "linear-gradient(90deg, " + low + ", " + mid + ")";
+          }
+          return "linear-gradient(90deg, " + baseStart + ", " + baseEnd + ")";
+        }
+
+        // --------- Persistence ----------
+        function defaultLlama(name, color) {
+          var t = Date.now();
+          return {
+            name: name || "Llama",
+            color: color || "#d9b8ff",
+            hunger: 78,
+            happiness: 72,
+            energy: 70,
+            knowledge: 40,
+            vibeId: "chill",
+            createdAt: t,
+            lastSeenAt: t,
+            lastInteractionAt: t,
+            version: 1,
+          };
+        }
+
+        function loadLlama() {
+          var raw = localStorage.getItem(KEY_LLAMA);
+          if (!raw) return null;
+          var obj = safeJsonParse(raw, null);
+          if (!obj || typeof obj !== "object") return null;
+
+          // Very light validation / upgrade.
+          obj.name = String(obj.name || "Llama").slice(0, 20);
+          obj.color = typeof obj.color === "string" ? obj.color : "#d9b8ff";
+          obj.vibeId = typeof obj.vibeId === "string" ? obj.vibeId : "chill";
+          obj.hunger = clamp(Number(obj.hunger), 0, 100);
+          obj.happiness = clamp(Number(obj.happiness), 0, 100);
+          obj.energy = clamp(Number(obj.energy), 0, 100);
+          obj.knowledge = clamp(Number(obj.knowledge), 0, 100);
+          obj.createdAt = Number(obj.createdAt || Date.now());
+          obj.lastSeenAt = Number(obj.lastSeenAt || Date.now());
+          obj.lastInteractionAt = Number(obj.lastInteractionAt || obj.lastSeenAt);
+          obj.version = 1;
+          return obj;
+        }
+
+        function saveLlama() {
+          if (!state.llama) return;
+          try {
+            localStorage.setItem(KEY_LLAMA, JSON.stringify(state.llama));
+            blinkSaved();
+          } catch (e) {
+            setSaveHint("save failed");
+          }
+        }
+
+        function loadFarmExtras() {
+          var raw = localStorage.getItem(KEY_FARM_EXTRAS);
+          if (!raw) return [];
+          var list = safeJsonParse(raw, []);
+          if (!Array.isArray(list)) return [];
+          return list
+            .filter(function (x) {
+              return x && typeof x === "object";
+            })
+            .map(function (x) {
+              return normalizeFarmLlama(x);
+            });
+        }
+
+        function saveFarmExtras(list) {
+          try {
+            localStorage.setItem(KEY_FARM_EXTRAS, JSON.stringify(list));
+          } catch (e) {}
+        }
+
+        // --------- Time decay ----------
+        function applyDecayForMinutes(llama, minutes) {
+          // minutes can be fractional, but we'll keep it simple and allow fraction.
+          // Apply time scale multiplier for debug/demo purposes
+          var m = Math.max(0, minutes) * state.timeScale;
+
+          llama.hunger = clamp(llama.hunger - DECAY_PER_MIN.hunger * m, 0, 100);
+          llama.happiness = clamp(llama.happiness - DECAY_PER_MIN.happiness * m, 0, 100);
+          llama.energy = clamp(llama.energy - DECAY_PER_MIN.energy * m, 0, 100);
+          llama.knowledge = clamp(llama.knowledge - DECAY_PER_MIN.knowledge * m, 0, 100);
+        }
+
+        function applyOfflineDecayIfNeeded() {
+          if (!state.llama) return;
+          var t = Date.now();
+          var last = Number(state.llama.lastSeenAt || t);
+          var elapsedMs = Math.max(0, t - last);
+          var minutes = elapsedMs / 60000;
+          state.awayAppliedMinutes = minutes;
+
+          // Cap for demo sanity: don’t decay more than 7 days.
+          var capped = Math.min(minutes, 60 * 24 * 7);
+          applyDecayForMinutes(state.llama, capped);
+          state.llama.lastSeenAt = t;
+          saveLlama();
+        }
+
+        // --------- Actions ----------
+        function canDo(action) {
+          var t = Date.now();
+          return t >= (state.cooldownUntil[action] || 0);
+        }
+
+        function setCooldown(action) {
+          state.cooldownUntil[action] = Date.now() + COOLDOWN_MS[action];
+        }
+
+        function applyAction(action) {
+          if (!state.llama) return;
+          if (!canDo(action)) return;
+
+          var delta = ACTIONS[action];
+          state.llama.hunger = clamp(state.llama.hunger + delta.hunger, 0, 100);
+          state.llama.happiness = clamp(state.llama.happiness + delta.happiness, 0, 100);
+          state.llama.energy = clamp(state.llama.energy + delta.energy, 0, 100);
+          state.llama.knowledge = clamp(state.llama.knowledge + delta.knowledge, 0, 100);
+
+          state.llama.lastInteractionAt = Date.now();
+          state.llama.lastSeenAt = state.llama.lastInteractionAt;
+
+          setCooldown(action);
+          saveLlama();
+
+          bounceLlama();
+          flashSpark();
+          softVibrate();
+
+          var msg = actionMessage(action, state.llama);
+          setBubble(msg.title, msg.text);
+        }
+
+        function actionMessage(action, llama) {
+          var mood = moodFromStats(llama);
+          if (action === "feed") {
+            if (llama.hunger > 90) return { title: "Snack Overachiever", text: "Absolutely stuffed. " + mood.emoji + " Maybe play?" };
+            return { title: "Nom nom", text: "Crisis averted. You fed " + llama.name + ". " + mood.emoji };
+          }
+          if (action === "play") {
+            if (llama.energy < 18) return { title: "Wheee… (kinda)", text: "Fun, but " + llama.name + " is exhausted. Consider a nap." };
+            return { title: "Playtime!", text: llama.name + " did a tiny victory dance. " + mood.emoji };
+          }
+          if (action === "sleep") {
+            return { title: "Zzz", text: llama.name + " is recharging. Dreaming of campus Wi‑Fi. " + mood.emoji };
+          }
+          if (action === "study") {
+            if (llama.energy < 15) return { title: "Brain fog", text: "Knowledge rises… but " + llama.name + " needs sleep for retention." };
+            return { title: "Big brain moment", text: llama.name + " studied. Knowledge +1 charisma. " + mood.emoji };
+          }
+          return { title: "Nice", text: "You did a thing." };
+        }
+
+        // --------- UI updates ----------
+        function setBubble(title, text) {
+          bubbleTitle.textContent = title;
+          bubbleText.textContent = text;
+        }
+
+        function updateSleepyFace() {
+          if (!state.llama) return;
+          var sleepy = state.llama.energy <= 18;
+          llamaEl.classList.toggle("sleepy", sleepy);
+          eyeL.classList.toggle("sleep", sleepy);
+          eyeR.classList.toggle("sleep", sleepy);
+        }
+
+        function updateStatsUI() {
+          if (!state.llama) return;
+
+          var h = state.llama.hunger;
+          var ha = state.llama.happiness;
+          var e = state.llama.energy;
+          var k = state.llama.knowledge;
+
+          barHunger.style.width = h + "%";
+          barHappiness.style.width = ha + "%";
+          barEnergy.style.width = e + "%";
+          barKnowledge.style.width = k + "%";
+
+          barHunger.style.background = statColor("hunger", h);
+          barHappiness.style.background = statColor("happiness", ha);
+          barEnergy.style.background = statColor("energy", e);
+          barKnowledge.style.background = statColor("knowledge", k);
+
+          valHunger.textContent = String(round(h));
+          valHappiness.textContent = String(round(ha));
+          valEnergy.textContent = String(round(e));
+          valKnowledge.textContent = String(round(k));
+        }
+
+        function currentVibe(llama) {
+          var id = (llama && llama.vibeId) || "chill";
+          for (var i = 0; i < VIBES.length; i++) {
+            if (VIBES[i].id === id) return VIBES[i];
+          }
+          return VIBES[0];
+        }
+
+        function updateIdentityUI() {
+          if (!state.llama) return;
+          llamaNameLabel.textContent = state.llama.name + " the Llama";
+          nameInput.value = state.llama.name;
+          colorInput.value = state.llama.color;
+          setLlamaColor(state.llama.color);
+
+          // Ensure vibe pills reflect current selection
+          var v = currentVibe(state.llama);
+          if (llamaVibeLabel) {
+            llamaVibeLabel.textContent = v.emoji + " " + v.label;
+          }
+          if (vibeOptions) {
+            var buttons = vibeOptions.querySelectorAll("[data-vibe-id]");
+            buttons.forEach(function (btn) {
+              btn.classList.toggle("active", btn.getAttribute("data-vibe-id") === v.id);
+            });
+          }
+        }
+
+        function updateMoodUI() {
+          if (!state.llama) return;
+          var mood = moodFromStats(state.llama);
+          moodBig.textContent = mood.emoji + " " + mood.label;
+          moodSmall.textContent = mood.tip;
+        }
+
+        function updateCooldownUI() {
+          var t = Date.now();
+          var any = false;
+
+          function left(action) {
+            return Math.max(0, (state.cooldownUntil[action] || 0) - t);
+          }
+
+          function setBtn(btn, cdEl, action) {
+            var ms = left(action);
+            var ready = ms <= 0;
+            btn.disabled = !ready || !state.llama;
+            if (!state.llama) {
+              cdEl.textContent = "";
+              return;
+            }
+            if (ready) {
+              cdEl.textContent = "";
+              return;
+            }
+            any = true;
+            cdEl.textContent = Math.ceil(ms / 1000) + "s";
+          }
+
+          setBtn(btnFeed, cdFeed, "feed");
+          setBtn(btnPlay, cdPlay, "play");
+          setBtn(btnSleep, cdSleep, "sleep");
+          setBtn(btnStudy, cdStudy, "study");
+
+          cooldownHint.textContent = any ? "cooling down…" : "ready";
+        }
+
+        function updateAwayUI() {
+          if (!state.llama) {
+            awayText.textContent = "—";
+            return;
+          }
+          var minutes = state.awayAppliedMinutes || 0;
+          if (minutes < 0.5) {
+            awayText.textContent = "no decay";
+            return;
+          }
+          if (minutes < 60) {
+            awayText.textContent = "decayed for " + Math.round(minutes) + "m";
+            return;
+          }
+          var h = minutes / 60;
+          if (h < 24) {
+            awayText.textContent = "decayed for " + Math.round(h) + "h";
+            return;
+          }
+          var d = h / 24;
+          awayText.textContent = "decayed for " + Math.round(d) + "d";
+        }
+
+        function tick() {
+          var t = Date.now();
+          var dtMs = Math.max(0, t - state.lastUiTick);
+          state.lastUiTick = t;
+
+          // Live decay while page is open (gentle)
+          if (state.llama) {
+            var minutes = dtMs / 60000;
+            applyDecayForMinutes(state.llama, minutes);
+            state.llama.lastSeenAt = t;
+
+            // Save occasionally (not every frame)
+            // Keep it simple: save every ~10s.
+            if (t - state.lastActionAt > 1200 && t % 10000 < 40) {
+              saveLlama();
+            }
+          }
+
+          // save hint resets
+          if (t - state.lastSaveBlink > 1200) setSaveHint("ready");
+
+          updateSleepyFace();
+          updateStatsUI();
+          updateMoodUI();
+          updateCooldownUI();
+
+          requestAnimationFrame(tick);
+        }
+
+        // --------- Tabs ----------
+        function showTab(which) {
+          var isLlama = which === "llama";
+          tabLlama.setAttribute("aria-selected", isLlama ? "true" : "false");
+          tabFarm.setAttribute("aria-selected", isLlama ? "false" : "true");
+          viewLlama.classList.toggle("hidden", !isLlama);
+          viewFarm.classList.toggle("hidden", isLlama);
+          if (!isLlama) renderFarm();
+        }
+
+        // --------- Farm ----------
+        function normalizeFarmLlama(x) {
+          var obj = Object.assign(
+            {
+              id: "local-" + Math.random().toString(16).slice(2),
+              name: "Llama",
+              color: "#d9b8ff",
+              hunger: 50,
+              happiness: 50,
+              energy: 50,
+              knowledge: 50,
+              lastSeenAt: Date.now(),
+            },
+            x
+          );
+          obj.name = String(obj.name || "Llama").slice(0, 20);
+          obj.color = typeof obj.color === "string" ? obj.color : "#d9b8ff";
+          obj.hunger = clamp(Number(obj.hunger), 0, 100);
+          obj.happiness = clamp(Number(obj.happiness), 0, 100);
+          obj.energy = clamp(Number(obj.energy), 0, 100);
+          obj.knowledge = clamp(Number(obj.knowledge), 0, 100);
+          obj.lastSeenAt = Number(obj.lastSeenAt || Date.now());
+          return obj;
+        }
+
+        function mockFarm() {
+          // Stable-ish mock data (seeded by day) so it doesn’t feel random every refresh.
+          var daySeed = Math.floor(Date.now() / 86400000);
+          function seeded(i) {
+            var x = Math.sin((daySeed + i * 97) * 999) * 10000;
+            return x - Math.floor(x);
+          }
+
+          var names = ["Byte", "Coda", "Neon", "Pico", "Nova", "Kotlin", "Ada", "Mocha", "Ziggy", "Quinn"];
+          var colors = ["#19d3ff", "#2d6cdf", "#ff5b6b", "#33d17a", "#ffcc66", "#d9b8ff", "#8c7aff", "#ffffff"];
+          var list = [];
+          for (var i = 0; i < 7; i++) {
+            var r1 = seeded(i + 1);
+            var r2 = seeded(i + 2);
+            var r3 = seeded(i + 3);
+            var r4 = seeded(i + 4);
+            var nm = names[(i + Math.floor(r1 * names.length)) % names.length];
+            var col = colors[(i + Math.floor(r2 * colors.length)) % colors.length];
+            list.push(
+              normalizeFarmLlama({
+                id: "mock-" + i,
+                name: nm,
+                color: col,
+                hunger: Math.round(35 + r1 * 65),
+                happiness: Math.round(25 + r2 * 75),
+                energy: Math.round(20 + r3 * 80),
+                knowledge: Math.round(15 + r4 * 85),
+                lastSeenAt: Date.now() - Math.round((r2 * 6 + i * 0.7) * 3600000),
+              })
+            );
+          }
+          return list;
+        }
+
+        function farmRoster() {
+          var out = [];
+          if (state.llama) {
+            out.push(
+              normalizeFarmLlama({
+                id: "you",
+                name: state.llama.name + " (you)",
+                color: state.llama.color,
+                hunger: state.llama.hunger,
+                happiness: state.llama.happiness,
+                energy: state.llama.energy,
+                knowledge: state.llama.knowledge,
+                lastSeenAt: state.llama.lastSeenAt,
+              })
+            );
+          }
+          var extras = loadFarmExtras();
+          var mocks = mockFarm();
+          return out.concat(extras).concat(mocks);
+        }
+
+        function moodChip(llama) {
+          var m = moodFromStats(llama);
+          return { label: m.emoji + " " + m.label, color: m.color };
+        }
+
+        function renderFarm() {
+          var list = farmRoster();
+          farmCount.textContent = String(list.length);
+
+          farmGrid.innerHTML = "";
+          list.forEach(function (x) {
+            var chip = moodChip(x);
+            var el = document.createElement("div");
+            el.className = "farmCard";
+
+            el.innerHTML =
+              '<div class="farmTop">' +
+              '  <div class="mini">' +
+              '    <div class="miniIcon" style="--c:' +
+              escAttr(x.color) +
+              '">' +
+              '      <div class="dot" style="background:' +
+              escAttr(x.color) +
+              '"></div>' +
+              "    </div>" +
+              '    <div style="min-width:0">' +
+              '      <div class="miniName">' +
+              escHtml(x.name) +
+              "</div>" +
+              '      <div class="miniSub">Last seen: ' +
+              escHtml(fmtAgo(Date.now() - x.lastSeenAt)) +
+              "</div>" +
+              "    </div>" +
+              "  </div>" +
+              "</div>" +
+              '<div class="farmBody">' +
+              '  <div class="moodTag" style="--mood:' +
+              escAttr(chip.color) +
+              '">' +
+              '    <span class="moodDot" style="background:' +
+              escAttr(chip.color) +
+              '"></span>' +
+              "    <span>" +
+              escHtml(chip.label) +
+              "</span>" +
+              "  </div>" +
+              '  <div class="farmStats">' +
+              farmStatRow("Hunger", x.hunger) +
+              farmStatRow("Happy", x.happiness) +
+              farmStatRow("Energy", x.energy) +
+              farmStatRow("Know", x.knowledge) +
+              "  </div>" +
+              "</div>";
+
+            farmGrid.appendChild(el);
+          });
+        }
+
+        function farmStatRow(label, value) {
+          var v = clamp(value, 0, 100);
+          var w = Math.round(v);
+          return (
+            '<div class="farmStat">' +
+            '  <div class="nm">' +
+            escHtml(label) +
+            "</div>" +
+            '  <div class="bar"><i style="width:' +
+            w +
+            '%"></i></div>' +
+            '  <div class="v">' +
+            w +
+            "</div>" +
+            "</div>"
+          );
+        }
+
+        function escHtml(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+        }
+
+        function escAttr(s) {
+          // For style attrs; still basic escaping
+          return escHtml(s).replace(/`/g, "&#096;");
+        }
+
+        function spawnLocalFarmLlama() {
+          var extras = loadFarmExtras();
+          var baseNames = ["Sprocket", "Ram", "Pixel", "Citrine", "Boba", "Turing", "Waffle", "Orbit", "Juno", "Mint"];
+          var nm = baseNames[Math.floor(Math.random() * baseNames.length)] + " " + (Math.floor(Math.random() * 90) + 10);
+          var col = PRESETS[Math.floor(Math.random() * PRESETS.length)];
+
+          var llama = normalizeFarmLlama({
+            id: "extra-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2),
+            name: nm,
+            color: col,
+            hunger: Math.round(30 + Math.random() * 70),
+            happiness: Math.round(30 + Math.random() * 70),
+            energy: Math.round(30 + Math.random() * 70),
+            knowledge: Math.round(10 + Math.random() * 90),
+            lastSeenAt: Date.now() - Math.round(Math.random() * 7200000),
+          });
+
+          extras.unshift(llama);
+          extras = extras.slice(0, 12); // keep small
+          saveFarmExtras(extras);
+          renderFarm();
+          setBubble("New friend!", llama.name + " joined the local farm. (Only on this browser.)");
+        }
+
+        function clearLocalFarmExtras() {
+          saveFarmExtras([]);
+          renderFarm();
+          setBubble("Farm tidied", "Local extra llamas cleared. Mock llamas remain.");
+        }
+
+        // --------- Presets ----------
+        function buildPresets(container, onPick) {
+          container.innerHTML = "";
+          PRESETS.forEach(function (hex) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "swatch";
+            b.style.background = hex;
+            b.title = hex;
+            b.setAttribute("aria-label", "Set color " + hex);
+            b.addEventListener("click", function () {
+              onPick(hex);
+            });
+            container.appendChild(b);
+          });
+        }
+
+        function buildVibes(container) {
+          if (!container) return;
+          container.innerHTML = "";
+          VIBES.forEach(function (v) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "tinyBtn";
+            b.setAttribute("data-vibe-id", v.id);
+            b.textContent = v.emoji + " " + v.label;
+            b.title = v.blurb;
+            b.addEventListener("click", function () {
+              if (!state.llama) return;
+              state.llama.vibeId = v.id;
+              state.llama.lastInteractionAt = Date.now();
+              state.llama.lastSeenAt = state.llama.lastInteractionAt;
+              saveLlama();
+              updateIdentityUI();
+              setBubble("Vibe set", state.llama.name + " is now " + v.emoji + " " + v.label + ".");
+            });
+            container.appendChild(b);
+          });
+        }
+
+        // --------- Random flavor ----------
+        function randomVibe() {
+          if (!state.llama) return;
+          var v = currentVibe(state.llama);
+          var lines = [
+            "is contemplating the meaning of semicolons.",
+            "just discovered a new debugging technique: more snacks.",
+            "is networking with the farm. (Locally. In spirit.)",
+            "wants to build a tiny app and ship it by Friday.",
+            "is speedrunning a CS concept and calling it ‘study.’",
+            "is chanting: ‘it works on my machine.’",
+            "is applying for an internship in the Cloud (literal cloud).",
+            "is practicing dramatic keyboard sounds.",
+          ];
+          var pick = lines[Math.floor(Math.random() * lines.length)];
+          setBubble("Random vibe check", v.emoji + " " + state.llama.name + " " + pick);
+          bounceLlama();
+          flashSpark();
+        }
+
+        // --------- Adopt / init ----------
+        function showAdopt() {
+          adoptCard.classList.add("show");
+          viewLlama.classList.add("hidden");
+          viewFarm.classList.add("hidden");
+          tabLlama.disabled = true;
+          tabFarm.disabled = true;
+        }
+
+        function hideAdopt() {
+          adoptCard.classList.remove("show");
+          tabLlama.disabled = false;
+          tabFarm.disabled = false;
+          showTab("llama");
+        }
+
+        function adoptNewLlama() {
+          var nm = (adoptName.value || "").trim();
+          if (!nm) nm = "Llama";
+          nm = nm.slice(0, 20);
+          var col = adoptColor.value || "#d9b8ff";
+
+          state.llama = defaultLlama(nm, col);
+          saveLlama();
+          state.lastActionAt = Date.now();
+
+          updateIdentityUI();
+          updateStatsUI();
+          updateMoodUI();
+          updateAwayUI();
+          hideAdopt();
+          setBubble("Adopted!", "Say hi to " + state.llama.name + ". Feed / play / sleep / study to keep stats up.");
+          bounceLlama();
+          flashSpark();
+        }
+
+        function resetAll() {
+          var ok = confirm("Reset your llama? This deletes your local save for the main llama.");
+          if (!ok) return;
+          try {
+            localStorage.removeItem(KEY_LLAMA);
+          } catch (e) {}
+          state.llama = null;
+          setBubble("Reset", "Save cleared. Adopt again!");
+          showAdopt();
+        }
+
+        // --------- Wiring ----------
+        function wireEvents() {
+          tabLlama.addEventListener("click", function () {
+            showTab("llama");
+          });
+          tabFarm.addEventListener("click", function () {
+            showTab("farm");
+          });
+
+          btnFeed.addEventListener("click", function () {
+            state.lastActionAt = Date.now();
+            applyAction("feed");
+          });
+          btnPlay.addEventListener("click", function () {
+            state.lastActionAt = Date.now();
+            applyAction("play");
+          });
+          btnSleep.addEventListener("click", function () {
+            state.lastActionAt = Date.now();
+            applyAction("sleep");
+          });
+          btnStudy.addEventListener("click", function () {
+            state.lastActionAt = Date.now();
+            applyAction("study");
+          });
+
+          adoptBtn.addEventListener("click", function () {
+            adoptNewLlama();
+          });
+          adoptName.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") adoptNewLlama();
+          });
+
+          nameInput.addEventListener("input", function () {
+            if (!state.llama) return;
+            state.llama.name = String(nameInput.value || "Llama").trim().slice(0, 20) || "Llama";
+            state.llama.lastInteractionAt = Date.now();
+            state.llama.lastSeenAt = state.llama.lastInteractionAt;
+            saveLlama();
+            updateIdentityUI();
+            updateMoodUI();
+          });
+
+          colorInput.addEventListener("input", function () {
+            if (!state.llama) return;
+            state.llama.color = colorInput.value || "#d9b8ff";
+            state.llama.lastInteractionAt = Date.now();
+            state.llama.lastSeenAt = state.llama.lastInteractionAt;
+            saveLlama();
+            updateIdentityUI();
+            renderFarm();
+          });
+
+          adoptColor.addEventListener("input", function () {
+            // Preview during adoption
+            setLlamaColor(adoptColor.value || "#d9b8ff");
+          });
+
+          resetBtn.addEventListener("click", resetAll);
+          randomEventBtn.addEventListener("click", randomVibe);
+
+          spawnLocalBtn.addEventListener("click", spawnLocalFarmLlama);
+          clearFarmBtn.addEventListener("click", clearLocalFarmExtras);
+
+          // Debug time scale slider
+          timeScaleSlider.addEventListener("input", function () {
+            state.timeScale = parseFloat(timeScaleSlider.value) || 1;
+            var val = state.timeScale;
+            if (val === 0) {
+              timeScaleLabel.textContent = "paused";
+            } else if (val < 1) {
+              timeScaleLabel.textContent = val.toFixed(1) + "x";
+            } else {
+              timeScaleLabel.textContent = Math.round(val) + "x";
+            }
+          });
+
+          // Visibility: update lastSeenAt and save on hide/show to make offline decay feel correct.
+          document.addEventListener("visibilitychange", function () {
+            if (!state.llama) return;
+            if (document.visibilityState === "hidden") {
+              state.llama.lastSeenAt = Date.now();
+              saveLlama();
+            }
+            if (document.visibilityState === "visible") {
+              applyOfflineDecayIfNeeded();
+              updateAwayUI();
+              updateStatsUI();
+              updateMoodUI();
+              renderFarm();
+              setBubble("Welcome back", "While you were away, time passed. (" + awayText.textContent + ".)");
+            }
+          });
+
+          // Make the llama area clickable for a tiny fun bounce.
+          llamaArea.addEventListener("click", function () {
+            if (!state.llama) return;
+            bounceLlama();
+            flashSpark();
+            var m = moodFromStats(state.llama);
+            setBubble("Boop!", state.llama.name + " says hi. Mood: " + m.emoji + " " + m.label + ".");
+          });
+        }
+
+        // --------- Init ----------
+        function init() {
+          // Build swatches in both places
+          buildPresets(presetWrap, function (hex) {
+            adoptColor.value = hex;
+            setLlamaColor(hex);
+          });
+          buildPresets(presetWrap2, function (hex) {
+            if (!state.llama) return;
+            state.llama.color = hex;
+            colorInput.value = hex;
+            state.llama.lastInteractionAt = Date.now();
+            state.llama.lastSeenAt = state.llama.lastInteractionAt;
+            saveLlama();
+            updateIdentityUI();
+            renderFarm();
+          });
+
+          buildVibes(vibeOptions);
+
+          wireEvents();
+
+          state.llama = loadLlama();
+          if (!state.llama) {
+            // Default preview color
+            setLlamaColor(adoptColor.value || "#d9b8ff");
+            showAdopt();
+            setBubble("Welcome!", "Adopt a llama to begin.");
+          } else {
+            hideAdopt();
+            applyOfflineDecayIfNeeded();
+            updateAwayUI();
+            updateIdentityUI();
+            updateStatsUI();
+            updateMoodUI();
+            renderFarm();
+            setBubble("Loaded", "Welcome back, " + state.llama.name + ". Your llama was saved locally.");
+          }
+
+          // Start loop
+          state.lastUiTick = Date.now();
+          requestAnimationFrame(tick);
+        }
+
+        init();
+      })();
+    </script>
+  </body>
+</html>
