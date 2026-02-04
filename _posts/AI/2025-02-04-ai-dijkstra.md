@@ -24,20 +24,17 @@ function Dijkstra(startNode, endNode):
     startNode.Cost = 0
     nodes.Enqueue(startNode, priority = startNode.Cost)
 
-    // Track if we've found the end node
-    // This allows early exit once the shortest path is found
-    found = false
-
-    while nodes is not empty and found is false:
-        // Get the unvisited node with smallest cost
+    // Process nodes until we find the end node or exhaust all options
+    while nodes is not empty:
+        // Get the node with smallest cost
         // This node is guaranteed to have the shortest path from start
         currentNode = nodes.Dequeue()
 
         // If this is our target node, we've found the shortest path
-        // No need to explore further nodes
+        // Build the path and return success
         if currentNode == endNode:
-            found = true
-            break
+            CreatePath(endNode, path)
+            return true
 
         // Check each connection from current node
         // This explores all possible paths one step further
@@ -54,12 +51,10 @@ function Dijkstra(startNode, endNode):
 
                 // Add/Update neighbor in priority queue
                 // It will be explored later based on its new priority
-                nodes.Enqueue(neighbor, priority = neighbor.Cost)
+                nodes.EnqueueWithoutDuplicates(neighbor, priority = cost)
 
-    // At this point, each node's Previous reference forms a chain
-    // Follow Previous references from endNode to startNode to get path
-
-    return
+    // No path found to end node
+    return false
 ```
 ### Interactive Demonstration ###
 
