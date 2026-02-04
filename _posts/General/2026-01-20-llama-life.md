@@ -1,6 +1,6 @@
 ---
 title: Neumont Llama Life
-date: 2026-01-19 00:00:00 -0500
+date: 2026-01-20 00:00:00 -0500
 categories: [Neumont]
 tags: [student, neumont]     # adjust categories and tags as needed
 toc: true
