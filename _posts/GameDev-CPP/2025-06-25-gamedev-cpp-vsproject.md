@@ -41,7 +41,7 @@ it is up to date.
   <img src="image5.png" width="93%" alt="image">
 </div>
 
-- Create an **Empty Project**.
+- Create a **Console App**.
 
   - To reduce project types listed, filter the projects by setting
     **Language** to **C++** and **Project type** to **Console**.
@@ -52,7 +52,7 @@ it is up to date.
 
 - Name your **Project** and **Solution**.
 
-  - In this example, the **Solution** name is "CSC196".
+  - In this example, the **Solution** name is "GameEngine".
 
   - In this example, the **Project** name is "Game".
 
