@@ -17,35 +17,35 @@ _This guide will provide step-by-step instructions on how to add the FMOD librar
 
 ### Download FMOD ###
 + Go to the **FMOD** website [https://www.fmod.com/](https://www.fmod.com/)
-  + Go to the **Sign In** and sign up for an account if you don't have one
-  + Go to the **Download**
+  + Go to the **Sign In** and sign up for an account if you don't have one.
+  + Go to the **Download**.
 <div align="left">
 <img src="fmod-sign-in.jpg" alt="Sign-in" width="65%"/>
 </div>
 
-+ Download the **FMOD Engine** for Windows
++ Download the **FMOD Engine** for Windows.
 <div align="left">
 <img src="fmod-download.jpg" alt="Download" width="75%"/>
 </div>
 
-+ Install the downloaded **FMOD Engine** file (accepts all defaults)
++ Install the downloaded **FMOD Engine** file (accepts all defaults).
 <div align="left">
 <img src="fmod-installer.jpg" alt="Installer" width="75%"/>
 </div>
 
-+ Create a folder in the **Source** directory called "ThirdParty", if one doesn't exist
-  + **ThirdParty** will contain libraries from external developers to be used in the project
-+ Create a folder in the **ThirdParty** folder called "fmod"
++ Create a folder in the **Source** directory called "ThirdParty", if one doesn't exist.
+  + **ThirdParty** will contain libraries from external developers to be used in the project.
++ Create a folder in the **ThirdParty** folder called "fmod".
 <div align="left">
 <img src="fmod-thirdparty.jpg" alt="ThirdParty" width="62%"/>
 </div>
 
-+ Navigate to where **FMOD** was installed on your computer
++ Navigate to where **FMOD** was installed on your computer.
 + The default location (copy into **Windows Explorer**):
 ```
-C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows
+C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api
 ```
-+ In the **api** folder, copy the **core** folder into the **ThirdParty\fmod** folder
++ Copy the **core** folder into the **ThirdParty\fmod** folder
 <div align="left">
 <img src="fmod-api-core.jpg" alt="Api Core" width="65%"/>
 <img src="fmod-thirdparty-core.jpg" alt="Api ThirdParty" width="65%"/>
@@ -62,7 +62,7 @@ C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows
 #### Add FMOD Include Directories ####
 + Add the directory of the FMOD include folder to the **Additional Include Directories**.
   + **Additional Include Directories** is located in **C/C++>General**.
-  + Add ```$(SolutionDir)Source\ThirdParty\fmod\core\inc```
+  + Add ```$(SolutionDir)ThirdParty\fmod\core\inc```
 
 ```
 $(SolutionDir)ThirdParty\fmod\core\inc
@@ -71,11 +71,11 @@ $(SolutionDir)ThirdParty\fmod\core\inc
 <img src="fmod-include.jpg" alt="Include" width="75%"/>
 </div>
  
->This needs to be done in all **Projects** in the **Solution**.
+>This needs to be done in both **Projects** in the **Solution**.
 {: .prompt-warning }
 
 + Once the directory is added to the list of included directories, the **FMOD** header can be add to the files.
-  + Add the following to a file, for example Main.cpp.
+  + Add the following to a file, place it where the **main.cpp** is located.
 ```
 #include <fmod.hpp>
 ```
@@ -96,14 +96,14 @@ $(SolutionDir)ThirdParty\fmod\core\inc
   + Add ```$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget)```
 
 ```
-$(SolutionDir)Source\ThirdParty\fmod\core\lib\$(PlatformTarget)
+$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget)
 ```
 <div align="left">
 <img src="fmod-library.jpg" alt="Library" width="70%"/>
 </div>
  <br> 
 
-+ Add the **FMOD** .lib files that the project needs to function
++ Add the **FMOD** .lib files that the project needs to function.
   + **Additional Dependencies** is located in **Librarian>General**
   + Add ```fmod_vc.lib```
 
@@ -117,9 +117,9 @@ fmod_vc.lib
 > If the **FMOD** library was properly added, building the project (CTRL+B) will result in no errors.
 {: .prompt-info }
 
-#### Add SDL Dynamic Link Library (dll) ####
-+ Create a folder in the **Solution** directory called "Build"
-  + This step might have already been done previously
+#### Add FMOD Dynamic Link Library (dll) ####
++ Create a folder in the **Solution** directory called "Build".
+  + The Build folder may already exist.
   + The **Build** folder will contain the **FMOD** dll (dynamic link library) files.
 <div align="left">
 <img src="fmod-build.jpg" alt="Build" width="70%"/>
