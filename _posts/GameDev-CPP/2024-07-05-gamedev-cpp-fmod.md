@@ -65,7 +65,7 @@ C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows
   + Add ```$(SolutionDir)Source\ThirdParty\fmod\core\inc```
 
 ```
-$(SolutionDir)Source\ThirdParty\fmod\core\inc
+$(SolutionDir)ThirdParty\fmod\core\inc
 ```
 <div align="left">
 <img src="fmod-include.jpg" alt="Include" width="75%"/>
@@ -93,7 +93,7 @@ $(SolutionDir)Source\ThirdParty\fmod\core\inc
 
 + Add the directory of the FMOD library folder in **Project Properties**
   + **Additional Library Directories** is located in **Librarian>General** or **Linker>Input**
-  + Add ```$(SolutionDir)Source\ThirdParty\fmod\core\lib\$(PlatformTarget)```
+  + Add ```$(SolutionDir)ThirdParty\fmod\core\lib\$(PlatformTarget)```
 
 ```
 $(SolutionDir)Source\ThirdParty\fmod\core\lib\$(PlatformTarget)
