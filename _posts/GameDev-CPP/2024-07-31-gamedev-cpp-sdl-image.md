@@ -27,6 +27,7 @@ _This guide will provide step-by-step instructions on how to add the Image libra
 <div align="left">
 <img src="sdl-image-unzip-dir.jpg" alt="Zip" width="80%"/>
 <img src="sdl-dir-dest.jpg" alt="Zip" width="50%"/>
+
 </div>
 
 ### Add SDL Image to the Solution Project(s) ###
@@ -176,7 +177,7 @@ vec2 Texture::GetSize()
 {
     Vector2 v;
     // https://wiki.libsdl.org/SDL3/SDL_GetTextureSize
-
+    // TODO: SDL_GetTextureSize
     return v;
 }
 ```
