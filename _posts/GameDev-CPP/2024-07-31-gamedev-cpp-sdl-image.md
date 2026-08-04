@@ -130,7 +130,7 @@ public:
 
 	bool Load(const std::string& filename, class Renderer& renderer);
 
-	vec2 GetSize();
+	Vector2 GetSize();
 
 	friend class Renderer;
 
