@@ -14,18 +14,18 @@ _This guide will provide step-by-step instructions on how to add the Image libra
   + [https://github.com/libsdl-org/SDL_image/releases](https://github.com/libsdl-org/SDL_image/releases)
   + Download the latest release. ```SDL3_image-devel-3.4.4-VC.zip```
 <div align="left">
-<img src="sdl-image-download.jpg" alt="Download" width="85%"/>
+<img src="sdl-image-download.jpg" alt="Download" width="65%"/>
 </div>
 
 + Copy the .zip to the **Source/ThirdParty** foler.
 + Unzip the downloaded .zip file.
 <div align="left">
-<img src="sdl-image-unzip.jpg" alt="Zip" width="85%"/>
+<img src="sdl-image-unzip.jpg" alt="Zip" width="65%"/>
 </div>
 + Copy the **SDL3 Image** **include** and **lib** directory to the **ThirdParty/SDL3** folder.
   + This will add the **SDL3 Image** files to **SDL3**.
 <div align="left">
-<img src="sdl-image-unzip-dir.jpg" alt="Zip" width="100%"/>
+<img src="sdl-image-unzip-dir.jpg" alt="Zip" width="80%"/>
 <img src="sdl-dir-dest.jpg" alt="Zip" width="70%"/>
 </div>
 
@@ -69,7 +69,7 @@ _This guide will provide step-by-step instructions on how to add the Image libra
 sdl3_image.lib
 ```
 <div align="left">
-<img src="sdl-image-lib.jpg" alt="Lib" width="100%"/>
+<img src="sdl-image-lib.jpg" alt="Lib" width="90%"/>
 </div>
 
 #### Add SDL Image Dynamic Link Library (dll) ####
@@ -84,7 +84,7 @@ sdl3_image.lib
   + The project is a x64 project (64-bit application).
 <div align="left">
 <img src="sdl-image-dll.jpg" alt="DLL" width="100%"/>
-<img src="sdl-image-dll-build.jpg" alt="DLL" width="100%"/>
+<img src="sdl-image-dll-build.jpg" alt="DLL" width="70%"/>
 </div>
 
 > If **SDL3 Image** was properly added, building and running the project will result in no errors.
@@ -96,7 +96,7 @@ sdl3_image.lib
   + Assets are now placed in the **Assets** folder inside the **Build** folder.
   + Create a subfolder called **Textures** to hold images used for textures.
 <div align="left">
-<img src="sdl-image-build.jpg" alt="Build" width="70%"/>
+<img src="sdl-image-build.jpg" alt="Build" width="60%"/>
 </div>
 
 ### Update Code for SDL Images ###
