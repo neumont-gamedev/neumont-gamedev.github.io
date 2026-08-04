@@ -130,7 +130,7 @@ public:
 
 	bool Load(const std::string& filename, class Renderer& renderer);
 
-	vec2 GetSize();
+	Vector2 GetSize();
 
 	friend class Renderer;
 
@@ -173,7 +173,7 @@ bool Texture::Load(const std::string& filename, Renderer& renderer)
     return true;
 }
 
-vec2 Texture::GetSize()
+Vector2 Texture::GetSize()
 {
     Vector2 v;
     // https://wiki.libsdl.org/SDL3/SDL_GetTextureSize
