@@ -12,7 +12,7 @@ _This guide will provide step-by-step instructions on how to add the Image libra
 ### Download SDL Image ###
 + Download the SDL_image library.
   + [https://github.com/libsdl-org/SDL_image/releases](https://github.com/libsdl-org/SDL_image/releases)
-  + Download the latest release. ```SDL3_image-devel-3.2.4-VC.zip```
+  + Download the latest release. ```SDL3_image-devel-3.4.4-VC.zip```
 <div align="left">
 <img src="sdl-image-download.jpg" alt="Download" width="85%"/>
 </div>
@@ -59,8 +59,7 @@ _This guide will provide step-by-step instructions on how to add the Image libra
 {: .prompt-warning }
 
 + Add the SDL library directory in **Project Properties** (**Librarian > General** or **Linker > Input**) to the **Additional Library Directories**:
-  + ```$(SolutionDir)Source\ThirdParty\SDL3\lib\$(PlatformTarget)```
-  + 
+  + ```$(SolutionDir)ThirdParty\SDL3\lib\$(PlatformTarget)```
 
 + Add the **SDL3_Image.lib** file.
   + **Additional Dependencies** is located in **Linker>Input**.
@@ -95,6 +94,7 @@ sdl3_image.lib
 + Find an image to use in the program.
   + Place the .bmp, .jpg, or .png images into the **Build** folder.
   + Assets are now placed in the **Assets** folder inside the **Build** folder.
+  + Create a subfolder called **Textures** to hold images used for textures.
 <div align="left">
 <img src="sdl-image-build.jpg" alt="Build" width="70%"/>
 </div>
@@ -107,18 +107,20 @@ sdl3_image.lib
 #include <SDL3_image/SDL_image.h>
 ```
 
-#### Initialize and Shutdown SDL Image ####
+### Initialize and Shutdown SDL Image ###
 
 + The **SDL Image** is initialized and shutdown as part of SDL3. There is no additional code here.
 
 ### Create Texture Class ###
 
-+ Create **Texture.h** file in the **Source/Renderer** directory.
++ Create **Texture.h** file in the **Engine** project.
   + Make sure to add the neccessary #include or forward declarations.
   + Place the class declaration inside the namespace.
-  + If doing a forward declaration on **SDL_Texture**, use **struct** instead of **class** as **SDL_Texture** is a **struct**.
+  + If doing a forward declaration on **SDL_Texture**, use **struct** instead of **class** as **SDL_Texture** is a **struct** and place it _outside_ the namespace.
 
 ```
+struct SDL_Texture;
+
 class Texture
 {
 public:
@@ -132,36 +134,36 @@ public:
 	friend class Renderer;
 
 private:
-	struct SDL_Texture* m_texture{ nullptr };
+	SDL_Texture* m_texture{ nullptr };
 };
 ```
 
 + Create **Texture.cpp** file
   + **Texture** will need to be a **friend class** of **Renderer** so it can access the **Renderer** private data **m_renderer**
-  + You will need to add the neccessary #include
+  + You will need to add the neccessary #include (include pch if using a precompiled header).
 
 ```
 Texture::~Texture()
 {
     // if texture exists, destroy texture
-    if (...texture is not null...) SDL_DestroyTexture(m_texture);
+    if (/*TODO: m_texture is not null*/) SDL_DestroyTexture(m_texture);
 }
 
 bool Texture::Load(const std::string& filename, Renderer& renderer)
 {
     // load image onto surface
     SDL_Surface* surface = IMG_Load(...get the c-string of filename...);
-    if (...surface is null...)
+    if (/*TODO: surface is null*/)
     {
         std::cerr << "Could not load image: " << filename << std::endl;
         return false;
     }
 
     // create texture from surface, texture is a friend class of renderer
-    m_texture = SDL_CreateTextureFromSurface(...look at parameters of function...);
+    m_texture = SDL_CreateTextureFromSurface(/*TODO: renderer, surface*/);
     // once texture is created, surface can be freed up
     SDL_DestroySurface(surface);
-    if (...m_texture is null...)
+    if (/*TODO: m_texture is null*/)
     {
         std::cerr << "Could not create texture: " << filename << std::endl;
         return false;
@@ -172,10 +174,10 @@ bool Texture::Load(const std::string& filename, Renderer& renderer)
 
 vec2 Texture::GetSize()
 {
-    float w, h;
+    Vector2 v;
     // https://wiki.libsdl.org/SDL3/SDL_GetTextureSize
 
-    return ...vec2 with w and h...;
+    return v;
 }
 ```
 
@@ -198,13 +200,13 @@ void DrawTexture(...forward declaration... Texture* texture, float x, float y);
 ```
 void Renderer::DrawTexture(Texture* texture, float x, float y)
 {
-	vec2 size = ...get texture size...
+	Vector2 size = ...get texture size...
 
 	SDL_FRect destRect;
 	destRect.x = x;
 	destRect.y = y;
-	destRect.w = ...size x...;
-	destRect.h = ...size y...;
+	destRect.w = /*TODO: get size x */;
+	destRect.h = /*TODO: get size x */;
 
 	// https://wiki.libsdl.org/SDL3/SDL_RenderTexture
   SDL_RenderTexture(m_renderer, texture->m_texture, NULL, &destRect);
@@ -213,18 +215,18 @@ void Renderer::DrawTexture(Texture* texture, float x, float y)
 
 #### Draw Texture in Main ####
 
-+ In **main()** create a **Texture** before the while loop
++ In **main()** create a **Texture** before the while loop.
 
 ```
 // create texture, using shared_ptr so texture can be shared
 std::shared_ptr<Texture> texture = std::make_shared<Texture>();
-texture->Load(...texture filename... , ...renderer from engine...);
+texture->Load(/*TODO: texture filename, get renderer from engine*/);
 ```
 
 + Draw the texture between the renderer **Clear** and **Present**.
 
 ```
-GetEngine().GetRenderer().DrawTexture(...get() texture pointer..., 30, 30);
+// TODO:: get engine renderer.DrawTexture(...get() texture pointer..., 30, 30);
 ```
 
 > Build and run the program and the image will show up on the screen at the set location.
