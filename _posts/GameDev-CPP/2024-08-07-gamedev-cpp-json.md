@@ -111,13 +111,15 @@ $(SolutionDir)ThirdParty\rapidjson\include
   + The functions are placed in a namespace to keep the function names in their own space **<your namespace::json>**
 
 ```
+#pragma once
 #include <rapidjson/document.h>
 #include <string>
 
-namespace <your namespace>::json
+namespace nu::json
 {
 	bool Load(const std::string& filename, rapidjson::Document& document);
 
+	// read json data
 	bool Read(const rapidjson::Value& value, const std::string& name, int& data);
 }
 ```
@@ -126,20 +128,22 @@ namespace <your namespace>::json
 + In the **Json.cpp** file, add code for the function definitions to load and read the **JSON** file.
 
 ```
+#include "pch.h"
 #include "Json.h"
 #include "File.h"
-#include "Logger.h"
 
 #include <rapidjson/istreamwrapper.h>
 #include <iostream>
 
-namespace <engine namespace>::json
+namespace nu::json
 {
-    bool Load(const std::string& filename, rapidjson::Document& document) {
+    bool Load(const std::string& filename, rapidjson::Document& document) 
+    {
         // read the file into a string
         std::string buffer;
-        if (!file::ReadTextFile(filename, buffer)) {
-            Logger::Error("Could not read file: {}.", filename);
+        if (!ReadTextFile(filename, buffer)) 
+        {
+            std::cerr << "Could not read file:" << filename << std::endl;
             return false;
         }
 
@@ -150,18 +154,21 @@ namespace <engine namespace>::json
         // set the json document from the stream
         document.ParseStream(istream);
         // check if the parse was successful
-        if (!document.IsObject()) {
-            Logger::Error("Could not parse Json: {}.", filename);
+        if (!document.IsObject()) 
+        {
+            std::cerr << "Could not parse JSON:" << filename << std::endl;
             return false;
         }
 
         return true;
     }
 
-    bool Read(const rapidjson::Value& value, const std::string& name, int& data) {
+    bool Read(const rapidjson::Value& value, const std::string& name, int& data) 
+    {
         // check if the value has the "<name>" and the correct data type
-        if (!value.HasMember(name.c_str()) || !value[name.c_str()].IsInt()) {
-            Logger::Error("Could not read Json value (int): {}.", name);
+        if (!value.HasMember(name.c_str()) || !value[name.c_str()].IsInt()) 
+        {
+            std::cerr << "Could not read JSON value (int):" << name << std::endl;
             return false;
         }
 
@@ -186,19 +193,22 @@ namespace <engine namespace>::json
 ```
 // load the json data from a file
 std::string buffer;
-<engine namespace>::file::ReadTextFile("json.txt", buffer);
-// show the contents of the json file (debug)
-std::cout << buffer << std::endl;
+if (ReadTextFile("data/data.json", buffer))
+{
+    // show the contents of the json file (debug)
+    std::cout << buffer << std::endl;
 
-// create json document from the json file contents
-rapidjson::Document document;
-<engine namespace>::json::Load("json.txt", document);
-
-// read the age data from the json
-int age;
-<engine namespace>::json::Read(document, "age", age);
-// show the age data
-std::cout << age << std::endl;
+    // create json document from the json file contents
+    rapidjson::Document document;
+    if (json::Load("data/data.json", document))
+    {
+        // read the age data (int) from the json
+        int age;
+        json::Read(document, "age", age);
+        // show the age data
+        std::cout << age << std::endl;
+    }
+}
 ```
 
 + After running the program, the console will display the contents of the **JSON** file and the **age** data.
@@ -220,8 +230,8 @@ _Add additional functions to load different data types from the **JSON** file._
 bool Read(const rapidjson::Value& value, const std::string& name, float& data);
 bool Read(const rapidjson::Value& value, const std::string& name, bool& data);
 bool Read(const rapidjson::Value& value, const std::string& name, std::string& data);
-bool Read(const rapidjson::Value& value, const std::string& name, vec2& data);
-bool Read(const rapidjson::Value& value, const std::string& name, vec3& data);
+bool Read(const rapidjson::Value& value, const std::string& name, Vector2& data);
+bool Read(const rapidjson::Value& value, const std::string& name, Vector3& data);
 ```
 
 + Create the definitions for the functions in Json.cpp.
