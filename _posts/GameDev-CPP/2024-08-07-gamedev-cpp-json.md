@@ -240,10 +240,12 @@ bool Read(const rapidjson::Value& value, const std::string& name, Vector3& data)
   + Do this for the **bool**, **float**, and **std::string** Read() functions
 
 ```
-bool Read(const rapidjson::Value& value, const std::string& name, bool& data) {
+bool Read(const rapidjson::Value& value, const std::string& name, bool& data) 
+{
     // check if the value has the "<name>" and the correct data type
-    if (!value.HasMember(name.c_str()) || !value[name.c_str()].IsBool()) {
-        Logger::Error("Could not read Json value (bool): {}.", name);
+    if (!value.HasMember(name.c_str()) || !value[name.c_str()].IsBool()) 
+    {
+        std::cerr << "Could not read JSON value (bool):" << name << std::endl;
         return false;
     }
 
@@ -254,24 +256,28 @@ bool Read(const rapidjson::Value& value, const std::string& name, bool& data) {
 }
 ```
 
-+ The **vec2** and **vec3** have multiple values that need to be read.
++ The **Vector2** and **Vector3** have multiple values that need to be read.
   + **JSON** treats these as arrays and need to be read in as an array
-+ Here is an example of reading in the **vec2**.
++ Here is an example of reading in the **Vector2**.
 
 ```
-bool Read(const rapidjson::Value& value, const std::string& name, vec2& data) {
+bool Read(const rapidjson::Value& value, const std::string& name, Vector2& data) 
+{
     // check if the value has the "<name>" and is an array with 2 elements
-    if (!value.HasMember(name.c_str()) || !value[name.c_str()].IsArray() || value[name.c_str()].Size() != 2) {
-        Logger::Error("Could not read Json value (vec2): {}.", name);
+    if (!value.HasMember(name.c_str()) || !value[name.c_str()].IsArray() || value[name.c_str()].Size() != 2) 
+    {
+        std::cerr << "Could not read JSON value (Vector2):" << name << std::endl;
         return false;
     }
 
     // get json array object
     auto& array = value[name.c_str()];
-    // get array values
-    for (rapidjson::SizeType i = 0; i < array.Size(); i++) {
-        if (!array[i].IsNumber()) {
-            Logger::Error("Could not read Json value: {}.", name);
+    // get array values, iterate through each element
+    for (rapidjson::SizeType i = 0; i < array.Size(); i++) 
+    {
+        if (!array[i].IsNumber()) 
+        {
+            std::cerr << "Could not read JSON value (Vector2):" << name << std::endl;
             return false;
         }
 
@@ -283,8 +289,8 @@ bool Read(const rapidjson::Value& value, const std::string& name, vec2& data) {
 }
 ```
 
-+ Using the **vec2** as an example, complete the **vec3** Read().
-  + The vec3 has 3 elements.
++ Using the **Vector2** as an example, complete the **Vecto3** Read().
+  + The Vector3 has 3 elements.
     + Make sure when checking the array size to check for 3 elements.
 
 ### Read Data Types in Main() ###
