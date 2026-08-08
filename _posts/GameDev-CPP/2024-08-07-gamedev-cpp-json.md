@@ -240,10 +240,12 @@ bool Read(const rapidjson::Value& value, const std::string& name, Vector3& data)
   + Do this for the **bool**, **float**, and **std::string** Read() functions
 
 ```
-bool Read(const rapidjson::Value& value, const std::string& name, bool& data) {
+bool Read(const rapidjson::Value& value, const std::string& name, bool& data) 
+{
     // check if the value has the "<name>" and the correct data type
-    if (!value.HasMember(name.c_str()) || !value[name.c_str()].IsBool()) {
-        Logger::Error("Could not read Json value (bool): {}.", name);
+    if (!value.HasMember(name.c_str()) || !value[name.c_str()].IsBool()) 
+    {
+        std::cerr << "Could not read JSON value (bool):" << name << std::endl;
         return false;
     }
 
@@ -254,9 +256,9 @@ bool Read(const rapidjson::Value& value, const std::string& name, bool& data) {
 }
 ```
 
-+ The **vec2** and **vec3** have multiple values that need to be read.
++ The **Vector2** and **Vector3** have multiple values that need to be read.
   + **JSON** treats these as arrays and need to be read in as an array
-+ Here is an example of reading in the **vec2**.
++ Here is an example of reading in the **Vector2**.
 
 ```
 bool Read(const rapidjson::Value& value, const std::string& name, vec2& data) {
