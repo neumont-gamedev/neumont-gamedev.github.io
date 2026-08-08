@@ -31,6 +31,7 @@ The reverse process is called **deserialization**. The game engine will use JSON
 
 + Copy the .zip into the **ThirdParty** folder.
 + Extract the ```rapidjson-master.zip``` file.
+  + Make sure the contents of the rapidjson files are under this directory and not under another subdirectory.
 + Rename the extracted folder "rapidjson".
 <div align="left">
 <img src="json-zip.jpg" alt="Zip" width="65%"/>
@@ -52,23 +53,23 @@ The reverse process is called **deserialization**. The game engine will use JSON
 {: .prompt-warning }
 
  
-+ Add the directory of the FMOD include folder to the **Additional Include Directories**.
++ Add the directory of the **rapidjson** include folder to the **Additional Include Directories**.
   + **Additional Include Directories** is located in **C/C++>General**.
-  + Add ```$(SolutionDir)Source\ThirdParty\rapidjson\include```
+  + Add ```$(SolutionDir)ThirdParty\rapidjson\include```
 
 ```
-$(SolutionDir)Source\ThirdParty\rapidjson\include
+$(SolutionDir)ThirdParty\rapidjson\include
 ```
 <div align="left">
 <img src="json-include.jpg" alt="Include" width="75%"/>
 </div>
 
 ### Create JSON File ###
-+ In the **Build/Assets** folder create a text file called ```json.txt```.
++ In the **Build/Assets** folder create a folder called ```data``` and a text file called ```json.txt```.
 <div align="left">
 <img src="json-file.jpg" alt="File" width="65%"/>
 </div>
-+ Open the file and add **JSON** data.
++ Open the file and add **JSON** data. Use your own values for name and age.
 ```
 {
 	"name": "Raymond",
@@ -100,20 +101,20 @@ $(SolutionDir)Source\ThirdParty\rapidjson\include
 
 ### Create JSON Functions ###
 
-+ Create a **Json.h** and **Json.cpp** in the **Core** filter in the **Engine** project, make sure the file is in the ```Source/Engine/Core``` folder.
++ Create a **Json.h** and **Json.cpp** in the  **Engine** project.
 <div align="left">
 <img src="json-files.jpg" alt="Json" width="85%"/>
 </div>
 
 #### Create JSON header (.h) ####
-+ In the **Json.h** file, add code for the function declarations to load and read the **JSON** file
-  + The functions are placed in a namespace to keep the function names in their own space
++ In the **Json.h** file, add code for the function declarations to load and read the **JSON** file.
+  + The functions are placed in a namespace to keep the function names in their own space **<your namespace::json>**
 
 ```
 #include <rapidjson/document.h>
 #include <string>
 
-namespace <engine namespace>::json
+namespace <your namespace>::json
 {
 	bool Load(const std::string& filename, rapidjson::Document& document);
 
@@ -172,11 +173,10 @@ namespace <engine namespace>::json
 }
 ```
 
-+ Include the **Json.h** in the **EngineMinimal.h**.
-  + Keep the include with the other Core includes.
++ Include the **Json.h** in the **Engine.h**.  
 
 ```
-#include "Core/Json.h"
+#include Json.h"
 ```
 
 ### Load and Read JSON in Main() ###
@@ -287,16 +287,16 @@ std::string name;
 int age;
 float speed;
 bool isAwake;
-<engine namespace>::vec2 position;
-<engine namespace>::vec3 color;
+<your namespace>::Vector2 position;
+<your namespace>::Vector3 color;
 
 // read the json data
-<engine namespace>::json::Read(document, "name", name);
-<engine namespace>::json::Read(document, "age", age);
-<engine namespace>::json::Read(document, "speed", speed);
-<engine namespace>::json::Read(document, "isAwake", isAwake);
-<engine namespace>::json::Read(document, "position", position);
-<engine namespace>::json::Read(document, "color", color);
+<your namespace>::json::Read(document, "name", name);
+<your namespace>::json::Read(document, "age", age);
+<your namespace>::json::Read(document, "speed", speed);
+<your namespace>::json::Read(document, "isAwake", isAwake);
+<your namespace>::json::Read(document, "position", position);
+<your namespace>::json::Read(document, "color", color);
 
 // show the data
 std::cout << name << " " << age << " " << speed << " " << isAwake << std::endl;
