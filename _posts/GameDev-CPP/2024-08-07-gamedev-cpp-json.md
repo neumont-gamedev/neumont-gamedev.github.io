@@ -153,10 +153,20 @@ namespace nu::json
 
         // set the json document from the stream
         document.ParseStream(istream);
+
         // check if the parse was successful
-        if (!document.IsObject()) 
+        if (document.HasParseError())
         {
-            std::cerr << "Could not parse JSON:" << filename << std::endl;
+            std::cerr << "Could not parse JSON: " << filename << std::endl;
+            std::cerr << "Error: " << rapidjson::GetParseError_En(document.GetParseError()) << std::endl;
+
+            return false;
+        }
+
+        // check that the root value is an object, not an array/string/number/etc.
+        if (!document.IsObject())
+        {
+            std::cerr << "JSON root is not an object: " << filename << std::endl;
             return false;
         }
 
@@ -334,7 +344,7 @@ _To make reading data in easier, a **macro** can be created to simplify the code
   + Place the **macro** after the **#include** lines.
 
 ```
-#define JSON_READ(value, data) <engine namespace>::json::Read(value, #data, data)
+#define JSON_READ(value, data) <your namespace>::json::Read(value, #data, data)
 ```
 
 + In **main()** change the **Read()** function to the **macro**.
@@ -343,7 +353,7 @@ _To make reading data in easier, a **macro** can be created to simplify the code
 
 _Before_
 ```
-<engine namespace>::json::Read(document, "name", name);
+<your namespace>::json::Read(document, "name", name);
 ```
 _After_
 ```
