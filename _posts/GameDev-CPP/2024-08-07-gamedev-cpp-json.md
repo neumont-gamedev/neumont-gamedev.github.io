@@ -220,7 +220,6 @@ if (ReadTextFile("data/data.json", buffer))
         std::cout << age << std::endl;
     }
 }
-```
 
 + After running the program, the console will display the contents of the **JSON** file and the **age** data.
 <div align="left">
@@ -235,8 +234,8 @@ _Add additional functions to load different data types from the **JSON** file._
   + Include **Math/Vector2.h** and **Math/Vector3.h**
 
 ```
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
+#include "Vector2.h"
+#include "Vector3.h"
 
 bool Read(const rapidjson::Value& value, const std::string& name, float& data);
 bool Read(const rapidjson::Value& value, const std::string& name, bool& data);
