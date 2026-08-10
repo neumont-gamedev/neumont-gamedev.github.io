@@ -65,7 +65,7 @@ $(SolutionDir)ThirdParty\rapidjson\include
 </div>
 
 ### Create JSON File ###
-+ In the **Build/Assets** folder create a folder called ```data``` and a text file called ```json.txt```.
++ In the **Build/Assets** folder create a folder called ```data``` and a text file called .json```.
 <div align="left">
 <img src="json-file.jpg" alt="File" width="65%"/>
 </div>
@@ -133,6 +133,7 @@ namespace nu::json
 #include "File.h"
 
 #include <rapidjson/istreamwrapper.h>
+#include <rapidjson/error/en.h>
 #include <iostream>
 
 namespace nu::json
