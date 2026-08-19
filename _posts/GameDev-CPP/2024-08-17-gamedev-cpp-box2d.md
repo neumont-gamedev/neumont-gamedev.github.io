@@ -258,27 +258,26 @@ namespace <namespace name> {
 
 + Add a **Physics** accessor method.
 ```
-Physics& GetPhysics() { return *m_physics; }
+Physics& GetPhysics() { return m_physics; }
 ```
 
 + Add a **Physics** variable.
 ```
-std::unique_ptr<Physics> m_physics;
+Physics m_physics;
 ```
 
 + In the ```Engine.cpp``` source file; create and initialize, shutdown and update the **Physics** class.
 
 ```
-m_physics = std::make_unique<Physics>();
-m_physics->Initialize();
+m_physics.Initialize();
 ```
 
 ```
-m_physics->Shutdown();
+m_physics.Shutdown();
 ```
 
 ```
-m_physics->Update(m_time.GetDeltaTime());
+m_physics.Update(m_time.GetDeltaTime());
 ```
 
 Build and run the application. There should be no warnings or errors. The physics will be added to the objects in an upcoming lesson. 
