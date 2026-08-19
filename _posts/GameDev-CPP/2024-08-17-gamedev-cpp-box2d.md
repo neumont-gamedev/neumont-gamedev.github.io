@@ -74,9 +74,6 @@ _CMake is a tool to create the build environment for a project. It is used to pa
 
 + Run the downloaded file to install **CMake**.
 <div align="left">
-<img src="box2d-cmake-install.jpg" alt="CMake Install" width="70%"/>
-</div>
-<div align="left">
 <img src="box2d-cmake-installer.jpg" alt="CMake Installer" width="50%"/>
 </div>
 
@@ -88,7 +85,7 @@ _CMake is a tool to create the build environment for a project. It is used to pa
 
 #### Build Box2D ####
 
-+ Run the **create_sln.bat** in the extracted box2d folder.
++ Run the **build_vs2026.bat** in the extracted box2d folder.
   + This is a _batch file_ and will run a set of commands to build the **Box 2D Visual Studio Solution** using **CMake**.
 
 <div align="left">
