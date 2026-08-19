@@ -88,6 +88,10 @@ _CMake is a tool to create the build environment for a project. It is used to pa
 + Run the **build_vs2026.bat** in the extracted box2d folder.
   + This is a _batch file_ and will run a set of commands to build the **Box 2D Visual Studio Solution** using **CMake**.
 
+>If using Visual Studio 2022, make a copy of the **build_vs2026.bat** and call it **build_vs2022.bat**
+>In the **build_vs2022.bat** change the line from **cmake -S . -B build -G "Visual Studio 18 2026"** to **cmake -S . -B build -G "Visual Studio 17 2022"** execute the **build_vs2022.bat**.
+{: .prompt-warning }
+
 <div align="left">
 <img src="box2d-cmake-build.jpg" alt="Box2D Build" width="60%"/>
 </div>
@@ -207,8 +211,10 @@ box2dd.lib
 #include <box2d/box2d.h>
 #include <memory>
 
-namespace <namespace name> {
-	class Physics {
+namespace <namespace>
+{
+	class Physics 
+	{
 	public:
 		Physics() = default;
 
@@ -227,10 +233,13 @@ namespace <namespace name> {
 + Add the following code for the Physics.cpp source code
 
 ```
+#include "pch.h"
 #include "Physics.h"
 
-namespace <namespace name> {
-	bool Physics::Initialize() {
+namespace nu 
+{
+	bool Physics::Initialize() 
+	{
 		b2WorldDef worldDef = b2DefaultWorldDef();
 		worldDef.gravity = b2Vec2{ 0.0f, -10.0f };
 		m_worldId = b2CreateWorld(&worldDef);
@@ -238,11 +247,13 @@ namespace <namespace name> {
 		return true;
 	}
 
-	void Physics::Shutdown() {
+	void Physics::Shutdown() 
+	{
 		b2DestroyWorld(m_worldId);
 	}
 
-	void Physics::Update(float dt) {
+	void Physics::Update(float dt) 
+	{
 		b2World_Step(m_worldId, 1.0f / 60.0f, 4);
 	}
 }
