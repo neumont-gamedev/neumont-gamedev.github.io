@@ -137,10 +137,10 @@ _CMake is a tool to create the build environment for a project. It is used to pa
 
 + Add the directory of the **Box2D** include folder to the **Additional Include Directories**.
   + **Additional Include Directories** is located in **C/C++>General**.
-  + Add ```$(SolutionDir)Source\ThirdParty\box2d\include```
+  + Add ```$(SolutionDir)ThirdParty\box2d\include```
 
 ```
-$(SolutionDir)Source\ThirdParty\box2d\include
+$(SolutionDir)ThirdParty\box2d\include
 ```
 <div align="left">
 <img src="box2d-include.jpg" alt="Include" width="75%"/>
@@ -165,10 +165,10 @@ $(SolutionDir)Source\ThirdParty\box2d\include
 
 + Add the directory of the **Box2D** library folder in **Project Properties**
   + **Additional Library Directories** is located in **Linker>General**.
-  + Add ```$(SolutionDir)Source\ThirdParty\box2d\lib```
+  + Add ```$(SolutionDir)ThirdParty\box2d\lib```
 
 ```
-$(SolutionDir)Source\ThirdParty\box2d\lib
+$(SolutionDir)ThirdParty\box2d\lib
 ```
 <div align="left">
 <img src="box2d-library.jpg" alt="Library" width="70%"/>
