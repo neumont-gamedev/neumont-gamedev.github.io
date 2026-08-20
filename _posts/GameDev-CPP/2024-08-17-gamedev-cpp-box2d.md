@@ -236,7 +236,7 @@ namespace <namespace>
 #include "pch.h"
 #include "Physics.h"
 
-namespace nu 
+namespace <namespace> 
 {
 	bool Physics::Initialize() 
 	{
